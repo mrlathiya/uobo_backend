@@ -22,6 +22,31 @@ module.exports = {
         }
     },
 
+    getUserByMobileNumber: async (params) => {
+        let existUser = await userSchema.find({
+            $and: [
+                { 'contact.countryCode': params.countryCode },
+                { 'contact.number': params.number }
+            ]
+        });
+
+        return existUser;
+    },
+
+    createUserToken: async (userId) => {
+        const token = jwt.sign(
+        { 
+            user_id: userId },
+            process.env.JWT_SECRET_KEY,
+            {
+                expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
+            },
+        );
+    
+        return token;
+      },
+    
+
     loginUser: async (params) => {
         
     }
