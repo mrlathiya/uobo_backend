@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const userSchema = require('../models/user');
 
 module.exports = {
@@ -14,9 +15,8 @@ module.exports = {
             }
         });
 
-        if (!addUser) {
-            await addUser.save()
-            return true;
+        if (addUser !== null || addUser !== undefined) {
+            return addUser.save();
         } else {
             return false;
         }
@@ -29,6 +29,12 @@ module.exports = {
                 { 'contact.number': params.number }
             ]
         });
+
+        return existUser;
+    },
+
+    getUserByEmail: async (email) => {
+        let existUser = await userSchema.find({ email });
 
         return existUser;
     },
@@ -47,7 +53,57 @@ module.exports = {
       },
     
 
-    loginUser: async (params) => {
-        
+    updateUserProfileInformation: async (params, user) => {
+        let update = {
+            firstName: params.firstName !== '' && params.firstName !== undefined ? params.firstName : undefined,
+            lastName: params.lastName !== '' && params.lastName !== undefined ? params.lastName : undefined,
+            middleName: params.middleName !== '' && params.middleName !== undefined ? params.middleName : undefined,
+            preferName: params.preferName !== '' && params.preferName !== undefined ? params.preferName : undefined,
+            sex: params.sex !== '' && params.sex !== undefined ? params.sex : undefined,
+            height: params.height !== '' && params.height !== undefined ? params.height : undefined,
+            age: params.age !== '' && params.age !== undefined ? params.age : undefined,
+            DOB: params.DOB !== '' && params.DOB !== undefined ? params.DOB : undefined,
+            address: {
+                address1: params.address1 !== undefined && params.address1 !== '' ? params.address1 : undefined,
+                address2: params.address2 !== '' && params.address1 !== undefined ? params.address1 : undefined,
+                postcode: params.postcode !== '' && params.address1 !== undefined ? params.address1 : undefined
+            },
+            licenceDetails: {
+                licenceNumber: params.licenceNumber !== '' && params.licenceNumber !== undefined ? params.licenceNumber : undefined,
+                class: params.class !== '' && params.class !== undefined ? params.class : undefined,
+                dateOfExpiry: params.dateOfExpiry !== '' && params.dateOfExpiry !== undefined ? params.dateOfExpiry : undefined,
+                image: params.image !== '' && params.image !== undefined ? params.image : undefined,
+                isVerify: params.isVerify !== '' && params.isVerify !== undefined ? params.isVerify : undefined
+            },
+            issued: params.issued !== '' && params.issued !== undefined ? params.issued : undefined,
+            issuerOrg_region_full: params.issuerOrg_region_full !== '' && params.issuerOrg_region_full !== undefined ? params.issuerOrg_region_full : undefined,
+            issuerOrg_region_abbr: params.issuerOrg_region_abbr !== '' && params.issuerOrg_region_abbr !== undefined ? params.issuerOrg_region_abbr : undefined,
+            issuerOrg_full: params.issuerOrg_full !== '' && params.issuerOrg_full !== undefined ? params.issuerOrg_full : undefined,
+            issuerOrg_iso2: params.issuerOrg_iso2 !== '' && params.issuerOrg_iso2 !== undefined ? params.issuerOrg_iso2 : undefined,
+            issuerOrg_iso3: params.issuerOrg_iso3 !== '' && params.issuerOrg_iso3 !== undefined ? params.issuerOrg_iso3 : undefined,
+            nationality_full: params.nationality_full !== '' && params.nationality_full !== undefined ? params.nationality_full : undefined,
+            nationality_iso2: params.nationality_iso2 !== '' && params.nationality_iso2 !== undefined ? params.nationality_iso2 : undefined,
+            nationality_iso3: params.nationality_iso3 !== '' && params.nationality_iso3 !== undefined ? params.nationality_iso3 : undefined,
+            eyeColor: params.eyeColor !== '' && params.eyeColor !== undefined ? params.eyeColor : undefined,
+            internalId: params.internalId !== '' && params.internalId !== undefined ? params.internalId : undefined,
+            matchrate: params.matchrate !== '' && params.matchrate !== undefined ? params.matchrate : undefined,
+            vaultid: params.vaultid !== '' && params.vaultid !== undefined ? params.vaultid : undefined,
+            executionTime: params.executionTime !== '' && params.executionTime !== undefined ? params.executionTime : undefined,
+            responseID: params.responseID !== '' && params.responseID !== undefined ? params.responseID : undefined,
+            quota: params.quota !== '' && params.quota !== undefined ? params.quota : undefined,
+            credit: params.credit !== '' && params.credit !== undefined ? params.credit : undefined,
+        }
+
+        let updateUser = await userSchema.findByIdAndUpdate(params.userId, update, { new: true });
+
+        if (updateUser) {
+            return updateUser;
+        } else {
+            return false;
+        }
+    },
+
+    getAllUsers: async () => {
+        return userSchema.find();
     }
 }

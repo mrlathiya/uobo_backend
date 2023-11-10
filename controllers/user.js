@@ -17,7 +17,14 @@ module.exports = {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Mobile number is required' });
             }
 
+            let checkExistUserWithEmail = await userServices.getUserByEmail(params.email);
+
+            if (checkExistUserWithEmail.length) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'User already exist with this email' });
+            }
+
             let checkExistUser = await userServices.getUserByMobileNumber(params);
+
 
             if (checkExistUser.length) {
                 return res.status(400).json({ 
@@ -39,7 +46,7 @@ module.exports = {
 
     signInUser: async (req, res, next) => {
         try {
-            const params = req.body;
+            const params = req.query;
 
             if (!params.countryCode) {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Country code is required' });
@@ -66,5 +73,43 @@ module.exports = {
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
         }
-    }
+    },
+
+    editUserProfile: async (req, res, next) => {
+        try {
+            const params = req.body;
+
+            const user = req.user;
+
+            if (!user) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please provide valid authrized token' });
+            }
+
+            params.userId = user._id;
+
+            let editProfile = await userServices.updateUserProfileInformation(params);
+
+            if (editProfile) {
+                return res.status(200).json({ IsSuccess: true, Data: editProfile, Message: 'User Profile Updated' });
+            } else {
+                return res.status(400).json({ IsSuccess: true, Data: [], Message: 'User Profile Not Updated' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    },
+
+    getAllUsers: async (req, res, next) => {
+        try {
+            let users = await userServices.getAllUsers();
+
+            if (users.length) {
+                return res.status(200).json({ IsSuccess: true, Data: [], Message: 'All users found' }); 
+            } else {
+                return res.status(400).json({ IsSuccess: true, Data: [], Message: 'No users found' }); 
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    } 
 }
