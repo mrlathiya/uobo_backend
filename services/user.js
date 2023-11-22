@@ -104,6 +104,8 @@ module.exports = {
     },
 
     getAllUsers: async () => {
-        return userSchema.find();
+        let user = await userSchema.find();
+
+        return user;
     }
 }

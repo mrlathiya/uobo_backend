@@ -104,7 +104,7 @@ module.exports = {
             let users = await userServices.getAllUsers();
 
             if (users.length) {
-                return res.status(200).json({ IsSuccess: true, Data: [], Message: 'All users found' }); 
+                return res.status(200).json({ IsSuccess: true, Count: users.length, Data: users, Message: 'All users found' }); 
             } else {
                 return res.status(400).json({ IsSuccess: true, Data: [], Message: 'No users found' }); 
             }
