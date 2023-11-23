@@ -121,6 +121,22 @@ module.exports = {
         }
     },
 
+    getUser: async (req, res, next) => {
+        try {
+            const userId = req.params.id;
+
+            let user = await userServices.getUserById(userId);
+
+            if (user) {
+                return res.status(200).json({ IsSuccess: true, Data: user, Message: 'User details found' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'User details not found' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    },
+
     editUserProfile: async (req, res, next) => {
         try {
             const params = req.body;
@@ -204,6 +220,38 @@ module.exports = {
                 }
             } else {
                 return res.status(400).json({ IsSuccess: true, Data: [], Message: 'User licence image not uploaded' });
+            }
+
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    },
+
+    updateUserLocation: async (req, res, next) => {
+        try {
+            const params = req.body;
+            const user = req.user;
+
+            if (!user) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please provide valid authrized token' });
+            }
+
+            params.userId = user._id;
+
+            if (!params.lat) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please pass lat required parameter' });
+            }
+
+            if (!params.long) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please pass long required parameter' });
+            }
+
+            let userLocation = await userServices.editUserCurrentLocation(params);
+
+            if (userLocation) {
+                return res.status(200).json({ IsSuccess: true, Data: [userLocation], Message: "User location updated" });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: "User location not updated" });
             }
 
         } catch (error) {

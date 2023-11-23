@@ -48,6 +48,14 @@ const userSchema = mongoose.Schema(
                 type: String
             },
         },
+        currentLocation: {
+            lat: {
+                type: Number
+            },
+            long: {
+                type: Number
+            },
+        },
         issued: {
             type: String
         },

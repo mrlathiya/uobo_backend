@@ -50,8 +50,13 @@ module.exports = {
         );
     
         return token;
-      },
+    },
     
+    getUserById: async (userId) => {
+        let user = await userSchema.findById(userId);
+
+        return user;
+    },
 
     updateUserProfileInformation: async (params, user) => {
         let update = {
@@ -121,5 +126,18 @@ module.exports = {
         let updateUserLicenceDetails = await userSchema.findByIdAndUpdate(params.userId, update, { new: true });
 
         return updateUserLicenceDetails;
+    },
+
+    editUserCurrentLocation: async (params) => {
+        let update = {
+            currentLocation: {
+                lat: params.lat,
+                long: params.long
+            }
+        }
+
+        let editUserLocation = await userSchema.findByIdAndUpdate(params.userId, update, { new: true });
+
+        return editUserLocation;
     }
 }
