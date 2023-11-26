@@ -32,6 +32,9 @@ const dealerRatingSchema = mongoose.Schema({
             type: String
         }
     }
+},
+{
+    timestamps: true
 });
 
 module.exports = mongoose.model('dealerRatings', dealerRatingSchema);
