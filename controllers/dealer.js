@@ -74,15 +74,15 @@ module.exports = {
     
     getDealer: async (req, res, next) => {
         try {
-            const params = req.body;
+            const dealerId = req.query.id;
             const user = req.user;
 
             if (!user) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Unauthorized access' });
             }
 
-            if (params.dealerId) {
-                let dealer = await dealerServices.getDealerByDealerId(params.dealerId);
+            if (dealerId) {
+                let dealer = await dealerServices.getDealerByDealerId(dealerId);
 
                 if (dealer) {
                     return res.status(200).json({ IsSuccess: true, Data: [dealer], Message: 'Dealer details found' });
@@ -137,21 +137,21 @@ module.exports = {
 
     deleteDealer: async (req, res, next) => {
         try {
-            const params = req.body;
+            const dealerId = req.params.id;
             const user = req.user;
 
             if (!user) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Unauthorized access' });
             }
 
-            if (!params.dealerId) {
+            if (!dealerId) {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'No dealerId found' });
             }
 
-            let checkExistDealer = await dealerServices.getDealerByDealerId(params.dealerId);
+            let checkExistDealer = await dealerServices.getDealerByDealerId(dealerId);
 
             if (checkExistDealer) {
-                let deleteDealer = await dealerServices.deleteDealer(params.dealerId);
+                let deleteDealer = await dealerServices.deleteDealer(dealerId);
 
                 return res.status(200).json({ IsSuccess: true, Data: [], Message: 'Dealer deleted' });
             } else {
@@ -170,6 +170,18 @@ module.exports = {
             if (!user) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Unauthorized access' });
             }
+
+            if (!params.dealerId) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer Id is required' });
+            }
+
+            let addRating = await dealerServices.addDealerRating(params);
+
+            if (addRating !== undefined) {
+                return res.status(200).json({ IsSuccess: true, Data: [addRating], Message: "Dealer rating added" });
+            } else {
+                return res.status(400).json({ IsSuccess: true, Data: [], Message: "Dealer rating not added" });
+            }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
         }
@@ -177,11 +189,30 @@ module.exports = {
 
     getDealerRatings: async (req, res, next) => {
         try {
-            const params = req.body;
+            const dealerId = req.params.id;
             const user = req.user;
 
             if (!user) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Unauthorized access' });
+            }
+
+            if (dealerId !== undefined && dealerId !== null && dealerId !== '') {
+                console.log('inn', dealerId)
+                let dealerRatings = await dealerServices.getDealerRating(dealerId);
+
+                if (dealerRatings) {
+                    return res.status(200).json({ IsSuccess: true, Data: [dealerRatings], Message: 'Dealer rating found' });
+                } else {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer rating not found' });
+                }
+            } else {
+                let dealersRatings = await dealerServices.getAllDealerRating();
+
+                if (dealersRatings) {
+                    return res.status(200).json({ IsSuccess: true, Data: dealersRatings, Message: 'Dealers rating found' });
+                } else {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealers rating not found' });
+                }
             }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });

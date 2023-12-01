@@ -30,6 +30,10 @@ const carSchema = mongoose.Schema({
     decription: {
         type: String
     },
+    dealerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'dealers', 
+    },
     feature: {
         interior: {
             icon: {

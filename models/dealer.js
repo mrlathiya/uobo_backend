@@ -10,10 +10,10 @@ const dealerSchema = mongoose.Schema({
     },
     location: {
         lat: {
-            type: String
+            type: Number
         },
         long: {
-            type: String
+            type: Number
         }
     }
 },

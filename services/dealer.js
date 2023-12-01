@@ -3,17 +3,18 @@ const dealerRating = require('../models/dealerRating');
 
 module.exports = {
     addDealer: async (params) => {
-        let add = await new dealerSchema({
+        let newDealer = await new dealerSchema({
             name: params.name,
             logo: params.logo,
             location: {
-                lat: params.lat,
-                long: params.long
+                lat: params.lat !== undefined && params.lat !== "" && params.lat !== null ? Number(params.lat) : undefined,
+                long: params.long !== undefined && params.long !== "" && params.long !== null ? Number(params.long) : undefined
             }
         });
 
-        if (!add) {
-            return add.save();
+        if (newDealer !== null) {
+            console.log('inn')
+            return newDealer.save();
         } else {
             return undefined;
         }
@@ -61,7 +62,9 @@ module.exports = {
             vehicle: params.vehicle,
         });
 
-        if(!addRating) {
+        console.log(addRating);
+
+        if(addRating !== undefined) {
             return addRating.save();
         } else {
             return undefined;
@@ -70,6 +73,15 @@ module.exports = {
 
     getDealerRating: async (dealerId) => {
         let ratings = await dealerRating.find({ dealerId })
+                                        .populate({
+                                            path: 'dealerId'
+                                        });
+
+        return ratings;
+    },
+
+    getAllDealerRating: async (dealerId) => {
+        let ratings = await dealerRating.find()
                                         .populate({
                                             path: 'dealerId'
                                         });
