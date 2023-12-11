@@ -20,6 +20,35 @@ module.exports = {
         }
     },
 
+    registerDealer: async (params) => {
+        let newDealer = await new dealerSchema({
+            dealerShipName: params.dealerShipName,
+            address: params.address,
+            OMVICLicenceLink: params.OMVICLicenceLink,
+            firstName: params.firstName,
+            lastName: params.lastName,
+            phoneNumber: params.phoneNumber,
+            companyRole: params.companyRole,
+            numberOfLocation: params.numberOfLocation,
+            delivery: {
+                uoboDelivery: params.uoboDelivery,
+                ownDeliveryStaff: params.ownDeliveryStaff,
+            },
+            customerPickUp: params.customerPickUp,
+            location: {
+                lat: params.lat !== undefined && params.lat !== "" && params.lat !== null ? Number(params.lat) : undefined,
+                long: params.long !== undefined && params.long !== "" && params.long !== null ? Number(params.long) : undefined
+            }
+        });
+
+        if (newDealer !== null) {
+            console.log('inn')
+            return newDealer.save();
+        } else {
+            return undefined;
+        }
+    },
+
     getDealerByDealerId: async (dealerId) => {
         let dealer = await dealerSchema.findById(dealerId);
 

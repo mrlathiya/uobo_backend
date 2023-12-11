@@ -120,5 +120,13 @@ module.exports = {
 
     deleteAllCars: async () => {
         return carSchema.deleteMany({});
-    }
+    },
+
+    deleteCarById: async (carId) => {
+        return carSchema.deleteOne({ _id: carId })
+    },
+
+    deleteCarByDealerId: async (dealerId) => {
+        return carSchema.deleteMany({ dealerId })
+    },
 };

@@ -6,7 +6,8 @@ const dealerController = require('../../controllers/dealer');
 const authController = require('../../middleware/auth');
 
 //Dealers API
-router.post('/', authController, dealerController.addNewDealer);
+// router.post('/', authController, dealerController.addNewDealer);
+router.post('/', dealerController.dealerRegistration);
 router.get('/', authController, dealerController.getDealer);
 router.put('/', authController, dealerController.updateDealer);
 router.delete('/:id', authController, dealerController.deleteDealer);

@@ -71,6 +71,22 @@ module.exports = {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
         }
     },
+
+    dealerRegistration: async (req, res, next) => {
+        try {
+            const params = req.body;
+
+            let registerDealerData = await dealerServices.registerDealer(params);
+
+            if (registerDealerData) {
+                return res.status(200).json({ IsSuccess: true, Data: [registerDealerData], Message: 'Dealer registration successfully' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer not registered' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    },
     
     getDealer: async (req, res, next) => {
         try {

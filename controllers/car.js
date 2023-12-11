@@ -170,7 +170,12 @@ module.exports = {
 
     deleteCar: async (req, res, next) => {
         try {
-            
+            const dealerId = req.params.dealerId;
+
+            if (dealerId === undefined || dealerId === null || dealerId === "") {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: "Dealer Id (dealerId) is required parameter" });
+            }
+
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
         }
