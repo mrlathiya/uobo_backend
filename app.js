@@ -4,6 +4,12 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongoConnection = require('./config/mongo-connection');
+const cors = require('cors');
+
+const corsOptions = {
+  origin: 'https://www.uobo.ca/',
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
 
 var indexRouter = require('./routes/index');
 
@@ -12,7 +18,6 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-const cors = require('cors');
 
 app.use(logger('dev'));
 app.use(express.json());
