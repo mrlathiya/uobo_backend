@@ -259,9 +259,21 @@ module.exports = {
         }
     },
 
-    dscds: async (req, res, next) => {
+    collectUserEmail: async (req, res, next) => {
         try {
-            
+            const email = req.body.email;
+
+            if (!email ) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Country code is required' });
+            }
+
+            let addEmail = await userServices.addUserEmail(email);
+
+            if (addEmail !== undefined && addEmail !== null) {
+                return res.status(200).json({ IsSuccess: true, Data: addEmail, Message: 'Email added' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Email not added' });
+            }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
         }

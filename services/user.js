@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const userSchema = require('../models/user');
+const emailSchema = require('../models/emails');
 
 module.exports = {
     registerUser: async (params) => {
@@ -139,5 +140,13 @@ module.exports = {
         let editUserLocation = await userSchema.findByIdAndUpdate(params.userId, update, { new: true });
 
         return editUserLocation;
+    },
+
+    addUserEmail: async (email) => {
+        let addEmail = await new emailSchema({
+            email
+        });
+
+        return addEmail;
     }
 }

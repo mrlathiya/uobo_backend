@@ -1,10 +1,6 @@
 const mongoose = require('mongoose');
 
 const orderSchema = mongoose.Schema({
-    orderId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'orders',
-    },
     customerId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'customers',
@@ -16,6 +12,9 @@ const orderSchema = mongoose.Schema({
     paymentId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'payments',
+    },
+    status: {
+        type: String
     }
 },
 {
