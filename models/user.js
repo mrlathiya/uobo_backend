@@ -128,6 +128,100 @@ const userSchema = mongoose.Schema(
         credit: {
             type: Number
         },
+        houseOwnership: {
+            ownershipType: {
+                type: String
+            },
+            mortgageDetails: {
+                amount: {
+                    type: String
+                },
+                bank: {
+                    type: String
+                },
+                marketValue: {
+                    type: String
+                },
+                monthlyMortgage: {
+                    type: String
+                },
+                comment: {
+                    type: String
+                }
+            }
+        },
+        currentEmployment: {
+            status: {
+                type: String
+            },
+            type: {
+                type: String
+            },
+            occupation: {
+                type: String
+            },
+            employer: {
+                type: String
+            },
+            workLocation: {
+                address1: {
+                    type: String
+                },
+                address2: {
+                    type: String
+                },
+                postalCode: {
+                    type: String
+                },
+                contact: {
+                    type: String
+                }
+            },
+            jobDuration: {
+                year: {
+                    type: String
+                },
+                month: {
+                    type: String
+                },
+                
+            },
+        },
+        grossIncome: {
+            income: {
+                type: String
+            },
+            perMQY: {
+                type: String
+            }
+        },
+        otherIncomeSource: {
+            type: {
+                type: String
+            },
+            income: {
+                type: String
+            },
+            perMQY: {
+                type: String
+            },    
+        },
+        SIN: {
+            type: String
+        },
+        documents: [
+            {
+                type: {
+                    type: String
+                },
+                file: {
+                    type: String
+                }
+            }
+        ],
+        preferredDeliveryMode: {
+            type: String,
+        },
     },
     {
         timestamps: true

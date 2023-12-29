@@ -12,6 +12,6 @@ router.put('/', authController, userController.editUserProfile);
 router.get('/all', userController.getAllUsers);
 router.post('/dlVerification', authController, userController.userVerification);
 router.patch('/location', authController, userController.updateUserLocation);
-router.post('/', authController, userController.collectUserEmail);
+router.post('/email', authController, userController.collectUserEmail);
 
 module.exports = router;

@@ -48,15 +48,13 @@ const financeSchema = mongoose.Schema({
     colors: [{
         type: String
     }],
-    color: {
-        type: String
-    },
-    personalDetails: {
-        type: String
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users',
     }
 },
 {
     timestamps: true
 });
 
-module.exports = mongoose.model('emails', financeSchema);
+module.exports = mongoose.model('finance', financeSchema);
