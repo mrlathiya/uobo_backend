@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const financeModel = require('../models/finance');
 const userModel = require('../models/user');
 
@@ -50,10 +51,58 @@ module.exports = {
     },
 
     getUserFinanceDetails: async (userId) => {
-        const finance = await financeModel.findOne({userId})
-                                          .populate({
-                                            path: 'userId'
-                                          });
+
+        let id = new mongoose.Types.ObjectId(userId);
+
+        const finance = await financeModel.aggregate([
+            {
+                $match: {
+                    userId: id
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'customerInfo'
+                }
+            },
+            {
+                $unwind: '$customerInfo'
+            },
+            {
+                $project: {
+                    _id: 1,
+                    carType: '$carType',
+                    preference: '$preference',
+                    make: '$make',
+                    model: '$model',
+                    priceRange: '$priceRange',
+                    yearRange: '$yearRange',
+                    mileageRange: '$mileageRange',
+                    driveTrain: '$driveTrain',
+                    transmission: '$transmission',
+                    colors: '$colors',
+                    userId: '$userId',
+                    'customerInfo._id': 1,
+                    'customerInfo.firstName': 1,
+                    'customerInfo.lastName': 1,
+                    'customerInfo.middleName': 1,
+                    'customerInfo.preferName': 1,
+                    'customerInfo.email': 1,
+                    'customerInfo.contact': 1,
+                    currentEmployment: '$customerInfo.currentEmployment',
+                    currentLocation: '$customerInfo.currentLocation',
+                    SIN: '$customerInfo.SIN',
+                    documents: '$customerInfo.documents',
+                    grossIncome: '$customerInfo.grossIncome',
+                    houseOwnership: '$customerInfo.houseOwnership',
+                    otherIncomeSource: '$customerInfo.otherIncomeSource',
+                    preferredDeliveryMode: '$customerInfo.preferredDeliveryMode'
+                }
+              }
+        ])
 
         return finance;
     }

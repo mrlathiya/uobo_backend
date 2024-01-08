@@ -58,7 +58,7 @@ module.exports = {
             let finance = await financeService.getUserFinanceDetails(user._id);
 
             if (finance) {
-                return res.status(200).json({ IsSuccess: true, Data: [finance], Message: 'User finance details found' });
+                return res.status(200).json({ IsSuccess: true, Data: finance, Message: 'User finance details found' });
             } else {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'No finance details found' });
             }
