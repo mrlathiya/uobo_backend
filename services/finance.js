@@ -3,7 +3,7 @@ const financeModel = require('../models/finance');
 const userModel = require('../models/user');
 
 module.exports = {
-    addCustomerFinance: async (params) => {
+    saddCustomerFinance: async (params) => {
         const customerFinance = await new financeModel({
             carType: params.carType,
             preference: params.preference,
@@ -43,6 +43,11 @@ module.exports = {
             SIN: params.SIN,
             documents: params.documents,
             preferredDeliveryMode: params.preferredDeliveryMode,
+            address: {
+                address1: params.address1,
+                address2: params.address2,
+                postcode: params.postcode,
+            }
         }
 
         let editUser = await userModel.findByIdAndUpdate(params.userId, editInformation, { new: true });

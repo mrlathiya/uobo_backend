@@ -31,6 +31,18 @@ module.exports = {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: "priceRange is required parameter" });
             }
 
+            if (!params.address1) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: "Address1 is required parameter" });
+            }
+
+            if (!params.address2) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: "Address2 is required parameter" });
+            }
+
+            if (!params.postcode) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: "Postcode is required parameter" });
+            }
+
             params.userId = user._id;
 
             let addNewFinance = await financeService.addCustomerFinance(params);
