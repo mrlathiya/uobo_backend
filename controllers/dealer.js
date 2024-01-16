@@ -1,4 +1,5 @@
 const dealerServices = require('../services/dealer');
+const userServices = require('../services/user');
 const fs = require('fs');
 
 const uploadedImage = async (base64Image, fileNameConst) => {
@@ -87,24 +88,47 @@ module.exports = {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
         }
     },
+
+    dealerLogin: async (req, res, next) => {
+        try {
+            const params = req.body;
+
+            let dealer = await dealerServices.loginDealer(params);
+
+            if (dealer) {
+                const token = await userServices.createUserToken(dealer._id);
+
+                if (token) {
+                    return res.status(200).json({ IsSuccess: true, Data: {dealer, token}, Message: "Dealer LoggedIn" });
+                } else {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: "Dealer token not created" });
+                }
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: "Dealer not found" });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    },
     
     getDealer: async (req, res, next) => {
         try {
             const dealerId = req.query.id;
-            const user = req.user;
+            const dealer = req.user;
 
-            if (!user) {
+            if (!dealer) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Unauthorized access' });
             }
 
-            if (dealerId) {
-                let dealer = await dealerServices.getDealerByDealerId(dealerId);
+            if (dealer) {
+                return res.status(200).json({ IsSuccess: true, Data: [dealer], Message: 'Dealer details found' });
+                // let dealer = await dealerServices.getDealerByDealerId(dealerId);
 
-                if (dealer) {
-                    return res.status(200).json({ IsSuccess: true, Data: [dealer], Message: 'Dealer details found' });
-                } else {
-                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer details not found' });
-                }
+                // if (dealer) {
+                //     return res.status(200).json({ IsSuccess: true, Data: [dealer], Message: 'Dealer details found' });
+                // } else {
+                //     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer details not found' });
+                // }
             } else {
                 let dealers = await dealerServices.getAllDealers();
 

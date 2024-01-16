@@ -42,11 +42,16 @@ module.exports = {
         });
 
         if (newDealer !== null) {
-            console.log('inn')
             return newDealer.save();
         } else {
             return undefined;
         }
+    },
+
+    loginDealer: async (params) => {
+        let dealer = await dealerSchema.findOne({ phoneNumber: params.phoneNumber });
+
+        return dealer;
     },
 
     getDealerByDealerId: async (dealerId) => {
