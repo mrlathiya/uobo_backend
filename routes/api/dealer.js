@@ -4,12 +4,13 @@ const router = express.Router();
 
 const dealerController = require('../../controllers/dealer');
 const dealerAuthController = require('../../middleware/dealerAuth');
+const authController = require('../../middleware/auth');
 
 //Dealers API
 // router.post('/', authController, dealerController.addNewDealer);
 router.post('/', dealerController.dealerRegistration);
 router.post('/login', dealerController.dealerLogin);
-router.get('/', dealerAuthController, dealerController.getDealer);
+router.get('/', authController, dealerController.getDealer);
 router.put('/', dealerAuthController, dealerController.updateDealer);
 router.delete('/:id', dealerAuthController, dealerController.deleteDealer);
 
