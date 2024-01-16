@@ -121,5 +121,28 @@ module.exports = {
                                         });
 
         return ratings;
+    },
+
+    getNearByDealer: async () => {
+        let dealerInformation = await dealerSchema.aggregate([
+            {
+                $lookup: {
+                    from: 'cars',
+                    localField: '_id',
+                    foreignField: 'dealerId',
+                    as: 'inventory'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'dealerratings',
+                    localField: '_id',
+                    foreignField: 'dealerId',
+                    as: 'ratings'
+                }
+            },
+        ]);
+
+        return dealerInformation;
     }
 }

@@ -1,5 +1,6 @@
 const dealerServices = require('../services/dealer');
 const userServices = require('../services/user');
+const carServices = require('../services/car');
 const fs = require('fs');
 
 const uploadedImage = async (base64Image, fileNameConst) => {
@@ -121,7 +122,10 @@ module.exports = {
             }
 
             if (dealer) {
-                return res.status(200).json({ IsSuccess: true, Data: [dealer], Message: 'Dealer details found' });
+                let dealerInformation = await dealerServices.getNearByDealer();
+                // const dealerInventory = await carServices.getCarByDealerId(dealer._id);
+                // const dealerRating = await dealerServices.getDealerRating();
+                return res.status(200).json({ IsSuccess: true, Data: dealerInformation, Message: 'Dealer details found' });
                 // let dealer = await dealerServices.getDealerByDealerId(dealerId);
 
                 // if (dealer) {
