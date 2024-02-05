@@ -77,5 +77,41 @@ module.exports = {
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
         }
-    }
+    },
+
+    addMortgageCategory: async (req, res, next) => {
+        try {
+            const typeList = req.body.mortgageList;
+
+            if (!typeList.length) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide valid list of data' });
+            } 
+
+            let addCategory = await financeService.addMortgageTypes(typeList);
+
+            if (addCategory.length) {
+                return res.status(200).json({ IsSuccess: true, Data: addCategory, Message: 'Mortgage categories added' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Mortgage categories not added' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
+
+    getMortgageCategory: async (req, res, next) => {
+        try {
+
+            let mortgageList = await financeService.getMortgageList();
+
+            if (mortgageList.length) {
+                return res.status(200).json({ IsSuccess: true, Count: mortgageList.length, Data: mortgageList, Message: 'Mortgage categories found' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Mortgage categories not found' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
+
 }

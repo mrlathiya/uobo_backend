@@ -5,6 +5,9 @@ const router = express.Router();
 const carController = require('../../controllers/car');
 const authController = require('../../middleware/auth');
 
+router.post('/category', carController.addCarType);
+router.get('/category', carController.getVehicleCategories);
+
 router.post('/', authController, carController.addNewCar);
 router.get('/', authController, carController.getAllCars);
 router.get('/:dealerId', authController, carController.getAllCars);

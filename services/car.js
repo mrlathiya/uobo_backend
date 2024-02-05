@@ -1,4 +1,5 @@
 const carSchema = require('../models/car');
+const vehicleTypeSchema = require('../models/vehicleType');
 
 module.exports = {
     addNewCar: async (params, dealerId) => {
@@ -129,4 +130,19 @@ module.exports = {
     deleteCarByDealerId: async (dealerId) => {
         return carSchema.deleteMany({ dealerId })
     },
+
+    addVehicleType: async (params) => {
+        let addType = await new vehicleTypeSchema({
+            name: params.name,
+            icon: params.icon,
+        });
+
+        if (addType) {
+            return addType.save();
+        }
+    },
+
+    getVehicleType: async () => {
+        return vehicleTypeSchema.find();
+    }
 };

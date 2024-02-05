@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
 const financeModel = require('../models/finance');
 const userModel = require('../models/user');
+const mortgageTypeModel = require('../models/mortgageType');
 
 module.exports = {
-    saddCustomerFinance: async (params) => {
+    addCustomerFinance: async (params) => {
         const customerFinance = await new financeModel({
             carType: params.carType,
             preference: params.preference,
@@ -110,5 +111,26 @@ module.exports = {
         ])
 
         return finance;
+    },
+
+    addMortgageTypes: async (listOfMortgage) => {
+
+        let mortgageList = [];
+
+        for (let type in listOfMortgage) {
+            let addMortgage = await new mortgageTypeModel({
+                name: listOfMortgage[type]
+            });
+
+            await addMortgage.save();
+            mortgageList.push(addMortgage);
+        }
+
+        return mortgageList;
+        
+    },
+
+    getMortgageList: async () => {
+        return mortgageTypeModel.find();
     }
 }

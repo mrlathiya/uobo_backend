@@ -180,4 +180,43 @@ module.exports = {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
         }
     },
+
+    addCarType: async (req, res, next) => {
+        try {
+            const params = req.body;
+
+            if (!params.name) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Vehicle type name is required' });
+            }
+
+            if (!params.icon) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Vehicle type icon is required' });
+            }
+
+            let addType = await carServices.addVehicleType(params);
+
+            if (addType) {
+                return res.status(200).json({ IsSuccess: true, Data: addType, Message: 'Vehicle Type added' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Vehicle Type not added' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
+
+    getVehicleCategories: async (req, res, next) => {
+        try {
+
+            let vehicleCategories = await carServices.getVehicleType();
+
+            if (vehicleCategories.length) {
+                return res.status(200).json({ IsSuccess: true, Count: vehicleCategories.length, Data: vehicleCategories, Message: 'Vehicle types found' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Vehicle type not found' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
 }
