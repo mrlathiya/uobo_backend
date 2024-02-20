@@ -59,6 +59,70 @@ module.exports = {
         }
     },
 
+    addCustomerFinanceCashFlow: async (req, res, next) => {
+        try {
+            const params = req.body;
+
+            if (!dealerId) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide dealerId' });
+            }
+
+            if (!customerId) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide customerId' });
+            }
+
+            if (!carId) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide carId' });
+            }
+
+            let addFinance = await financeService.addCustomerCashFinance(params);
+
+            if (addFinance) {
+                return res.status(200).json({ IsSuccess: true, Data: [addFinance], Message: 'Customer cash finance added' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer cash finance not added' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    },
+
+    addCustomerFinanceFixFlow: async (req, res, next) => {
+        try {
+            const params = req.body;
+
+            if (!dealerId) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide dealerId' });
+            }
+
+            if (!customerId) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide customerId' });
+            }
+
+            if (!carId) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide carId' });
+            }
+
+            let addFinance = await financeService.addCustomerFixFinance(params);
+
+            if (addFinance) {
+                return res.status(200).json({ IsSuccess: true, Data: [addFinance], Message: 'Customer fix finance added' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer fix finance not added' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    },
+
+    editCustomerFinanceStatus: async (req, res, next) => {
+        try {
+            const params = req.body;
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    },
+
     getCustomerFinance: async (req, res, next) => {
         try {
             const user = req.user;

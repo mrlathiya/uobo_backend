@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const financeModel = require('../models/finance');
+const financeCashFlowModel = require('../models/financeCashFlow');
+const financeCashFixModel = require('../models/financeCarFix');
 const userModel = require('../models/user');
 const mortgageTypeModel = require('../models/mortgageType');
 
@@ -132,5 +134,136 @@ module.exports = {
 
     getMortgageList: async () => {
         return mortgageTypeModel.find();
+    },
+
+    addCustomerCashFinance: async (params) => {
+        let customerFinance = await new financeCashFlowModel({
+            dealerId: params.dealerId,
+            customerId: params.customerId,
+            carId: params.carId,
+            firstName: params.firstName,
+            lastName: params.lastName,
+            email: params.email,
+            contact: {
+                countryCode: params.countryCode,
+                number: params.number,
+            },
+            address: {
+                address1: params.address1,
+                address2: params.address2,
+                city: params.city,
+                postalCode: params.postalCode,
+            },
+            gender: params.gender,
+            DOB: params.DOB,
+            documents: {
+                category: params.category,
+                file: params.file,
+            },
+            status: params.status,
+            tradeDetails: {
+                VIN: params.VIN,
+                YearMakeModel: params.YearMakeModel,
+                odometerReading: params.odometerReading,
+                trim: params.trim,
+                transmission: params.transmission,
+                color: params.color,
+                ownerShip: params.ownerShip,
+                loanType: params.loanType,
+                amount: params.amount,
+                remainingPayment: params.remainingPayment,
+                EMIAmount: params.EMIAmount,
+                accidentHistory: {
+                    damageAmount: params.damageAmount,
+                    insurancePayoutAmount: params.insurancePayoutAmount
+                },
+                mechanicalIssue: params.mechanicalIssue,
+                warningLight: params.warningLight,
+                afterMarketModification: params.afterMarketModification,
+                additionalIsuse: params.additionalIsuse,
+                estimatedBodyWorkAmount: params.estimatedBodyWorkAmount,
+                smoke: params.smoke,
+                photos: params.photos,
+            }
+        });
+
+        if (customerFinance) {
+            return customerFinance.save();
+        } else {
+            return undefined;
+        }
+    },
+
+    addCustomerFixFinance: async (params) => {
+        let customerFinance = await new financeCashFixModel({
+            dealerId: params.dealerId,
+            customerId: params.customerId,
+            carId: params.carId,
+            firstName: params.firstName,
+            lastName: params.lastName,
+            email: params.email,
+            contact: {
+                countryCode: params.countryCode,
+                number: params.number,
+            },
+            address: {
+                address1: params.address1,
+                address2: params.address2,
+                city: params.city,
+                postalCode: params.postalCode,
+            },
+            gender: params.gender,
+            DOB: params.DOB,
+            documents: {
+                category: params.category,
+                file: params.file,
+            },
+            status: params.status,
+            tradeDetails: {
+                VIN: params.VIN,
+                YearMakeModel: params.YearMakeModel,
+                odometerReading: params.odometerReading,
+                trim: params.trim,
+                transmission: params.transmission,
+                color: params.color,
+                ownerShip: params.ownerShip,
+                loanType: params.loanType,
+                amount: params.amount,
+                remainingPayment: params.remainingPayment,
+                EMIAmount: params.EMIAmount,
+                accidentHistory: {
+                    damageAmount: params.damageAmount,
+                    insurancePayoutAmount: params.insurancePayoutAmount
+                },
+                mechanicalIssue: params.mechanicalIssue,
+                warningLight: params.warningLight,
+                afterMarketModification: params.afterMarketModification,
+                additionalIsuse: params.additionalIsuse,
+                estimatedBodyWorkAmount: params.estimatedBodyWorkAmount,
+                smoke: params.smoke,
+                photos: params.photos,
+            },
+            EMIOptions: params.EMIOptions,
+            appointments: {
+                date: params.date,
+                time: params.time,
+            },
+            deliveryAddress: {
+                address1: params.address1,
+                address2: params.address2,
+                city: params.city,
+                postalCode: params.postalCode,
+            }
+        });
+
+        if (customerFinance) {
+            return customerFinance.save();
+        } else {
+            return undefined;
+        }
+    },
+
+    editFinanceStatus: async (params) => {
+        
     }
 }

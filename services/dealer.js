@@ -160,6 +160,7 @@ module.exports = {
                     createdAt: "$createdAt", 
                     updatedAt: "$updatedAt", 
                     // Extra_Photos :"$Extra_Photos", 
+                    inventory_id: "$inventory._id", 
                     inventory_VIN: "$inventory.VIN", 
                     inventory_Stock_Number: "$inventory.Stock_Number", 
                     inventory_New_or_Used: "$inventory.New_or_Used", 
@@ -220,7 +221,8 @@ module.exports = {
                     inventory: { 
                         $push: { 
                             "url": "$assets_url",
-                            VIN: "$inventory_VIN", 
+                            VIN: "$inventory_VIN",
+                            Inventory_Id: "$inventory_id", 
                             Stock_Number: "$inventory_Stock_Number", 
                             New_or_Used: "$inventory_New_or_Used", 
                             MSRP: "$inventory_MSRP", 
