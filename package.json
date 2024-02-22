@@ -6,6 +6,7 @@
     "start": "nodemon ./bin/www"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.515.0",
     "aws-amplify": "^6.0.15",
     "aws-sdk": "^2.1548.0",
     "cookie-parser": "~1.4.4",
@@ -20,6 +21,7 @@
     "mongoose": "^7.4.3",
     "moongoose": "^0.0.5",
     "morgan": "~1.9.1",
+    "multer": "^1.4.5-lts.1",
     "nodemon": "^3.0.1",
     "pm2": "^5.3.0",
     "uuid": "^7.0.3"

@@ -6,12 +6,25 @@ const dealerSchema = mongoose.Schema({
         require: true
     },
     address: {
-        type: String,
-        require: true
+        address1: {
+            type: String
+        },
+        address2: {
+            type: String
+        },
+        city: {
+            type: String
+        },
+        postcode: {
+            type: String
+        },
     },
     OMVICLicenceLink: {
         type: String,
         require: true
+    },
+    email: {
+        type: String
     },
     firstName: {
         type: String,
@@ -22,8 +35,12 @@ const dealerSchema = mongoose.Schema({
         require: true
     },
     phoneNumber: {
-        type: Number,
-        require: true
+        countryCode: {
+            type: String
+        },
+        number: {
+            type: Number
+        }
     },
     companyRole: {
         type: String,
@@ -43,10 +60,10 @@ const dealerSchema = mongoose.Schema({
             default: false
         },
     },
-   customerPickUp: {
+    customerPickUp: {
         type: Boolean,
         default: false
-   },
+    },
     logo: {
         type: String
     },
@@ -57,6 +74,9 @@ const dealerSchema = mongoose.Schema({
         long: {
             type: Number
         }
+    },
+    inventory_csv: {
+        type: String
     }
 },
 {

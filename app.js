@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongoConnection = require('./config/mongo-connection');
 const cors = require('cors');
+var bodyParser = require('body-parser');
 
 const corsOptions = {
   origin: 'https://www.uobo.ca/',
@@ -20,11 +21,12 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(logger('dev'));
-app.use(express.json());
+// app.use(express.json());
 app.use(express.urlencoded({ 
-  extended: true,
-  limit: '50mb'
+  extended: false,
+  limit: '1000mb'
  }));
+app.use(bodyParser.json({ limit: '1000mb' }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use("/uploads", express.static(__dirname + "/uploads"));

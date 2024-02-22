@@ -1,6 +1,6 @@
 const dealerServices = require('../services/dealer');
 const userServices = require('../services/user');
-const carServices = require('../services/car');
+const awsServices = require('../config/aws-services');
 const fs = require('fs');
 
 const uploadedImage = async (base64Image, fileNameConst) => {
@@ -48,6 +48,36 @@ const deleteImage = async (fileName) => {
     });
 }
 
+const uploadCsvFile = async (base64Csv, fileNameConst) => {
+    const matches = base64Csv.match(/^data:text\/csv;base64,(.+)$/);
+      
+    if (!matches || matches.length !== 2) {
+        throw new Error('Invalid base64 CSV string');
+    }
+    
+    const base64Data = matches[1];
+    
+    // Remove the data:text/csv;base64 part
+    const dataBuffer = Buffer.from(base64Data, 'base64');
+    
+    // Generate a unique filename
+    const fileName = `${fileNameConst}_${Date.now()}.csv`;
+    
+    const filePath = `uploads/${fileName}`;
+    
+    // Save the CSV file to the "uploads" folder
+    fs.writeFile(filePath, dataBuffer, (err) => {
+        if (err) {
+            console.error(err);
+            throw new Error('Error uploading CSV file');
+        } else {
+            console.log('CSV file uploaded successfully');
+        }
+    });
+    
+    return fileName;
+}
+
 module.exports = {
     addNewDealer: async (req, res, next) => {
         try {
@@ -78,10 +108,52 @@ module.exports = {
         try {
             const params = req.body;
 
+            if (!params.dealerShipName) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide dealerShipName' });
+            }
+
+            if (!params.firstName) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide firstName' });
+            }
+
+            if (!params.lastName) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide lastName' });
+            }
+
+            if (!params.OMVICLicenceLink) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide OMVICLicenceLink' });
+            }
+
+            if (!params.countryCode) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide mobile countryCode' });
+            }
+
+            if (!params.number) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide mobile number' });
+            }
+
+            let uploadInventoryCSV;
+
+            let csvFile = req.file;
+
+            if (csvFile) {
+                uploadInventoryCSV = await awsServices._uploadCSV(csvFile,'Dealers_Inventory','csv',params.dealerShipName);
+                console.log(uploadInventoryCSV);
+            }
+
             let registerDealerData = await dealerServices.registerDealer(params);
 
             if (registerDealerData) {
-                return res.status(200).json({ IsSuccess: true, Data: [registerDealerData], Message: 'Dealer registration successfully' });
+                if (uploadInventoryCSV) {
+                    return res.status(200).json({ 
+                        IsSuccess: true, 
+                        Data: [registerDealerData], 
+                        InventoryURL: uploadInventoryCSV.URL, 
+                        Message: 'Dealer registration successfully' 
+                    });
+                } else {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer not registered' });
+                }
             } else {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer not registered' });
             }
