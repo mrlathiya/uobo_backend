@@ -219,4 +219,35 @@ module.exports = {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
         }
     },
+
+    searchCarInventory: async (req, res, next) => {
+        try {
+            const { keyword } = req.query;
+
+            const dealer = req.user;
+
+            if (!keyword) {
+                return res.status(401).json({ 
+                    IsSuccess: false, 
+                    Data: [], 
+                    Message: 'Keyword is required in the query parameters' 
+                });
+            }
+
+            const cars = await carServices.searchOperation(keyword, dealer._id);
+
+            if (cars) {
+                return res.status(200).json({ 
+                    IsSuccess: true, 
+                    Count: cars.length, 
+                    Data: cars, 
+                    Message: 'Search car result found' 
+                });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Search car found' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    }
 }

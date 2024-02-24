@@ -144,5 +144,21 @@ module.exports = {
 
     getVehicleType: async () => {
         return vehicleTypeSchema.find();
+    },
+
+    searchOperation: async (keyword, dealerId) => {
+        const query = {
+            $or: [
+                { Make: { $regex: keyword, $options: 'i' } },
+                { Model: { $regex: keyword, $options: 'i' } },
+                { Body_Style: { $regex: keyword, $options: 'i' } },
+                { Exterior_Colour: { $regex: keyword, $options: 'i' } }
+            ],
+            dealerId
+        };
+
+        let cars = await carSchema.find(query);
+
+        return cars;
     }
 };

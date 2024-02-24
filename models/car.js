@@ -17,19 +17,23 @@ const carSchema = mongoose.Schema({
         type: String
     },
     Make: {
-        type: String
+        type: String,
+        index: true
     },
     Model: {
-        type: String
+        type: String,
+        index: true
     },
     Body_Style: {
-        type: String
+        type: String,
+        index: true
     },
     Series: {
         type: String
     },
     Exterior_Colour: {
-        type: String
+        type: String,
+        index: true
     },
     Interior_Colour: {
         type: String
