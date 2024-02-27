@@ -271,7 +271,7 @@ module.exports = {
         let update = {
             status: params.status,
             appointments: params.appointments,
-            'tradeDetails.tradeInCarValue': params.tradeInCarValue
+            'tradeDetails.dealerEstimatedTradeValue': params.tradeInCarValue
         }
 
         let updateFinanceStatus = await financeCashFlowModel.findByIdAndUpdate(params.financeId, update, { new: true });
