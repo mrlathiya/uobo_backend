@@ -269,7 +269,8 @@ module.exports = {
 
     editFinanceStatus: async (params) => {
         let update = {
-            status: params.status
+            status: params.status,
+            appointments: params.appointments,
         }
 
         let updateFinanceStatus = await financeCashFlowModel.findByIdAndUpdate(params.financeId, update, { new: true });
