@@ -67,6 +67,9 @@ const financeCashFlowSchema = mongoose.Schema({
         type: String
     },
     tradeDetails: {
+        tradeInCarValue: {
+            type: Number
+        },
         VIN: {
             type: String
         },
