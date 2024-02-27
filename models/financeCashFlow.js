@@ -134,9 +134,9 @@ const financeCashFlowSchema = mongoose.Schema({
         date: {
             type: String
         },
-        time: {
+        time: [{
             type: String
-        },
+        }],
     }],
 });
 
