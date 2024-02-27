@@ -136,7 +136,7 @@ module.exports = {
         return mortgageTypeModel.find();
     },
 
-    addCustomerCashFinance: async (params) => {
+    addCustomerCashFinance: async (params, customer) => {
         let customerFinance = await new financeCashFlowModel({
             dealerId: params.dealerId,
             customerId: params.customerId,
@@ -145,8 +145,8 @@ module.exports = {
             lastName: params.lastName,
             email: params.email,
             contact: {
-                countryCode: params.countryCode,
-                number: params.number,
+                countryCode: customer.contact.countryCode ? customer.contact.countryCode : params.countryCode,
+                number: customer.contact.number ? customer.contact.number : params.number,
             },
             address: {
                 address1: params.address1,

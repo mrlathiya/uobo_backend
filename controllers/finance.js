@@ -62,6 +62,7 @@ module.exports = {
     addCustomerFinanceCashFlow: async (req, res, next) => {
         try {
             const params = req.body;
+            const customer = req.user;
 
             if (!dealerId) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide dealerId' });
@@ -75,7 +76,7 @@ module.exports = {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide carId' });
             }
 
-            let addFinance = await financeService.addCustomerCashFinance(params);
+            let addFinance = await financeService.addCustomerCashFinance(params, customer);
 
             if (addFinance) {
                 return res.status(200).json({ IsSuccess: true, Data: [addFinance], Message: 'Customer cash finance added' });

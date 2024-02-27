@@ -44,6 +44,9 @@ const financeCashFlowSchema = mongoose.Schema({
             postalCode: {
                 type: String
             },
+            province: {
+                type: String
+            }, 
         }
     ],
     gender: {
