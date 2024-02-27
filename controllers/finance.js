@@ -64,15 +64,15 @@ module.exports = {
             const params = req.body;
             const customer = req.user;
 
-            if (!dealerId) {
+            if (!params.dealerId) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide dealerId' });
             }
 
-            if (!customerId) {
+            if (!customer._id) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide customerId' });
             }
 
-            if (!carId) {
+            if (!params.carId) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide carId' });
             }
 
