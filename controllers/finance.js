@@ -122,7 +122,7 @@ module.exports = {
             const params = req.body;
 
             if (params.status === 'CustomerPaidFullInCash') {
-                let editStatus = await financeService.editFinanceStatus(params);
+                let editStatus = await financeService.editFinancePaidStatus(params);
 
                 if (editStatus) {
                     return res.status(200).json({ IsSuccess: true, Data: editStatus, Message: `Finance status updated ${params.status}` });
