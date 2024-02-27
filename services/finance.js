@@ -267,6 +267,16 @@ module.exports = {
         return finance;
     },
 
+    editFinancePaidStatus: async (params) => {
+        let update = {
+            status: 'CustomerPaidFullInCash'
+        }
+
+        let updateFinanceStatus = await financeCashFlowModel.findByIdAndUpdate(params.financeId, update, { new: true });
+
+        return updateFinanceStatus;
+    },
+
     editFinanceStatus: async (params) => {
         let update = {
             status: params.status,
