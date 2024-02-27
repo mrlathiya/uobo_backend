@@ -30,20 +30,22 @@ const financeCashFlowSchema = mongoose.Schema({
             type: String
         },
     },
-    address: {
-        address1: {
-            type: String
-        },
-        address2: {
-            type: String
-        },
-        city: {
-            type: String
-        },
-        postalCode: {
-            type: String
-        },
-    },
+    address: [
+        {
+            address1: {
+                type: String
+            },
+            address2: {
+                type: String
+            },
+            city: {
+                type: String
+            },
+            postalCode: {
+                type: String
+            },
+        }
+    ],
     gender: {
         type: String
     },

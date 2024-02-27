@@ -128,6 +128,10 @@ module.exports = {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide mobile countryCode' });
             }
 
+            if (!params.email) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide mobile email' });
+            }
+
             if (!params.number) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide mobile number' });
             }

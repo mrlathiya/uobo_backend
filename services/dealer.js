@@ -27,6 +27,7 @@ module.exports = {
             OMVICLicenceLink: params.OMVICLicenceLink,
             firstName: params.firstName,
             lastName: params.lastName,
+            email: params.email,
             phoneNumber: params.phoneNumber,
             companyRole: params.companyRole,
             numberOfLocation: params.numberOfLocation,
