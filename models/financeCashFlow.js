@@ -13,6 +13,10 @@ const financeCashFlowSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'cars',
     },
+    category: {
+        type: String,
+        require: true
+    },
     firstName: {
         type: String
     },
@@ -141,6 +145,24 @@ const financeCashFlowSchema = mongoose.Schema({
             type: String
         }],
     }],
+    EMIOptions: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'EMIOptios',
+    },
+    deliveryAddress: {
+        address1: {
+            type: String
+        },
+        address1: {
+            type: String
+        },
+        city: {
+            type: String
+        },
+        postalCode: {
+            type: String
+        },
+    },
 });
 
 module.exports = mongoose.model('financeCashFlow', financeCashFlowSchema);
