@@ -144,25 +144,21 @@ module.exports = {
                     return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide tradeInCarValue parameter' });
                 }
     
-                if (!params.appointmentDate) {
-                    return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide appointmentDate parameter' });
+                if (!params.appointments) {
+                    return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide appointments parameter' });
                 }
-    
-                if (!params.appointmentTime) {
-                    return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide appointmentTime parameter' });
+
+                let editStatus = await financeService.editFinanceStatus(params);
+
+                if (editStatus) {
+                    return res.status(200).json({ IsSuccess: true, Data: editStatus, Message: `Finance status updated ${params.status}` });
+                } else {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Finance status not updated' });
                 }
             } else {
                 let deleteFinance = await financeService.deleteFinanceOrder(params.financeId);
 
                 return res.status(200).json({  IsSuccess: true, Data: [], Message: 'Customer requested finance deleted'});
-            }
-
-            let editStatus = await financeService.editFinanceStatus(params);
-
-            if (editStatus) {
-                return res.status(200).json({ IsSuccess: true, Data: editStatus, Message: `Finance status updated ${params.status}` });
-            } else {
-                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Finance status not updated' });
             }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
