@@ -129,7 +129,15 @@ const financeCashFlowSchema = mongoose.Schema({
         photos: [{
             type: String
         }]
-    }
+    },
+    appointments: [{
+        date: {
+            type: String
+        },
+        time: {
+            type: String
+        },
+    }],
 });
 
 module.exports = mongoose.model('financeCashFlow', financeCashFlowSchema);

@@ -1,3 +1,4 @@
+const { trusted } = require('mongoose');
 const financeService = require('../services/finance');
 
 module.exports = {
@@ -119,6 +120,18 @@ module.exports = {
     editCustomerFinanceStatus: async (req, res, next) => {
         try {
             const params = req.body;
+
+            if (!params.status) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide status parameter' });
+            }
+
+            let editStatus = await financeService.editFinanceStatus(params);
+
+            if (editStatus) {
+                return res.status(200).json({ IsSuccess: true, Data: editStatus, Message: `Finance status updated ${params.status}` });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Finance status not updated' });
+            }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
         }

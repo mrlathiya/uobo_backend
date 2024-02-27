@@ -158,7 +158,7 @@ module.exports = {
             gender: params.gender,
             DOB: params.DOB,
             documents: params.documents,
-            status: params.status,
+            status: 'CustomerRequestForCashPurchase',
             tradeDetails: {
                 VIN: params.tradeDetails.VIN,
                 YearMakeModel: params.tradeDetails.YearMakeModel,
@@ -262,6 +262,12 @@ module.exports = {
     },
 
     editFinanceStatus: async (params) => {
-        
+        let update = {
+            status: params.status
+        }
+
+        let updateFinanceStatus = await financeCashFlowModel.findByIdAndUpdate(params.financeId, update, { new: true });
+
+        return updateFinanceStatus;
     }
 }
