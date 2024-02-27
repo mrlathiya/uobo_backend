@@ -261,6 +261,12 @@ module.exports = {
         }
     },
 
+    getFinanceById: async (financeId) => {
+        let finance = await financeCashFlowModel.findById(financeId);
+
+        return finance;
+    },
+
     editFinanceStatus: async (params) => {
         let update = {
             status: params.status
@@ -269,5 +275,11 @@ module.exports = {
         let updateFinanceStatus = await financeCashFlowModel.findByIdAndUpdate(params.financeId, update, { new: true });
 
         return updateFinanceStatus;
+    },
+
+    deleteFinanceOrder: async (financeId) => {
+        await financeCashFixModel.findByIdAndDelete(financeId);
+
+        return true;
     }
 }

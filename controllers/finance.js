@@ -121,8 +121,40 @@ module.exports = {
         try {
             const params = req.body;
 
-            if (!params.status) {
-                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide status parameter' });
+            if (!params.confirmAvailabilty) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide confirmAvailabilty parameter' });
+            }
+
+            if (!params.financeId) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide financeId parameter' });
+            }
+
+            let finance = await financeService.getFinanceById(params.financeId);
+
+            if (finance === undefined || finance === null) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Requested cash finance not found' });
+            }
+
+            if (params.confirmAvailabilty === true) {
+                if (!params.status) {
+                    return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide status parameter' });
+                }
+    
+                if (!params.tradeInCarValue) {
+                    return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide tradeInCarValue parameter' });
+                }
+    
+                if (!params.appointmentDate) {
+                    return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide appointmentDate parameter' });
+                }
+    
+                if (!params.appointmentTime) {
+                    return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide appointmentTime parameter' });
+                }
+            } else {
+                let deleteFinance = await financeService.deleteFinanceOrder(params.financeId);
+
+                return res.status(200).json({  IsSuccess: true, Data: [], Message: 'Customer requested finance deleted'});
             }
 
             let editStatus = await financeService.editFinanceStatus(params);
