@@ -150,7 +150,7 @@ const userSchema = mongoose.Schema(
                 }
             }
         },
-        currentEmployment: {
+        currentEmployment: [{
             status: {
                 type: String
             },
@@ -186,7 +186,7 @@ const userSchema = mongoose.Schema(
                 },
                 
             },
-        },
+        }],
         grossIncome: {
             income: {
                 type: String

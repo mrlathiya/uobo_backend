@@ -148,5 +148,19 @@ module.exports = {
         });
 
         return addEmail;
+    },
+
+    editCustomerFinancialDetails: async (customerId, params) => {
+        let update = {
+            houseOwnership: params.houseOwnership,
+            currentEmployment: params.currentEmployment,
+            grossIncome: params.grossIncome,
+            otherIncomeSource: params.otherIncomeSource,
+            SIN: params.SIN,
+        };
+
+        let updateCustomerDetails = await userSchema.findByIdAndUpdate(customerId, update, { new: true });
+
+        return updateCustomerDetails;
     }
 }
