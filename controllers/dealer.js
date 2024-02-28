@@ -129,7 +129,7 @@ module.exports = {
             }
 
             if (!params.email) {
-                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide mobile email' });
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide emai parameter' });
             }
 
             if (!params.number) {
@@ -148,16 +148,22 @@ module.exports = {
             let registerDealerData = await dealerServices.registerDealer(params);
 
             if (registerDealerData) {
-                if (uploadInventoryCSV) {
-                    return res.status(200).json({ 
-                        IsSuccess: true, 
-                        Data: [registerDealerData], 
-                        InventoryURL: uploadInventoryCSV.URL, 
-                        Message: 'Dealer registration successfully' 
-                    });
-                } else {
-                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer not registered' });
-                }
+                // if (uploadInventoryCSV) {
+                //     return res.status(200).json({ 
+                //         IsSuccess: true, 
+                //         Data: [registerDealerData], 
+                //         InventoryURL: uploadInventoryCSV.URL, 
+                //         Message: 'Dealer registration successfully' 
+                //     });
+                // } else {
+                //     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer not registered' });
+                // }
+                return res.status(200).json({ 
+                    IsSuccess: true, 
+                    Data: [registerDealerData], 
+                    InventoryURL: uploadInventoryCSV.URL, 
+                    Message: 'Dealer registration successfully' 
+                });
             } else {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer not registered' });
             }

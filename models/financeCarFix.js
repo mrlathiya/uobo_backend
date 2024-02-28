@@ -14,7 +14,13 @@ const financeCashFixSchema = mognoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'cars',
     },
+    salutation: {
+        type: String
+    },
     fistName: {
+        type: String
+    },
+    middleName: {
         type: String
     },
     lastName: {
@@ -31,11 +37,14 @@ const financeCashFixSchema = mognoose.Schema({
             type: String
         },
     },
-    address: {
+    address: [{
         address1: {
             type: String
         },
-        address1: {
+        address2: {
+            type: String
+        },
+        addressType: {
             type: String
         },
         city: {
@@ -44,7 +53,22 @@ const financeCashFixSchema = mognoose.Schema({
         postalCode: {
             type: String
         },
-    },
+        province: {
+            type: String
+        },
+        suitNumber: {
+            type: String
+        },
+        stayDuration: {
+            year: {
+                type: String
+            },
+            month: {
+                type: String
+            },
+            
+        },
+    }],
     gender: {
         type: String
     },
@@ -69,6 +93,9 @@ const financeCashFixSchema = mognoose.Schema({
         type: Number
     },
     tradeDetails: {
+        dealerEstimatedTradeValue: {
+            type: Number
+        },
         VIN: {
             type: String
         },

@@ -193,10 +193,10 @@ module.exports = {
         }
     },
 
-    addCustomerFixFinance: async (params) => {
+    addCustomerFixFinance: async (params, customer) => {
         let customerFinance = await new financeCashFixModel({
             dealerId: params.dealerId,
-            customerId: params.customerId,
+            customerId: customer._id,
             carId: params.carId,
             firstName: params.firstName,
             lastName: params.lastName,

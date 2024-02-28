@@ -92,20 +92,21 @@ module.exports = {
     addCustomerFinanceFixFlow: async (req, res, next) => {
         try {
             const params = req.body;
+            const customer = req.user;
 
-            if (!dealerId) {
+            if (!params.dealerId) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide dealerId' });
             }
 
-            if (!customerId) {
+            if (!params.customerId) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide customerId' });
             }
 
-            if (!carId) {
+            if (!params.carId) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide carId' });
             }
 
-            let addFinance = await financeService.addCustomerFixFinance(params);
+            let addFinance = await financeService.addCustomerFixFinance(params, customer);
 
             if (addFinance) {
                 return res.status(200).json({ IsSuccess: true, Data: [addFinance], Message: 'Customer fix finance added' });
