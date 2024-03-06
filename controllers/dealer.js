@@ -124,9 +124,9 @@ module.exports = {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide OMVICLicenceLink' });
             }
 
-            if (!params.countryCode) {
-                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide mobile countryCode' });
-            }
+            // if (!params.countryCode) {
+            //     return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide mobile countryCode' });
+            // }
 
             if (!params.email) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide email parameter' });

@@ -28,7 +28,10 @@ module.exports = {
             firstName: params.firstName,
             lastName: params.lastName,
             email: params.email,
-            phoneNumber: params.phoneNumber,
+            phoneNumber: {
+                countryCode: '+1',
+                number: params.phoneNumber
+            },
             companyRole: params.companyRole,
             numberOfLocation: params.numberOfLocation,
             delivery: {
