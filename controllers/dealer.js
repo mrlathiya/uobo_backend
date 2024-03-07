@@ -1,7 +1,9 @@
 const dealerServices = require('../services/dealer');
+const carServices = require('../services/car');
 const userServices = require('../services/user');
 const awsServices = require('../config/aws-services');
 const fs = require('fs');
+const path = require('path');
 
 const uploadedImage = async (base64Image, fileNameConst) => {
     const matches = base64Image.match(/^data:image\/(\w+);base64,(.+)$/);
@@ -46,6 +48,69 @@ const deleteImage = async (fileName) => {
         console.log('Image deleted successfully');
       }
     });
+}
+
+const convertCsvToJson = async (csvFile, dealerId) => {
+    const jsonData = [];
+    const csvData = csvFile.buffer.toString('utf-8');
+    
+    const rows = csvData.trim().split('\n');
+    
+    const headers = rows[0].split(',');
+    
+    for (let i = 1; i < rows.length; i++) {
+        const row = rows[i].split(',');
+        const rowData = {};
+        
+        for (let j = 0; j < headers.length; j++) {
+            // Replace spaces with underscores in keys
+            let cleanedKey = headers[j].replace(/"/g, '').replace(/\s+/g, '_');
+            
+            // Remove double quotes from values
+            const cleanedValue = row[j].replace(/"/g, '');
+            
+            if (cleanedKey === 'New/Used') {
+                cleanedKey = 'New_or_Used';
+            }
+            
+            if (cleanedKey === 'Certified_Pre-owned') {
+                cleanedKey = 'Certified_Pre_owned';
+            }
+            
+            rowData[cleanedKey] = cleanedValue;
+        }
+        
+        jsonData.push(rowData);
+        
+        await addCSVRawToDB(rowData, dealerId);
+    }
+    
+    return jsonData; 
+}
+
+
+const addCSVRawToDB = async (dataRow, dealerId) => {
+    try {
+        console.log('in');
+        console.log(dataRow);
+        if (dataRow !== undefined && dataRow !== null) {
+            const VINNumber = dataRow.VIN;
+            const checkExist = await carServices.getCarByVIN(VINNumber);
+
+            console.log(checkExist);
+
+            if (checkExist.length) {
+                console.log('her')
+                const updateCarDetails = await carServices.editCarDetails(dataRow);
+            } else {
+                console.log('him')
+                const addCarDetails = await carServices.addNewCar(dataRow, dealerId);
+            }
+        }    
+    } catch (error) {
+        return error.message;
+    }
+
 }
 
 const uploadCsvFile = async (base64Csv, fileNameConst) => {
@@ -136,34 +201,30 @@ module.exports = {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide mobile number' });
             }
 
-            let uploadInventoryCSV;
-
             let csvFile = req.file;
 
-            if (csvFile) {
-                uploadInventoryCSV = await awsServices._uploadCSV(csvFile,'Dealers_Inventory','csv',params.dealerShipName);
-                console.log(uploadInventoryCSV);
-            }
+            // console.log(csvFile)
 
             let registerDealerData = await dealerServices.registerDealer(params);
 
             if (registerDealerData) {
-                // if (uploadInventoryCSV) {
-                //     return res.status(200).json({ 
-                //         IsSuccess: true, 
-                //         Data: [registerDealerData], 
-                //         InventoryURL: uploadInventoryCSV.URL, 
-                //         Message: 'Dealer registration successfully' 
-                //     });
-                // } else {
-                //     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer not registered' });
-                // }
-                return res.status(200).json({ 
-                    IsSuccess: true, 
-                    Data: [registerDealerData], 
-                    InventoryURL: uploadInventoryCSV ? uploadInventoryCSV.URL : undefined, 
-                    Message: 'Dealer registration successfully' 
-                });
+
+                if (csvFile) {
+                    let dealerInventory = await convertCsvToJson(csvFile, registerDealerData._id);
+                    return res.status(200).json({ 
+                        IsSuccess: true, 
+                        Data: [registerDealerData], 
+                        Inventory: dealerInventory, 
+                        Message: 'Dealer registration successfully' 
+                    });
+                } else {
+                    return res.status(200).json({ 
+                        IsSuccess: true, 
+                        Data: registerDealerData, 
+                        Message: 'Dealer Register Successfully' 
+                    });
+                }
+                
             } else {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer not registered' });
             }
