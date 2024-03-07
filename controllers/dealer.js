@@ -101,7 +101,7 @@ const addCSVRawToDB = async (dataRow, dealerId) => {
 
             if (checkExist.length) {
                 console.log('her')
-                const updateCarDetails = await carServices.editCarDetails(dataRow);
+                const updateCarDetails = await carServices.editCarDetails(dataRow, dealerId);
             } else {
                 console.log('him')
                 const addCarDetails = await carServices.addNewCar(dataRow, dealerId);

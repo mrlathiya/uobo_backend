@@ -74,8 +74,9 @@ module.exports = {
         return car;
     },
 
-    editCarDetails: async (params) => {
+    editCarDetails: async (params, dealerId) => {
         let update = {
+            dealerId: dealerId ? dealerId : undefined,
             VIN: params.VIN,
             Stock_Number: params.Stock_Number,
             New_or_Used: params.New_or_Used,
