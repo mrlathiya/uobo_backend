@@ -276,6 +276,8 @@ module.exports = {
         let update = {
             status: params.status,
             appointments: params.appointments,
+            additionalDocuments: params.additionalDocuments,
+            deliveryDate: params.deliveryDate,
             'tradeDetails.dealerEstimatedTradeValue': params.tradeInCarValue
         }
 

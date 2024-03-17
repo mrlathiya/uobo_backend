@@ -120,7 +120,7 @@ module.exports = {
         }
     },
 
-    editCustomerFinanceStatus: async (req, res, next) => {
+    editCustomerCashFinanceStatus: async (req, res, next) => {
         try {
             const params = req.body;
 

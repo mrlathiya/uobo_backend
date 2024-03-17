@@ -13,7 +13,7 @@ router.get('/mortgageCategory', financeController.getMortgageCategory);
 
 router.post('/cash', authController, financeController.addCustomerFinanceCashFlow);
 router.post('/fix', authController, financeController.addCustomerFinanceFixFlow);
-router.put('/', authController, financeController.editCustomerFinanceStatus);
+router.put('/cash', authController, financeController.editCustomerCashFinanceStatus);
 
 
 module.exports = router;
