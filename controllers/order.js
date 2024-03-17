@@ -56,6 +56,51 @@ module.exports = {
         }
     },
 
+    getDealerOrders: async (req, res, next) => {
+        try {
+            const dealer = req.user;
+
+            if (!dealer) {
+                return res.status(401).json({ IsSuccess: false, Message: 'No dealer found' });
+            }
+
+            const orders = await orderServices.getOrderByDealerId(dealer._id);
+
+            if (orders) {
+                return res.status(200).json({ IsSuccess: true, Count: orders.length, Data: orders, Message: 'Dealer orders found' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer orders not found' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
+
+    getCustomerOrders: async (req, res, next) => {
+        try {
+            const customer = req.user;
+
+            if (!customer) {
+                return res.status(401).json({ IsSuccess: false, Message: 'No customer found' });
+            }
+
+            const orders = await orderServices.getOrderByCustomerId(customer._id);
+
+            if (orders.length) {
+                return res.status(200).json({ 
+                    IsSuccess: true, 
+                    Count: orders.length, 
+                    Data: orders, 
+                    Message: 'Customer orders found' 
+                });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer orders not found' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
+
     editCustomerOrder: async (req, res, next) => {
         try {
             const orderId = req.params.id;

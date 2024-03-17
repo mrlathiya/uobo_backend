@@ -185,6 +185,10 @@ const financeWithoutCarSchema = mognoose.Schema({
             type: String
         },
     },
+    orderType: {
+        type: String,
+        default: 'FinanceWithoutCar'
+    },
 });
 
-module.exports = mognoose.model('financeCashFix', financeWithoutCarSchema);
+module.exports = mognoose.model('financeWithoutCar', financeWithoutCarSchema);

@@ -139,7 +139,7 @@ module.exports = {
     addCustomerCashFinance: async (params, customer) => {
         let customerFinance = await new financeCashFlowModel({
             dealerId: params.dealerId,
-            customerId: params.customerId,
+            customerId: customer._id,
             carId: params.carId,
             firstName: params.firstName,
             lastName: params.lastName,

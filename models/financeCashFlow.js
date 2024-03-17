@@ -13,6 +13,10 @@ const financeCashFlowSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'cars',
     },
+    orderType: {
+        type: String,
+        default: 'BuyCashOrder'
+    },
     category: {
         type: String,
         require: true

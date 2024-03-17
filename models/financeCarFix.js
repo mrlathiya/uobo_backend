@@ -14,6 +14,10 @@ const financeCashFixSchema = mognoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'cars',
     },
+    orderType: {
+        type: String,
+        default: 'FinanceWithCar'
+    },
     salutation: {
         type: String
     },
