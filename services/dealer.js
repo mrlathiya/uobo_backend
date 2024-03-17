@@ -65,7 +65,16 @@ module.exports = {
     },
 
     getAllDealers: async () => {
-        const dealers = await dealerSchema.find();
+        const dealers = await dealerSchema.aggregate([
+            {
+                $lookup: {
+                    from: 'dealerratings',
+                    localField: '_id',
+                    foreignField: 'dealerId',
+                    as: 'ratings'
+                }
+            }
+        ])
 
         return dealers;
     },
@@ -181,7 +190,10 @@ module.exports = {
                     inventory_Cylinder_Count: "$inventory.Cylinder_Count", 
                     inventory_Door_Count: "$inventory.Door_Count", 
                     inventory_Drive_configuration: "$inventory.Drive_configuration", 
-                    inventory_Additional_Options: "$inventory.Additional_Options", 
+                    // inventory_Additional_Options: "$inventory.Additional_Options", 
+                    inventory_Additional_Options: {
+                        $split: ["$inventory.Additional_Options", ";"]
+                    }, 
                     inventory_Current_Miles: "$inventory.Current_Miles", 
                     inventory_Date_Added_to_Inventory: "$inventory.Date_Added_to_Inventory", 
                     inventory_Status: "$inventory.Status", 
