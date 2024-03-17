@@ -16,6 +16,7 @@ const authController = require('../../middleware/auth');
 router.post('/', uploadFile.single('inventory_csv'), dealerController.dealerRegistration);
 router.post('/login', dealerController.dealerLogin);
 router.get('/', authController, dealerController.getDealer);
+router.get('/all', dealerController.getAlldealerDetails);
 router.put('/', dealerAuthController, dealerController.updateDealer);
 router.delete('/:id', dealerAuthController, dealerController.deleteDealer);
 

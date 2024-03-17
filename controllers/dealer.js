@@ -290,6 +290,26 @@ module.exports = {
         }
     },
 
+    getAlldealerDetails: async (req, res, next) => {
+        try {
+
+            const dealers = await dealerServices.getAllDealers();
+
+            if (dealers.length) {
+                return res.status(200).json({ 
+                    IsSuccess: true, 
+                    Count: dealers.length, 
+                    Data: dealers, 
+                    Message: "All dealers found" 
+                });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: "Dealers not found" });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    },
+
     updateDealer: async (req, res, next) => {
         try {
             const params = req.body;
