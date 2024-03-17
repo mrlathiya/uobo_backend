@@ -83,6 +83,14 @@ const financeCashFlowSchema = mongoose.Schema({
             }
         }
     ],
+    deliveryDate: {
+        date: {
+            type: String
+        },
+        time: {
+            type: String
+        }
+    },
     tradeDetails: {
         dealerEstimatedTradeValue: {
             type: Number
