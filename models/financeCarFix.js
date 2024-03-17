@@ -86,6 +86,9 @@ const financeCashFixSchema = mognoose.Schema({
     status: {
         type: String
     },
+    isTradeinCarAvilable: {
+        type: Boolean
+    },
     financeApproval: {
         type: String
     },
