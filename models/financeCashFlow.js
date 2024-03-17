@@ -73,6 +73,16 @@ const financeCashFlowSchema = mongoose.Schema({
     isTradeinCarAvilable: {
         type: Boolean
     },
+    additionalDocuments: [
+        {
+            nameOfDocument: {
+                type: String
+            },
+            explanation: {
+                type: String
+            }
+        }
+    ],
     tradeDetails: {
         dealerEstimatedTradeValue: {
             type: Number
