@@ -160,6 +160,7 @@ module.exports = {
             DOB: params.DOB,
             documents: params.documents,
             status: 'CustomerRequestForCashPurchase',
+            isTradeinCarAvilable: params.isTradeinCarAvilable,
             tradeDetails: {
                 VIN: params.tradeDetails.VIN,
                 YearMakeModel: params.tradeDetails.YearMakeModel,
