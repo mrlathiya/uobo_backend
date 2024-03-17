@@ -188,6 +188,10 @@ const financeCashFlowSchema = mongoose.Schema({
             type: String
         },
     },
+    billOfSale: {
+        type: String,
+        default: ''
+    }
 });
 
 module.exports = mongoose.model('financeCashFlow', financeCashFlowSchema);
