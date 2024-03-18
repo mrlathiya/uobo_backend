@@ -53,7 +53,12 @@ module.exports = {
     },
 
     loginDealer: async (params) => {
-        let dealer = await dealerSchema.findOne({ phoneNumber: Number(params.phoneNumber) });
+        let dealer = await dealerSchema.findOne({ 
+            phoneNumber:  {
+                countryCode: '+1',
+                number: Number(params.phoneNumber)
+            } 
+        });
 
         return dealer;
     },
