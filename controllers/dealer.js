@@ -262,7 +262,7 @@ module.exports = {
             }
 
             if (dealer) {
-                let dealerInformation = await dealerServices.getNearByDealer();
+                let dealerInformation = await dealerServices.getNearByDealer(dealer);
                 // const dealerInventory = await carServices.getCarByDealerId(dealer._id);
                 // const dealerRating = await dealerServices.getDealerRating();
                 return res.status(200).json({ IsSuccess: true, Data: dealerInformation, Message: 'Dealer details found' });
