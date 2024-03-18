@@ -203,11 +203,11 @@ module.exports = {
 
             let csvFile = req.file;
 
-            // console.log(csvFile)
-
             let registerDealerData = await dealerServices.registerDealer(params);
 
             if (registerDealerData) {
+
+                console.log(csvFile)
 
                 if (csvFile) {
                     let dealerInventory = await convertCsvToJson(csvFile, registerDealerData._id);

@@ -30,7 +30,7 @@ module.exports = {
             email: params.email,
             phoneNumber: {
                 countryCode: '+1',
-                number: params.phoneNumber
+                number: params.number
             },
             companyRole: params.companyRole,
             numberOfLocation: params.numberOfLocation,
