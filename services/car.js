@@ -115,7 +115,7 @@ module.exports = {
             feature: params.feature
         }
 
-        let updateCar = await carSchema.findByIdAndUpdate(params.carId, update, { new: true });
+        let updateCar = await carSchema.findByIdAndUpdate(params._id, update, { new: true });
         
         return updateCar;
     },
