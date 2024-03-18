@@ -257,11 +257,14 @@ module.exports = {
             const dealerId = req.query.id;
             const dealer = req.user;
 
+            console.log(dealer);
+
             if (!dealer) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Unauthorized access' });
             }
 
             if (dealer) {
+                console.log('in')
                 let dealerInformation = await dealerServices.getNearByDealer(dealer);
                 // const dealerInventory = await carServices.getCarByDealerId(dealer._id);
                 // const dealerRating = await dealerServices.getDealerRating();

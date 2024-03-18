@@ -1,4 +1,4 @@
-const { default: mongoose } = require('mongoose');
+const mongoose = require('mongoose');
 const dealerSchema = require('../models/dealer');
 const dealerRating = require('../models/dealerRating');
 
@@ -143,10 +143,11 @@ module.exports = {
     },
 
     getNearByDealer: async (dealer) => {
+        console.log(dealer._id);
         let dealerInformation = await dealerSchema.aggregate([
             {
                 $match: {
-                    _id: mongoose.Types.ObjectId(dealer._id)
+                    _id: new mongoose.Types.ObjectId(dealer._id)
                 }
             },
             {
