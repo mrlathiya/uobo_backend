@@ -143,7 +143,6 @@ module.exports = {
     },
 
     getNearByDealer: async (dealer) => {
-        console.log(dealer._id);
         let dealerInformation = await dealerSchema.aggregate([
             {
                 $match: {
@@ -306,6 +305,34 @@ module.exports = {
                     // "Extra_Photos" : "$_id.Extra_Photos", 
                     inventory: "$inventory" 
                 } 
+            }
+        ]);
+
+        return dealerInformation;
+    },
+
+    getNearByDealerData: async (dealer) => {
+        let dealerInformation = await dealerSchema.aggregate([
+            {
+                $match: {
+                    _id: new mongoose.Types.ObjectId(dealer._id)
+                }
+            },
+            {
+                $lookup: {
+                    from: 'cars',
+                    localField: '_id',
+                    foreignField: 'dealerId',
+                    as: 'inventory'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'dealerratings',
+                    localField: '_id',
+                    foreignField: 'dealerId',
+                    as: 'ratings'
+                }
             }
         ]);
 

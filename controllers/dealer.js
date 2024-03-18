@@ -4,6 +4,7 @@ const userServices = require('../services/user');
 const awsServices = require('../config/aws-services');
 const fs = require('fs');
 const path = require('path');
+const dealer = require('../models/dealer');
 
 const uploadedImage = async (base64Image, fileNameConst) => {
     const matches = base64Image.match(/^data:image\/(\w+);base64,(.+)$/);
@@ -265,17 +266,22 @@ module.exports = {
 
             if (dealer) {
                 console.log('in')
-                let dealerInformation = await dealerServices.getNearByDealer(dealer);
-                // const dealerInventory = await carServices.getCarByDealerId(dealer._id);
-                // const dealerRating = await dealerServices.getDealerRating();
-                return res.status(200).json({ IsSuccess: true, Data: dealerInformation, Message: 'Dealer details found' });
-                // let dealer = await dealerServices.getDealerByDealerId(dealerId);
 
-                // if (dealer) {
-                //     return res.status(200).json({ IsSuccess: true, Data: [dealer], Message: 'Dealer details found' });
-                // } else {
-                //     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer details not found' });
-                // }
+                let dealerInformation = await dealerServices.getNearByDealer(dealer);
+                
+                if (dealerInformation.length === 0) {
+                    let dealerIs = await dealerServices.getNearByDealerData(dealer);
+
+                    if (dealerIs) {
+                        return res.status(200).json({ IsSuccess: true, Data: dealerInformation, Message: 'Dealer details found' });
+                    } else {
+                        return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer details not found' });
+                    }
+
+                } 
+                
+                return res.status(200).json({ IsSuccess: true, Data: dealerInformation, Message: 'Dealer details found' });
+                
             } else {
                 let dealers = await dealerServices.getAllDealers();
 
