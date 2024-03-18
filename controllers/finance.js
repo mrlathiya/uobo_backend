@@ -178,6 +178,54 @@ module.exports = {
         }
     },
 
+    editCustomerFixFinanceStatus: async (req, res, next) => {
+        try {
+            const params = req.body;
+
+            if (!params.confirmAvailabilty) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide confirmAvailabilty parameter' });
+            }
+
+            if (!params.financeId) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide financeId parameter' });
+            }
+
+            let finance = await financeService.getFinanceById(params.financeId, 'financeFix');
+
+            if (finance === undefined || finance === null) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Requested car fix finance not found' });
+            }
+
+            if (params.confirmAvailabilty === true) {
+                if (!params.status) {
+                    return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide status parameter' });
+                }
+    
+                if (!params.tradeInCarValue) {
+                    return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide tradeInCarValue parameter' });
+                }
+    
+                if (!params.appointments) {
+                    return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide appointments parameter' });
+                }
+
+                let editStatus = await financeService.editFinanceStatus(params);
+
+                if (editStatus) {
+                    return res.status(200).json({ IsSuccess: true, Data: editStatus, Message: `Finance status updated ${params.status}` });
+                } else {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Finance status not updated' });
+                }
+            } else {
+                let deleteFinance = await financeService.deleteFinanceOrder(params.financeId);
+
+                return res.status(200).json({  IsSuccess: true, Data: [], Message: 'Customer requested finance deleted'});
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    },
+
     getCustomerFinance: async (req, res, next) => {
         try {
             const user = req.user;

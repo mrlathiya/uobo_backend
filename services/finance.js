@@ -256,8 +256,14 @@ module.exports = {
         }
     },
 
-    getFinanceById: async (financeId) => {
-        let finance = await financeCashFlowModel.findById(financeId);
+    getFinanceById: async (financeId, type) => {
+
+        let finance;
+        if (type == 'financeFix') {
+            finance = await financeCashFixModel.findById(financeId);
+        } else {
+            finance = await financeCashFlowModel.findById(financeId);
+        } 
 
         return finance;
     },
@@ -278,8 +284,10 @@ module.exports = {
             appointments: params.appointments,
             billOfSale: params.billOfSale,
             additionalDocuments: params.additionalDocuments,
-            deliveryDate: params.deliveryDate,
-            'tradeDetails.dealerEstimatedTradeValue': params.tradeInCarValue
+            deliveryDate: params.deliveryDate ? params.deliveryDate : undefined,
+            selectedEMIOptions: params.selectedEMIOptions ? params.selectedEMIOptions : undefined,
+            EMIOptions: params.EMIOptions ? params.EMIOptions : undefined,
+            'tradeDetails.dealerEstimatedTradeValue': params.tradeInCarValue ? params.tradeInCarValue : params.dealerEstimatedTradeInValue
         }
 
         let updateFinanceStatus = await financeCashFlowModel.findByIdAndUpdate(params.financeId, update, { new: true });
