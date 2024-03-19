@@ -284,17 +284,19 @@ module.exports = {
 
     getCustomerRequestedOrder: async (req, res, next) => {
         try {
-            const orders = await financeService.getAllCustomerRequestedOrders();
+
+            const dealer = req.user;
+            const orders = await financeService.getAllCustomerRequestedOrders(dealer);
 
             if (orders.length) {
                 return res.status(200).json({ 
                     IsSuccess: true, 
                     Count: orders.length, 
                     Data: orders, 
-                    Message: 'Customer Requested Orders found' 
+                    Message: 'Customer requested orders found' 
                 });
             } else {
-                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer Requested Orders found' });
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer requested orders not found' });
             }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error.message });

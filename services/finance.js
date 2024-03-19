@@ -302,9 +302,20 @@ module.exports = {
         return true;
     },
 
-    getAllCustomerRequestedOrders: async () => {
-        const cashOrders = await financeCashFixModel.find({ status: '' });
-        const fixOrders = await financeCashFixModel.find({ status: '' });
+    getAllCustomerRequestedOrders: async (dealer) => {
+        const cashOrders = await financeCashFixModel.find({
+            $and: [
+                { dealerId: dealer._id },
+                { status: '' }
+            ]  
+        });
+
+        const fixOrders = await financeCashFlowModel.find({
+            $and: [
+                { dealerId: dealer._id },
+                { status: '' }
+            ]
+        });
 
         return [...cashOrders, ...fixOrders];
     }

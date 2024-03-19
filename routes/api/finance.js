@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 const authController = require('../../middleware/auth');
+const dealerAuthController = require('../../middleware/dealerAuth');
 const commonAuthController = require('../../middleware/commonAuth');
 const financeController = require('../../controllers/finance');
 
@@ -17,7 +18,7 @@ router.post('/fix', commonAuthController, financeController.addCustomerFinanceFi
 router.put('/cash', commonAuthController, financeController.editCustomerCashFinanceStatus);
 router.put('/fix', commonAuthController, financeController.editCustomerFixFinanceStatus);
 
-router.get('/liveOrders', commonAuthController, financeController.getCustomerRequestedOrder);
+router.get('/liveOrders', dealerAuthController, financeController.getCustomerRequestedOrder);
 
 
 module.exports = router;
