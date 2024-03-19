@@ -66,6 +66,8 @@ module.exports = {
             const params = req.body;
             const customer = req.user;
 
+            console.log(customer);
+
             if (!params.dealerId) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide dealerId' });
             }
@@ -280,5 +282,15 @@ module.exports = {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
         }
     },
+
+    getCustomerRequestedOrder: async (req, res, next) => {
+        try {
+            const orders = await financeService.getAllCustomerRequestedOrders();
+
+            return orders;
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    }
 
 }

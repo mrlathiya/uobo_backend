@@ -137,6 +137,8 @@ module.exports = {
     },
 
     addCustomerCashFinance: async (params, customer) => {
+
+        console.log(customer, 'her');
         let customerFinance = await new financeCashFlowModel({
             dealerId: params.dealerId,
             customerId: customer._id,
@@ -159,7 +161,7 @@ module.exports = {
             gender: params.gender,
             DOB: params.DOB,
             documents: params.documents,
-            status: 'CustomerRequestForCashPurchase',
+            status: '',
             isTradeinCarAvilable: params.isTradeinCarAvilable,
             tradeDetails: {
                 VIN: params.tradeDetails.VIN,
@@ -299,5 +301,12 @@ module.exports = {
         await financeCashFixModel.findByIdAndDelete(financeId);
 
         return true;
+    },
+
+    getAllCustomerRequestedOrders: async () => {
+        const cashOrders = await financeCashFixModel.find({ status: '' });
+        const fixOrders = await financeCashFixModel.find({ status: '' });
+
+        return [...cashOrders, ...fixOrders];
     }
 }
