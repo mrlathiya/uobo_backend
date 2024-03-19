@@ -287,7 +287,16 @@ module.exports = {
         try {
             const orders = await financeService.getAllCustomerRequestedOrders();
 
-            return orders;
+            if (orders.length) {
+                return res.status(200).json({ 
+                    IsSuccess: true, 
+                    Count: orders.length, 
+                    Data: orders, 
+                    Message: 'Customer Requested Orders found' 
+                });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer Requested Orders found' });
+            }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
         }

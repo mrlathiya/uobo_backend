@@ -17,7 +17,7 @@ router.post('/fix', commonAuthController, financeController.addCustomerFinanceFi
 router.put('/cash', commonAuthController, financeController.editCustomerCashFinanceStatus);
 router.put('/fix', commonAuthController, financeController.editCustomerFixFinanceStatus);
 
-router.get('/customerRequested', commonAuthController, financeController.getCustomerRequestedOrder);
+router.get('/liveOrders', commonAuthController, financeController.getCustomerRequestedOrder);
 
 
 module.exports = router;
