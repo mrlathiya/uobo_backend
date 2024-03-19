@@ -138,7 +138,6 @@ module.exports = {
 
     addCustomerCashFinance: async (params, customer) => {
 
-        console.log(customer, 'her');
         let customerFinance = await new financeCashFlowModel({
             dealerId: params.dealerId,
             customerId: customer._id,
