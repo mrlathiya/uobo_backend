@@ -12,7 +12,7 @@ module.exports = async function (req, res, next) {
         const decodeToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
         const dealer = await dealerSchema.findOne({ _id: decodeToken.user_id });
 
-        if (!dealer) {
+        if (dealer === undefined || dealer === null) {
             const user = await userSchema.findOne({ _id: decodeToken.user_id });
 
             if (!user) {
@@ -20,13 +20,13 @@ module.exports = async function (req, res, next) {
             }
 
             req.userToken = decodeToken.decodeToken;
-            req.user = dealer;
-            next();
+            req.user = user;
+            
         } else {
             req.userToken = decodeToken.decodeToken;
             req.user = dealer;
-            next();
         }
+        next();
 
     } catch (e) {
         res.status(401).send({ message: "Invalid Token" });

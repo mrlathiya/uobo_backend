@@ -100,7 +100,7 @@ module.exports = {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide dealerId' });
             }
 
-            if (!params.customerId) {
+            if (!customer._id) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide customerId' });
             }
 
@@ -111,7 +111,7 @@ module.exports = {
             let addFinance = await financeService.addCustomerFixFinance(params, customer);
             let editCustomerFinancialInformation = await customerService.editCustomerFinancialDetails(customer._id, params);
 
-            if (addFinance & editCustomerFinancialInformation) {
+            if (addFinance) {
                 return res.status(200).json({ IsSuccess: true, Data: [addFinance, editCustomerFinancialInformation], Message: 'Customer fix finance added' });
             } else {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer fix finance not added' });
