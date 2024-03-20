@@ -215,7 +215,7 @@ module.exports = {
                 postalCode: params.address.postalCode,
                 province: params.address.province,
             },
-            status: 'CustomerRequestForFinanceFixCar',
+            status: '',
             gender: params.gender,
             DOB: params.DOB,
             documents: {
