@@ -183,7 +183,7 @@ module.exports = {
         try {
             const params = req.body;
 
-            if (!params.confirmAvailabilty) {
+            if (params.confirmAvailabilty === undefined || params.confirmAvailabilty === '' || params.confirmAvailabilty === null) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide confirmAvailabilty parameter' });
             }
 
