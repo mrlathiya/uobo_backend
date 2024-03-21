@@ -207,20 +207,29 @@ module.exports = {
             let registerDealerData = await dealerServices.registerDealer(params);
 
             if (registerDealerData) {
-                if (csvFile) {
-                    let dealerInventory = await convertCsvToJson(csvFile, registerDealerData._id);
-                    return res.status(200).json({ 
-                        IsSuccess: true, 
-                        Data: [registerDealerData], 
-                        Inventory: dealerInventory, 
-                        Message: 'Dealer registration successfully' 
-                    });
+
+                const token = await userServices.createUserToken(dealer._id);
+
+                if (token) {
+                    if (csvFile) {
+                        let dealerInventory = await convertCsvToJson(csvFile, registerDealerData._id);
+    
+                        return res.status(200).json({ 
+                            IsSuccess: true, 
+                            Data: [registerDealerData], 
+                            Inventory: dealerInventory, 
+                            Message: 'Dealer registration successfully' 
+                        });
+    
+                    } else {
+                        return res.status(200).json({ 
+                            IsSuccess: true, 
+                            Data: registerDealerData, 
+                            Message: 'Dealer Register Successfully' 
+                        });
+                    }
                 } else {
-                    return res.status(200).json({ 
-                        IsSuccess: true, 
-                        Data: registerDealerData, 
-                        Message: 'Dealer Register Successfully' 
-                    });
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: "Dealer token not created" });
                 }
                 
             } else {
