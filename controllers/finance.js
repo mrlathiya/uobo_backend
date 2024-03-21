@@ -135,7 +135,7 @@ module.exports = {
                 }
             }
 
-            if (!params.confirmAvailabilty) {
+            if (params.confirmAvailabilty === undefined || params.confirmAvailabilty === '' || params.confirmAvailabilty === null) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide confirmAvailabilty parameter' });
             }
 
