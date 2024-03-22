@@ -217,14 +217,16 @@ module.exports = {
                         return res.status(200).json({ 
                             IsSuccess: true, 
                             Data: [registerDealerData], 
-                            Inventory: dealerInventory, 
+                            Inventory: dealerInventory,
+                            token, 
                             Message: 'Dealer registration successfully' 
                         });
     
                     } else {
                         return res.status(200).json({ 
                             IsSuccess: true, 
-                            Data: registerDealerData, 
+                            Data: registerDealerData,
+                            token, 
                             Message: 'Dealer Register Successfully' 
                         });
                     }
