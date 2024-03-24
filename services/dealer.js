@@ -79,6 +79,14 @@ module.exports = {
                     foreignField: 'dealerId',
                     as: 'ratings'
                 }
+            },
+            {
+                $lookup: {
+                    from: 'cars',
+                    localField: '_id',
+                    foreignField: 'dealerId',
+                    as: 'inventory'
+                }
             }
         ])
 
