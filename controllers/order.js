@@ -32,7 +32,7 @@ module.exports = {
         }
     },
 
-    getCustomerOrders: async (req, res, next) => {
+    getCustomerOrdersv1: async (req, res, next) => {
         try {
             const user = req.user;
 

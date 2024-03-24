@@ -286,7 +286,7 @@ module.exports = {
         try {
 
             const dealer = req.user;
-            const orders = await financeService.getAllCustomerRequestedOrders(dealer);
+            const orders = await financeService.getOrderByDealerId(dealer);
 
             if (orders.length) {
                 return res.status(200).json({ 

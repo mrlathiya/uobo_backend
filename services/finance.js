@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const financeModel = require('../models/finance');
 const financeCashFlowModel = require('../models/financeCashFlow');
-const financeCashFixModel = require('../models/financeCarFix');
+const financeCarFixModel = require('../models/financeCarFix');
+const financeWithoutCar = require('../models/financeWithoutCar');
 const userModel = require('../models/user');
 const mortgageTypeModel = require('../models/mortgageType');
 
@@ -196,7 +197,7 @@ module.exports = {
     },
 
     addCustomerFixFinance: async (params, customer) => {
-        let customerFinance = await new financeCashFixModel({
+        let customerFinance = await new financeCarFixModel({
             dealerId: params.dealerId,
             customerId: customer._id,
             carId: params.carId,
@@ -261,7 +262,7 @@ module.exports = {
 
         let finance;
         if (type == 'financeFix') {
-            finance = await financeCashFixModel.findById(financeId);
+            finance = await financeCarFixModel.findById(financeId);
         } else {
             finance = await financeCashFlowModel.findById(financeId);
         } 
@@ -297,13 +298,36 @@ module.exports = {
     },
 
     deleteFinanceOrder: async (financeId) => {
-        await financeCashFixModel.findByIdAndDelete(financeId);
+        await financeCarFixModel.findByIdAndDelete(financeId);
 
         return true;
     },
 
+    getOrderByDealerId: async(dealer) => {
+        const orderFix = await financeCarFixModel.find({ 
+            $and: [
+                { dealerId: dealer._id },
+                { status: '' }
+            ] 
+        }).populate({ path: 'carId' }).populate({ path: 'customerId' });
+        const orderCash = await financeCashFlowModel.find({ 
+            $and: [
+                { dealerId: dealer._id },
+                { status: '' }
+            ] 
+        }).populate({ path: 'carId' }).populate({ path: 'customerId' });
+        const orderWithoutCar = await financeWithoutCar.find({ 
+            $and: [
+                { dealerId: dealer._id },
+                { status: '' }
+            ] 
+        }).populate({ path: 'carId' }).populate({ path: 'customerId' });
+
+        return [...orderCash, ...orderFix, ...orderWithoutCar];
+    },
+
     getAllCustomerRequestedOrders: async (dealer) => {
-        const cashOrders = await financeCashFixModel.find({
+        const cashOrders = await financeCarFixModel.find({
             $and: [
                 { dealerId: dealer._id },
                 { status: '' }
