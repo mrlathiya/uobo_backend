@@ -21,7 +21,7 @@ router.put('/', dealerAuthController, dealerController.updateDealer);
 router.delete('/:id', dealerAuthController, dealerController.deleteDealer);
 
 //Dealer Rating API
-router.post('/rating', dealerAuthController, dealerController.addDealerRating);
+router.post('/rating', authController, dealerController.addDealerRating);
 router.get('/rating', dealerAuthController, dealerController.getDealerRatings);
 
 module.exports = router;

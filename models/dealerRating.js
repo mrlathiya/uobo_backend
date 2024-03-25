@@ -5,6 +5,13 @@ const dealerRatingSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "dealers"
     },
+    customerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users',
+    },
+    customerName: {
+        type: String
+    },
     finalRating: {
         type: Number,
         min: 1,

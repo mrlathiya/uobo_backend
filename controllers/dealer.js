@@ -395,7 +395,7 @@ module.exports = {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer Id is required' });
             }
 
-            let addRating = await dealerServices.addDealerRating(params);
+            let addRating = await dealerServices.addDealerRating(params, user);
 
             if (addRating !== undefined) {
                 return res.status(200).json({ IsSuccess: true, Data: [addRating], Message: "Dealer rating added" });

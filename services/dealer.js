@@ -273,9 +273,11 @@ module.exports = {
         return true;
     },
 
-    addDealerRating: async (params) => {
+    addDealerRating: async (params, user) => {
         let addRating = await new dealerRating({
             dealerId: params.dealerId,
+            customerId: user._id,
+            customerName: user.firstName + ' ' + user.lastName,
             finalRating: params.finalRating,
             communication: params.communication,
             service: params.service,
