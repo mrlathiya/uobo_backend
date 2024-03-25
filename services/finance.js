@@ -139,7 +139,32 @@ module.exports = {
 
     addCustomerCashFinance: async (params, customer) => {
 
-        // console.log(params.tradeDetails.VIN);
+        let tradeDetails = {};
+
+        if (params.tradeDetails) {
+            tradeDetails.VIN = params.tradeDetails.VIN ? params.tradeDetails.VIN : '';
+            tradeDetails.YearMakeModel = params.tradeDetails.YearMakeModel;
+            tradeDetails.odometerReading = params.tradeDetails.odometerReading;
+            tradeDetails.trim = params.tradeDetails.trim;
+            tradeDetails.transmission = params.tradeDetails.transmission;
+            tradeDetails.color = params.tradeDetails.color;
+            tradeDetails.ownerShip = params.tradeDetails.ownerShip;
+            tradeDetails.loanType = params.tradeDetails.loanType;
+            tradeDetails.amount = params.tradeDetails.amount;
+            tradeDetails.remainingPayment = params.tradeDetails.remainingPayment;
+            tradeDetails.EMIAmount = params.tradeDetails.EMIAmount;
+            tradeDetails.accidentHistory = {
+                damageAmount: params.tradeDetails.damageAmount,
+                insurancePayoutAmount: params.tradeDetails.insurancePayoutAmount
+            };
+            tradeDetails.mechanicalIssue = params.tradeDetails.mechanicalIssue;
+            tradeDetails.warningLight = params.tradeDetails.warningLight;
+            tradeDetails.afterMarketModification = params.tradeDetails.afterMarketModification;
+            tradeDetails.additionalIsuse = params.tradeDetails.additionalIsuse;
+            tradeDetails.estimatedBodyWorkAmount = params.tradeDetails.estimatedBodyWorkAmount;
+            tradeDetails.smoke = params.tradeDetails.smoke;
+            tradeDetails.photos = params.tradeDetails.photos;
+        }
 
         let customerFinance = await new financeCashFlowModel({
             dealerId: params.dealerId,
@@ -165,30 +190,7 @@ module.exports = {
             documents: params.documents,
             status: '',
             isTradeinCarAvilable: params.isTradeinCarAvilable,
-            tradeDetails: {
-                VIN: params.tradeDetails.VIN ? params.tradeDetails.VIN : '',
-                YearMakeModel: params.tradeDetails.YearMakeModel,
-                odometerReading: params.tradeDetails.odometerReading,
-                trim: params.tradeDetails.trim,
-                transmission: params.tradeDetails.transmission,
-                color: params.tradeDetails.color,
-                ownerShip: params.tradeDetails.ownerShip,
-                loanType: params.tradeDetails.loanType,
-                amount: params.tradeDetails.amount,
-                remainingPayment: params.tradeDetails.remainingPayment,
-                EMIAmount: params.tradeDetails.EMIAmount,
-                accidentHistory: {
-                    damageAmount: params.tradeDetails.damageAmount,
-                    insurancePayoutAmount: params.tradeDetails.insurancePayoutAmount
-                },
-                mechanicalIssue: params.tradeDetails.mechanicalIssue,
-                warningLight: params.tradeDetails.warningLight,
-                afterMarketModification: params.tradeDetails.afterMarketModification,
-                additionalIsuse: params.tradeDetails.additionalIsuse,
-                estimatedBodyWorkAmount: params.tradeDetails.estimatedBodyWorkAmount,
-                smoke: params.tradeDetails.smoke,
-                photos: params.tradeDetails.photos,
-            }
+            tradeDetails: tradeDetails
         });
 
         if (customerFinance) {
@@ -199,6 +201,33 @@ module.exports = {
     },
 
     addCustomerFixFinance: async (params, customer) => {
+        let tradeDetails = {};
+
+        if (params.tradeDetails) {
+            tradeDetails.VIN = params.tradeDetails.VIN ? params.tradeDetails.VIN : '';
+            tradeDetails.YearMakeModel = params.tradeDetails.YearMakeModel;
+            tradeDetails.odometerReading = params.tradeDetails.odometerReading;
+            tradeDetails.trim = params.tradeDetails.trim;
+            tradeDetails.transmission = params.tradeDetails.transmission;
+            tradeDetails.color = params.tradeDetails.color;
+            tradeDetails.ownerShip = params.tradeDetails.ownerShip;
+            tradeDetails.loanType = params.tradeDetails.loanType;
+            tradeDetails.amount = params.tradeDetails.amount;
+            tradeDetails.remainingPayment = params.tradeDetails.remainingPayment;
+            tradeDetails.EMIAmount = params.tradeDetails.EMIAmount;
+            tradeDetails.accidentHistory = {
+                damageAmount: params.tradeDetails.damageAmount,
+                insurancePayoutAmount: params.tradeDetails.insurancePayoutAmount
+            };
+            tradeDetails.mechanicalIssue = params.tradeDetails.mechanicalIssue;
+            tradeDetails.warningLight = params.tradeDetails.warningLight;
+            tradeDetails.afterMarketModification = params.tradeDetails.afterMarketModification;
+            tradeDetails.additionalIsuse = params.tradeDetails.additionalIsuse;
+            tradeDetails.estimatedBodyWorkAmount = params.tradeDetails.estimatedBodyWorkAmount;
+            tradeDetails.smoke = params.tradeDetails.smoke;
+            tradeDetails.photos = params.tradeDetails.photos;
+        }
+
         let customerFinance = await new financeCarFixModel({
             dealerId: params.dealerId,
             customerId: customer._id,
@@ -226,30 +255,7 @@ module.exports = {
                 file: params.file,
             },
             status: params.status,
-            tradeDetails: {
-                VIN: params.tradeDetails.VIN ? params.tradeDetails.VIN : '',
-                YearMakeModel: params.tradeDetails.YearMakeModel,
-                odometerReading: params.tradeDetails.odometerReading,
-                trim: params.tradeDetails.trim,
-                transmission: params.tradeDetails.transmission,
-                color: params.tradeDetails.color,
-                ownerShip: params.tradeDetails.ownerShip,
-                loanType: params.tradeDetails.loanType,
-                amount: params.tradeDetails.amount,
-                remainingPayment: params.tradeDetails.remainingPayment,
-                EMIAmount: params.tradeDetails.EMIAmount,
-                accidentHistory: {
-                    damageAmount: params.tradeDetails.damageAmount,
-                    insurancePayoutAmount: params.tradeDetails.insurancePayoutAmount
-                },
-                mechanicalIssue: params.tradeDetails.mechanicalIssue,
-                warningLight: params.tradeDetails.warningLight,
-                afterMarketModification: params.tradeDetails.afterMarketModification,
-                additionalIsuse: params.tradeDetails.additionalIsuse,
-                estimatedBodyWorkAmount: params.tradeDetails.estimatedBodyWorkAmount,
-                smoke: params.tradeDetails.smoke,
-                photos: params.tradeDetails.photos,
-            },
+            tradeDetails: tradeDetails,
             EMIOptions: params.EMIOptions,
         });
 
