@@ -139,6 +139,8 @@ module.exports = {
 
     addCustomerCashFinance: async (params, customer) => {
 
+        // console.log(params.tradeDetails.VIN);
+
         let customerFinance = await new financeCashFlowModel({
             dealerId: params.dealerId,
             customerId: customer._id,
@@ -164,7 +166,7 @@ module.exports = {
             status: '',
             isTradeinCarAvilable: params.isTradeinCarAvilable,
             tradeDetails: {
-                VIN: params.tradeDetails.VIN,
+                VIN: params.tradeDetails.VIN ? params.tradeDetails.VIN : '',
                 YearMakeModel: params.tradeDetails.YearMakeModel,
                 odometerReading: params.tradeDetails.odometerReading,
                 trim: params.tradeDetails.trim,
@@ -225,7 +227,7 @@ module.exports = {
             },
             status: params.status,
             tradeDetails: {
-                VIN: params.tradeDetails.VIN,
+                VIN: params.tradeDetails.VIN ? params.tradeDetails.VIN : '',
                 YearMakeModel: params.tradeDetails.YearMakeModel,
                 odometerReading: params.tradeDetails.odometerReading,
                 trim: params.tradeDetails.trim,
