@@ -266,11 +266,7 @@ module.exports = {
     
     getDealer: async (req, res, next) => {
         try {
-            const dealerId = req.query.id;
             const dealer = req.user;
-
-            console.log(dealer);
-
             if (!dealer) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Unauthorized access' });
             }
