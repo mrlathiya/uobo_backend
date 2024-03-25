@@ -15,7 +15,7 @@ const dealerSchema = mongoose.Schema({
         city: {
             type: String
         },
-        postcode: {
+        postalcode: {
             type: String
         },
     },

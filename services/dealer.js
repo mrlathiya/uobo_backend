@@ -22,6 +22,15 @@ module.exports = {
     },
 
     registerDealer: async (params) => {
+        let addressList = params.address ? params.address.split(' ') : undefined;
+
+        let address1 = '';
+        let address2 = '';
+
+        if (addressList) {
+            address1 = addressList[0];
+            address2 = addressList[1] + ' ' + addressList[2];
+        }
         let newDealer = await new dealerSchema({
             dealerShipName: params.dealerShipName,
             address: params.address,
@@ -29,6 +38,12 @@ module.exports = {
             firstName: params.firstName,
             lastName: params.lastName,
             email: params.email,
+            address: {
+                address1: params.address1 ? params.address1 : address1,
+                address2: params.address2 ? params.address2 : address2,
+                city: params.city ? params.city : '',
+                postalcode: params.postalcode ? params.postalcode : '',
+            },
             phoneNumber: {
                 countryCode: '+1',
                 number: params.number
@@ -94,6 +109,7 @@ module.exports = {
             { 
                 $project : { 
                     _id: "$_id", 
+                    ratings: "$ratings", 
                     dealerShipName: "$dealerShipName", 
                     address: "$address", 
                     OMVICLicenceLink: "$OMVICLicenceLink", 
@@ -162,6 +178,7 @@ module.exports = {
                         numberOfLocation: "$numberOfLocation", 
                         delivery: "$delivery", 
                         customerPickUp: "$customerPickUp", 
+                        ratings: "$ratings", 
                         createdAt: "$createdAt", 
                         updatedAt: "$updatedAt", 
                         // "product_name": "$product_name", 
@@ -222,6 +239,7 @@ module.exports = {
                     numberOfLocation: "$_id.numberOfLocation", 
                     delivery: "$_id.delivery", 
                     customerPickUp: "$_id.customerPickUp", 
+                    ratings: "$_id.ratings", 
                     createdAt: "$_id.createdAt", 
                     updatedAt: "$_id.updatedAt", 
                     // "product_name": "$_id.product_name", 
