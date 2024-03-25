@@ -239,7 +239,12 @@ module.exports = {
                     numberOfLocation: "$_id.numberOfLocation", 
                     delivery: "$_id.delivery", 
                     customerPickUp: "$_id.customerPickUp", 
-                    ratings: "$_id.ratings", 
+                    ratings: {
+                        customerRating: "$_id.ratings",
+                        finalRating: {
+                            $avg: '$_id.ratings.finalRating'
+                        }
+                    }, 
                     createdAt: "$_id.createdAt", 
                     updatedAt: "$_id.updatedAt", 
                     // "product_name": "$_id.product_name", 
@@ -247,7 +252,7 @@ module.exports = {
                     inventory: "$inventory" 
                 } 
             }
-        ])
+        ]);
 
         return dealers;
     },
