@@ -250,6 +250,73 @@ module.exports = {
             status: '',
             gender: params.gender,
             DOB: params.DOB,
+            isTradeinCarAvilable: params.isTradeinCarAvilable,
+            documents: {
+                category: params.category,
+                file: params.file,
+            },
+            status: params.status,
+            tradeDetails: tradeDetails,
+            EMIOptions: params.EMIOptions,
+        });
+
+        if (customerFinance) {
+            return customerFinance.save();
+        } else {
+            return undefined;
+        }
+    },
+
+    addCustomerWithoutCarOrder: async (params, customer) => {
+        let tradeDetails = {};
+
+        if (params.tradeDetails) {
+            tradeDetails.VIN = params.tradeDetails.VIN ? params.tradeDetails.VIN : '';
+            tradeDetails.YearMakeModel = params.tradeDetails.YearMakeModel;
+            tradeDetails.odometerReading = params.tradeDetails.odometerReading;
+            tradeDetails.trim = params.tradeDetails.trim;
+            tradeDetails.transmission = params.tradeDetails.transmission;
+            tradeDetails.color = params.tradeDetails.color;
+            tradeDetails.ownerShip = params.tradeDetails.ownerShip;
+            tradeDetails.loanType = params.tradeDetails.loanType;
+            tradeDetails.amount = params.tradeDetails.amount;
+            tradeDetails.remainingPayment = params.tradeDetails.remainingPayment;
+            tradeDetails.EMIAmount = params.tradeDetails.EMIAmount;
+            tradeDetails.accidentHistory = {
+                damageAmount: params.tradeDetails.damageAmount,
+                insurancePayoutAmount: params.tradeDetails.insurancePayoutAmount
+            };
+            tradeDetails.mechanicalIssue = params.tradeDetails.mechanicalIssue;
+            tradeDetails.warningLight = params.tradeDetails.warningLight;
+            tradeDetails.afterMarketModification = params.tradeDetails.afterMarketModification;
+            tradeDetails.additionalIsuse = params.tradeDetails.additionalIsuse;
+            tradeDetails.estimatedBodyWorkAmount = params.tradeDetails.estimatedBodyWorkAmount;
+            tradeDetails.smoke = params.tradeDetails.smoke;
+            tradeDetails.photos = params.tradeDetails.photos;
+        }
+
+        let customerFinance = await new financeCarFixModel({
+            dealerId: params.dealerId,
+            customerId: customer._id,
+            carId: params.carId,
+            firstName: params.firstName,
+            lastName: params.lastName,
+            email: customer.email ? customer.email : params.email,
+            category: 'Fix',
+            contact: {
+                countryCode: customer.contact.countryCode ? customer.contact.countryCode : params.countryCode,
+                number: customer.contact.number ? customer.contact.number : params.number,
+            },
+            address: {
+                address1: params.address.address1,
+                address2: params.address.address2,
+                city: params.address.city,
+                postalCode: params.address.postalCode,
+                province: params.address.province,
+            },
+            status: '',
+            gender: params.gender,
+            DOB: params.DOB,
             documents: {
                 category: params.category,
                 file: params.file,

@@ -10,10 +10,10 @@ const financeWithoutCarSchema = mognoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
     },
-    carId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'cars',
-    },
+    // carId: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'cars',
+    // },
     salutation: {
         type: String
     },
