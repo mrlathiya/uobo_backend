@@ -22,15 +22,15 @@ module.exports = {
     },
 
     registerDealer: async (params) => {
-        let addressList = params.address ? params.address.split(' ') : undefined;
+        // let addressList = params.address ? params.address.split(' ') : undefined;
 
-        let address1 = '';
-        let address2 = '';
+        // let address1 = '';
+        // let address2 = '';
 
-        if (addressList) {
-            address1 = addressList[0];
-            address2 = addressList[1] + ' ' + addressList[2];
-        }
+        // if (addressList) {
+        //     address1 = addressList[0];
+        //     address2 = addressList[1] + ' ' + addressList[2];
+        // }
         let newDealer = await new dealerSchema({
             dealerShipName: params.dealerShipName,
             address: params.address,
@@ -39,8 +39,8 @@ module.exports = {
             lastName: params.lastName,
             email: params.email,
             address: {
-                address1: params.address1 ? params.address1 : address1,
-                address2: params.address2 ? params.address2 : address2,
+                address1: params.address1 ? params.address1 : '',
+                address2: params.address2 ? params.address2 : '',
                 city: params.city ? params.city : '',
                 postalcode: params.postalcode ? params.postalcode : '',
             },
