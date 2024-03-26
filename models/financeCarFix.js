@@ -170,6 +170,23 @@ const financeCashFixSchema = mognoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'EMIOptios',
     },
+    isTradeinCarAvilable: {
+        type: Boolean
+    },
+    additionalDocuments: [
+        {
+            nameOfDocument: {
+                type: String
+            },
+            explanation: {
+                type: String
+            }
+        }
+    ],
+    billOfSale: {
+        type: String,
+        default: ''
+    },
     appointments: [{
         date: {
             type: String
