@@ -15,8 +15,12 @@ router.get('/mortgageCategory', financeController.getMortgageCategory);
 
 router.post('/cash', authController, financeController.addCustomerFinanceCashFlow);
 router.post('/fix', commonAuthController, financeController.addCustomerFinanceFixFlow);
+
 router.put('/cash', commonAuthController, financeController.editCustomerCashFinanceStatus);
 router.put('/fix', commonAuthController, financeController.editCustomerFixFinanceStatus);
+
+router.post('/withoutcar', authController, financeController.addCustomerWithoutCarOrder);
+router.put('/withoutcar', commonAuthController, financeController.editCustomerWithoutCarStatus);
 
 router.get('/liveOrders', dealerAuthController, financeController.getCustomerRequestedOrder);
 

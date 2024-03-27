@@ -10,10 +10,26 @@ const financeWithoutCarSchema = mognoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
     },
-    // carId: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'cars',
-    // },
+    customerSelectedCar: {
+        carId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'cars'
+        },
+        EMIOptions: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'EMIOptios'
+        }
+    },
+    dealerProvidedOptions: {
+        carId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'cars'
+        },
+        EMIOptions: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'EMIOptios'
+        }
+    },
     salutation: {
         type: String
     },
@@ -158,10 +174,6 @@ const financeWithoutCarSchema = mognoose.Schema({
         photos: [{
             type: String
         }]
-    },
-    EMIOptions: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'EMIOptios',
     },
     appointments: [{
         date: {

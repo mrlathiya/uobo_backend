@@ -251,10 +251,7 @@ module.exports = {
             gender: params.gender,
             DOB: params.DOB,
             isTradeinCarAvilable: params.isTradeinCarAvilable,
-            documents: {
-                category: params.category,
-                file: params.file,
-            },
+            documents: documents,
             status: params.status,
             tradeDetails: tradeDetails,
             EMIOptions: params.EMIOptions,
@@ -267,7 +264,7 @@ module.exports = {
         }
     },
 
-    addCustomerWithoutCarOrder: async (params, customer) => {
+    addWithoutCarOrder: async (params, customer) => {
         let tradeDetails = {};
 
         if (params.tradeDetails) {
@@ -298,11 +295,10 @@ module.exports = {
         let customerFinance = await new financeCarFixModel({
             dealerId: params.dealerId,
             customerId: customer._id,
-            carId: params.carId,
             firstName: params.firstName,
             lastName: params.lastName,
             email: customer.email ? customer.email : params.email,
-            category: 'Fix',
+            category: 'WithoutCar',
             contact: {
                 countryCode: customer.contact.countryCode ? customer.contact.countryCode : params.countryCode,
                 number: customer.contact.number ? customer.contact.number : params.number,
@@ -314,16 +310,15 @@ module.exports = {
                 postalCode: params.address.postalCode,
                 province: params.address.province,
             },
-            status: '',
+            // status: '',
             gender: params.gender,
             DOB: params.DOB,
             documents: {
                 category: params.category,
                 file: params.file,
             },
-            status: params.status,
+            status: params.status ? params.status : '',
             tradeDetails: tradeDetails,
-            EMIOptions: params.EMIOptions,
         });
 
         if (customerFinance) {
@@ -361,6 +356,8 @@ module.exports = {
             appointments: params.appointments,
             billOfSale: params.billOfSale,
             additionalDocuments: params.additionalDocuments,
+            customerSelectedCar: params.customerSelectedCar ? params.customerSelectedCar : undefined,
+            dealerProvidedOptions: params.dealerProvidedOptions ? params.dealerProvidedOptions : undefined,
             deliveryDate: params.deliveryDate ? params.deliveryDate : undefined,
             selectedEMIOptions: params.selectedEMIOptions ? params.selectedEMIOptions : undefined,
             EMIOptions: params.EMIOptions ? params.EMIOptions : undefined,
