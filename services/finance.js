@@ -298,7 +298,7 @@ module.exports = {
             firstName: params.firstName,
             lastName: params.lastName,
             email: customer.email ? customer.email : params.email,
-            category: 'WithoutCar',
+            orderType: 'WithoutCar',
             contact: {
                 countryCode: customer.contact.countryCode ? customer.contact.countryCode : params.countryCode,
                 number: customer.contact.number ? customer.contact.number : params.number,

@@ -244,9 +244,9 @@ module.exports = {
             let editCustomerFinancialInformation = await customerService.editCustomerFinancialDetails(customer._id, params);
 
             if (addFinance) {
-                return res.status(200).json({ IsSuccess: true, Data: [addFinance, editCustomerFinancialInformation], Message: 'Customer fix finance added' });
+                return res.status(200).json({ IsSuccess: true, Data: [addFinance, editCustomerFinancialInformation], Message: 'Customer requested for without car order' });
             } else {
-                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer fix finance not added' });
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer order request failed' });
             }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
