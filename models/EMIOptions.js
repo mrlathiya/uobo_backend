@@ -23,4 +23,4 @@ const EMIOptionsSchema = mongoose.Schema({
     }]
 });
 
-module.exports = mongoose.model('EMIOptios', EMIOptionsSchema);
+module.exports = mongoose.model('EMIOptions', EMIOptionsSchema);

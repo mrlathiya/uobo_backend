@@ -166,10 +166,10 @@ const financeCashFixSchema = mognoose.Schema({
             type: String
         }]
     },
-    EMIOptions: {
+    EMIOptions: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'EMIOptios',
-    },
+        ref: 'EMIOptions',
+    }],
     isTradeinCarAvilable: {
         type: Boolean
     },
@@ -191,9 +191,9 @@ const financeCashFixSchema = mognoose.Schema({
         date: {
             type: String
         },
-        time: {
+        time: [{
             type: String
-        },
+        }],
     }],
     deliveryAddress: {
         address1: {

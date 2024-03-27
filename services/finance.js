@@ -5,6 +5,7 @@ const financeCarFixModel = require('../models/financeCarFix');
 const financeWithoutCar = require('../models/financeWithoutCar');
 const userModel = require('../models/user');
 const mortgageTypeModel = require('../models/mortgageType');
+const EMIOptionsModel = require('../models/EMIOptions');
 
 module.exports = {
     addCustomerFinance: async (params) => {
@@ -251,7 +252,7 @@ module.exports = {
             gender: params.gender,
             DOB: params.DOB,
             isTradeinCarAvilable: params.isTradeinCarAvilable,
-            documents: documents,
+            documents: params.documents,
             status: params.status,
             tradeDetails: tradeDetails,
             EMIOptions: params.EMIOptions,
@@ -350,7 +351,7 @@ module.exports = {
         return updateFinanceStatus;
     },
 
-    editFinanceStatus: async (params) => {
+    editFinanceStatus: async (params, type) => {
         let update = {
             status: params.status,
             appointments: params.appointments,
@@ -360,14 +361,54 @@ module.exports = {
             dealerProvidedOptions: params.dealerProvidedOptions ? params.dealerProvidedOptions : undefined,
             deliveryDate: params.deliveryDate ? params.deliveryDate : undefined,
             selectedEMIOptions: params.selectedEMIOptions ? params.selectedEMIOptions : undefined,
-            EMIOptions: params.EMIOptions ? params.EMIOptions : undefined,
+            // EMIOptions: params.EMIOptions ? params.EMIOptions : undefined,
             isTradeinCarAvilable: params.isTradeinCarAvilable,
             'tradeDetails.dealerEstimatedTradeValue': params.tradeInCarValue ? params.tradeInCarValue : params.dealerEstimatedTradeInValue
         }
 
-        let updateFinanceStatus = await financeCashFlowModel.findByIdAndUpdate(params.financeId, update, { new: true });
+        let updateFinanceStatus;
 
+        if (type == 'financeFix') {  
+            updateFinanceStatus = await financeCarFixModel.findByIdAndUpdate(params.financeId, update, { new: true });
+        } else if (type == '' || type == undefined) {
+            updateFinanceStatus = await financeCashFlowModel.findByIdAndUpdate(params.financeId, update, { new: true });
+        }
+
+        console.log(updateFinanceStatus);
         return updateFinanceStatus;
+    },
+
+    addNewEMIOptions: async (params) => {
+        const newEMI = await new EMIOptionsModel({
+            bankName: params.bankName,
+            options: params.options
+        });
+
+        if (newEMI !== null && newEMI !== undefined) {
+            return newEMI.save();
+        } else {
+            return false;
+        }
+    },
+
+    addBulkOfNewEMIOptions: async (EMIOptionsList) => {
+        const newEMI = await EMIOptionsModel.insertMany(EMIOptionsList);
+
+        console.log(newEMI);
+        if (newEMI) {
+            return newEMI;
+        } else {
+            return false;
+        }
+    },
+
+    deleteEMIOptions: async (EMIIds) => {
+
+        for (let i=0;i<EMIIds;i++) {
+            let deleteEMI = await EMIOptionsModel.findByIdAndDelete(EMIIds[i]);
+        }
+
+        return true;
     },
 
     deleteFinanceOrder: async (financeId) => {
