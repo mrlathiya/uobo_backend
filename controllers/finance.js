@@ -159,9 +159,9 @@ module.exports = {
                 //     return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide tradeInCarValue parameter' });
                 // }
     
-                if (!params.appointments) {
-                    return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide appointments parameter' });
-                }
+                // if (!params.appointments) {
+                //     return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide appointments parameter' });
+                // }
 
                 let editStatus = await financeService.editFinanceStatus(params, 'cashFinance');
 
