@@ -167,7 +167,7 @@ module.exports = {
             tradeDetails.photos = params.tradeDetails.photos;
         }
 
-        let customerFinance = await new financeCashFlowModel({
+        let customerFinance = await new financeModel({
             dealerId: params.dealerId,
             customerId: customer._id,
             carId: params.carId,
@@ -229,7 +229,7 @@ module.exports = {
             tradeDetails.photos = params.tradeDetails.photos;
         }
 
-        let customerFinance = await new financeCarFixModel({
+        let customerFinance = await new financeModel({
             dealerId: params.dealerId,
             customerId: customer._id,
             carId: params.carId,
@@ -293,7 +293,7 @@ module.exports = {
             tradeDetails.photos = params.tradeDetails.photos;
         }
 
-        let customerFinance = await new financeCarFixModel({
+        let customerFinance = await new financeModel({
             dealerId: params.dealerId,
             customerId: customer._id,
             firstName: params.firstName,
@@ -331,12 +331,12 @@ module.exports = {
 
     getFinanceById: async (financeId, type) => {
 
-        let finance;
-        if (type == 'financeFix') {
-            finance = await financeCarFixModel.findById(financeId);
-        } else {
-            finance = await financeCashFlowModel.findById(financeId);
-        } 
+        let finance = await financeModel.findById(financeId);;
+        // if (type == 'financeFix') {
+        //     finance = await financeModel.findById(financeId);
+        // } else {
+        //     finance = await financeModel.findById(financeId);
+        // } 
 
         return finance;
     },
@@ -346,7 +346,7 @@ module.exports = {
             status: 'CustomerPaidFullInCash'
         }
 
-        let updateFinanceStatus = await financeCashFlowModel.findByIdAndUpdate(params.financeId, update, { new: true });
+        let updateFinanceStatus = await financeModel.findByIdAndUpdate(params.financeId, update, { new: true });
 
         return updateFinanceStatus;
     },
@@ -366,15 +366,14 @@ module.exports = {
             'tradeDetails.dealerEstimatedTradeValue': params.tradeInCarValue ? params.tradeInCarValue : params.dealerEstimatedTradeInValue
         }
 
-        let updateFinanceStatus;
+        let updateFinanceStatus = await financeModel.findByIdAndUpdate(params.financeId, update, { new: true });;
 
-        if (type == 'financeFix') {  
-            updateFinanceStatus = await financeCarFixModel.findByIdAndUpdate(params.financeId, update, { new: true });
-        } else if (type == '' || type == undefined) {
-            updateFinanceStatus = await financeCashFlowModel.findByIdAndUpdate(params.financeId, update, { new: true });
-        }
-
-        console.log(updateFinanceStatus);
+        // if (type == 'financeFix') {  
+        //     updateFinanceStatus = await financeCarFixModel.findByIdAndUpdate(params.financeId, update, { new: true });
+        // } else if (type == 'cashFinance') {
+        //     updateFinanceStatus = await financeCashFlowModel.findByIdAndUpdate(params.financeId, update, { new: true });
+        // }
+        
         return updateFinanceStatus;
     },
 
@@ -412,49 +411,51 @@ module.exports = {
     },
 
     deleteFinanceOrder: async (financeId) => {
-        await financeCarFixModel.findByIdAndDelete(financeId);
+        await financeModel.findByIdAndDelete(financeId);
 
         return true;
     },
 
     getOrderByDealerId: async(dealer) => {
-        const orderFix = await financeCarFixModel.find({ 
+        const orders = await financeModel.find({ 
             $and: [
                 { dealerId: dealer._id },
                 { status: '' }
             ] 
         }).populate({ path: 'carId' }).populate({ path: 'customerId' });
-        const orderCash = await financeCashFlowModel.find({ 
-            $and: [
-                { dealerId: dealer._id },
-                { status: '' }
-            ] 
-        }).populate({ path: 'carId' }).populate({ path: 'customerId' });
-        const orderWithoutCar = await financeWithoutCar.find({ 
-            $and: [
-                { dealerId: dealer._id },
-                { status: '' }
-            ] 
-        }).populate({ path: 'carId' }).populate({ path: 'customerId' });
+        // const orderCash = await financeCashFlowModel.find({ 
+        //     $and: [
+        //         { dealerId: dealer._id },
+        //         { status: '' }
+        //     ] 
+        // }).populate({ path: 'carId' }).populate({ path: 'customerId' });
+        // const orderWithoutCar = await financeWithoutCar.find({ 
+        //     $and: [
+        //         { dealerId: dealer._id },
+        //         { status: '' }
+        //     ] 
+        // }).populate({ path: 'carId' }).populate({ path: 'customerId' });
 
-        return [...orderCash, ...orderFix, ...orderWithoutCar];
+        return orders;
     },
 
     getAllCustomerRequestedOrders: async (dealer) => {
-        const cashOrders = await financeCarFixModel.find({
+        const orders = await financeModel.find({
             $and: [
                 { dealerId: dealer._id },
                 { status: '' }
             ]  
         });
 
-        const fixOrders = await financeCashFlowModel.find({
-            $and: [
-                { dealerId: dealer._id },
-                { status: '' }
-            ]
-        });
+        return orders;
 
-        return [...cashOrders, ...fixOrders];
+        // const fixOrders = await financeCashFlowModel.find({
+        //     $and: [
+        //         { dealerId: dealer._id },
+        //         { status: '' }
+        //     ]
+        // });
+
+        // return [...cashOrders, ...fixOrders];
     }
 }
