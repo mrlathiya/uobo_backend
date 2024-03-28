@@ -38,11 +38,11 @@ module.exports = {
     },
 
     getOrderByDealerId: async(dealerId) => {
-        const orderFix = await financeFixModel.find({ dealerId }).populate({ path: 'carId' }).populate({ path: 'customerId' });
-        const orderCash = await financeCashModel.find({ dealerId }).populate({ path: 'carId' }).populate({ path: 'customerId' });
-        const orderWithoutCar = await financeWithoutCar.find({ dealerId }).populate({ path: 'carId' }).populate({ path: 'customerId' });
-
-        return [...orderCash, ...orderFix, ...orderWithoutCar];
+        // const orderFix = await financeFixModel.find({ dealerId }).populate({ path: 'carId' }).populate({ path: 'customerId' });
+        // const orderCash = await financeCashModel.find({ dealerId }).populate({ path: 'carId' }).populate({ path: 'customerId' });
+        // const orderWithoutCar = await financeWithoutCar.find({ dealerId }).populate({ path: 'carId' }).populate({ path: 'customerId' });
+        const orders = await financeModel.find({ dealerId }).populate({ path: 'carId' }).populate({ path: 'customerId' })
+        return orders;
     },
 
     getOrderByCustomerId: async(customerId) => {
