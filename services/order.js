@@ -1,6 +1,7 @@
 const financeCashModel = require('../models/financeCashFlow');
 const financeFixModel = require('../models/financeCarFix');
 const financeWithoutCar = require('../models/financeWithoutCar');
+const financeModel = require('../models/finance');
 
 module.exports = {
     addOrder: async (params) => {
@@ -45,11 +46,12 @@ module.exports = {
     },
 
     getOrderByCustomerId: async(customerId) => {
-        const orderFix = await financeFixModel.find({ customerId }).populate({ path: 'carId' }).populate({ path: 'dealerId' });
-        const orderCash = await financeCashModel.find({ customerId }).populate({ path: 'carId' }).populate({ path: 'dealerId' });
-        const orderWithoutCar = await financeWithoutCar.find({ customerId }).populate({ path: 'carId' }).populate({ path: 'dealerId' });
+        // const orderFix = await financeFixModel.find({ customerId }).populate({ path: 'carId' }).populate({ path: 'dealerId' });
+        // const orderCash = await financeCashModel.find({ customerId }).populate({ path: 'carId' }).populate({ path: 'dealerId' });
+        // const orderWithoutCar = await financeWithoutCar.find({ customerId }).populate({ path: 'carId' }).populate({ path: 'dealerId' });
+        const orders = await financeModel.find({ customerId }).populate({ path: 'carId' }).populate({ path: 'dealerId' });
 
-        return [...orderCash, ...orderFix, ...orderWithoutCar];
+        return orders;
     },
 
     editOrderStatus: async (status, orderId) => {
