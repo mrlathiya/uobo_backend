@@ -356,6 +356,7 @@ module.exports = {
             status: params.status,
             appointments: params.appointments,
             billOfSale: params.billOfSale,
+            document: { $push: params.document },
             additionalDocuments: params.additionalDocuments,
             customerSelectedCar: params.customerSelectedCar ? params.customerSelectedCar : undefined,
             dealerProvidedOptions: params.dealerProvidedOptions ? params.dealerProvidedOptions : undefined,
