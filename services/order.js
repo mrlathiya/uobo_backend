@@ -49,7 +49,11 @@ module.exports = {
         // const orderFix = await financeFixModel.find({ customerId }).populate({ path: 'carId' }).populate({ path: 'dealerId' });
         // const orderCash = await financeCashModel.find({ customerId }).populate({ path: 'carId' }).populate({ path: 'dealerId' });
         // const orderWithoutCar = await financeWithoutCar.find({ customerId }).populate({ path: 'carId' }).populate({ path: 'dealerId' });
-        const orders = await financeModel.find({ customerId }).populate({ path: 'carId' }).populate({ path: 'dealerId' });
+        const orders = await financeModel.find({ customerId })
+                                .populate({ path: 'carId' })
+                                .populate({ path: 'dealerId' })
+                                .populate({ path: 'customerSelectedCar.carId' })
+                                .populate({ path: 'dealerProvidedOptions.carId' });
 
         return orders;
     },
