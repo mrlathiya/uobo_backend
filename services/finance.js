@@ -314,10 +314,7 @@ module.exports = {
             // status: '',
             gender: params.gender,
             DOB: params.DOB,
-            documents: {
-                category: params.category,
-                file: params.file,
-            },
+            documents: params.documents,
             status: params.status ? params.status : '',
             tradeDetails: tradeDetails,
         });
@@ -394,7 +391,6 @@ module.exports = {
     addBulkOfNewEMIOptions: async (EMIOptionsList) => {
         const newEMI = await EMIOptionsModel.insertMany(EMIOptionsList);
 
-        console.log(newEMI);
         if (newEMI) {
             return newEMI;
         } else {
