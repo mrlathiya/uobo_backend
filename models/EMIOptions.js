@@ -12,7 +12,7 @@ const EMIOptionsSchema = mongoose.Schema({
             type: Number
         },
         amountDue: {
-            type: Number
+            type: String
         },
         totalAmount: {
             type: Number
