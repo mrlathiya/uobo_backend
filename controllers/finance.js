@@ -314,6 +314,18 @@ module.exports = {
                     }
                 }
 
+                if (params.EMIOptions) {
+                    let EMIs = await financeService.addBulkOfNewEMIOptions(params.EMIOptions);
+
+                    if (EMIs) {
+                        EMIs.forEach(EMI => {
+                            EMIsIds.push(EMI._id)
+                        });
+                    }
+
+                    params.EMIOptions = EMIsIds;
+                }
+
                 let editStatus = await financeService.editFinanceStatus(params);
 
                 if (editStatus) {
