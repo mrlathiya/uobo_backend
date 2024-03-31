@@ -312,6 +312,7 @@ module.exports = {
                 province: params.address.province,
             },
             // status: '',
+            carPreference: params.carPreference,
             gender: params.gender,
             DOB: params.DOB,
             documents: params.documents,

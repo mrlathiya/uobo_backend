@@ -29,6 +29,53 @@ const financeOrdersSchema = mongoose.Schema({
             ref: 'EMIOptios'
         }
     },
+    carPreference: {
+        carType: [{
+            type: String
+        }],
+        deliveryType: {
+            type: String
+        }, 
+        makeAndModel: [{
+            type: String
+        }],
+        priceRange: {
+            start: {
+                type: String
+            },
+            end: {
+                type: String
+            },
+        },
+        yearRange: {
+            start: {
+                type: String
+            },
+            end: {
+                type: String
+            },
+        },
+        milageRange: {
+            start: {
+                type: String
+            },
+            end: {
+                type: String
+            },
+        },
+        driveTrain: {
+            type: String
+        }, 
+        transmission: {
+            type: String
+        },
+        color: [{
+            type: String
+        }],
+        fuel: {
+            type: String
+        }
+    },
     carId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'cars',
