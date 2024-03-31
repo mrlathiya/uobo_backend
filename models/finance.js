@@ -276,6 +276,10 @@ const financeOrdersSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'EMIOptions',
     }],
+    customerSelectedEMIOption: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'EMIOptions'
+    },
     deliveryAddress: {
         address1: {
             type: String

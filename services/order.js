@@ -46,6 +46,7 @@ module.exports = {
                                         .populate({ path: 'customerId' })
                                         .populate({ path: 'customerSelectedCar.carId' })
                                         .populate({ path: 'EMIOptions' })
+                                        .populate({ path: 'customerSelectedEMIOption' })
                                         .populate({ path: 'dealerProvidedOptions.carId' });
         return orders;
     },
@@ -59,6 +60,7 @@ module.exports = {
                                 .populate({ path: 'dealerId' })
                                 .populate({ path: 'customerSelectedCar.carId' })
                                 .populate({ path: 'EMIOptions' })
+                                .populate({ path: 'customerSelectedEMIOption' })
                                 .populate({ path: 'dealerProvidedOptions.carId' });
 
         return orders;

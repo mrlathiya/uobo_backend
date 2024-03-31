@@ -301,20 +301,20 @@ module.exports = {
                 //     return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide appointments parameter' });
                 // }
 
-                if (params.customerSelectedCar) {
-                    if (params.customerSelectedCar.EMIOptions) {
-                        let paramForEMIs = params?.customerSelectedCar?.EMIOptions;
-                        let EMIs = await financeService.addNewEMIOptions(paramForEMIs);
+                // if (params.customerSelectedCar) {
+                //     if (params.customerSelectedCar.EMIOptions) {
+                //         let paramForEMIs = params?.customerSelectedCar?.EMIOptions;
+                //         let EMIs = await financeService.addNewEMIOptions(paramForEMIs);
     
-                        // if (EMIs) {
-                        //     EMIs.forEach(EMI => {
-                        //         EMIsIds.push(EMI._id)
-                        //     });
-                        // }
+                //         // if (EMIs) {
+                //         //     EMIs.forEach(EMI => {
+                //         //         EMIsIds.push(EMI._id)
+                //         //     });
+                //         // }
     
-                        params.customerSelectedCar.EMIOptions = EMIs._id;
-                    }
-                }
+                //         params.customerSelectedCar.EMIOptions = EMIs._id;
+                //     }
+                // }
 
                 if (params.EMIOptions) {
                     let EMIs = await financeService.addBulkOfNewEMIOptions(params.EMIOptions);
