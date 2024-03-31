@@ -215,14 +215,16 @@ module.exports = {
                 if (params.EMIOptions) {
                     let EMIs = await financeService.addBulkOfNewEMIOptions(params.EMIOptions);
 
+                    console.log(EMIs);
+
                     if (EMIs) {
                         EMIs.forEach(EMI => {
                             EMIsIds.push(EMI._id)
                         });
                     }
-
-                    params.EMIOptions = EMIsIds;
+                    
                 }
+                params.EMIOptions = EMIsIds;
 
                 let editStatus = await financeService.editFinanceStatus(params, 'financeFix');
 
