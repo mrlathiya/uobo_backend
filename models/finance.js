@@ -274,7 +274,7 @@ const financeOrdersSchema = mongoose.Schema({
     }],
     EMIOptions: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'EMIOptios',
+        ref: 'EMIOptions',
     }],
     deliveryAddress: {
         address1: {

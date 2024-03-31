@@ -41,7 +41,12 @@ module.exports = {
         // const orderFix = await financeFixModel.find({ dealerId }).populate({ path: 'carId' }).populate({ path: 'customerId' });
         // const orderCash = await financeCashModel.find({ dealerId }).populate({ path: 'carId' }).populate({ path: 'customerId' });
         // const orderWithoutCar = await financeWithoutCar.find({ dealerId }).populate({ path: 'carId' }).populate({ path: 'customerId' });
-        const orders = await financeModel.find({ dealerId }).populate({ path: 'carId' }).populate({ path: 'customerId' })
+        const orders = await financeModel.find({ dealerId })
+                                        .populate({ path: 'carId' })
+                                        .populate({ path: 'customerId' })
+                                        .populate({ path: 'customerSelectedCar.carId' })
+                                        .populate({ path: 'EMIOptions' })
+                                        .populate({ path: 'dealerProvidedOptions.carId' });
         return orders;
     },
 
@@ -53,6 +58,7 @@ module.exports = {
                                 .populate({ path: 'carId' })
                                 .populate({ path: 'dealerId' })
                                 .populate({ path: 'customerSelectedCar.carId' })
+                                .populate({ path: 'EMIOptions' })
                                 .populate({ path: 'dealerProvidedOptions.carId' });
 
         return orders;
