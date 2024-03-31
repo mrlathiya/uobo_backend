@@ -223,8 +223,8 @@ module.exports = {
                         });
                     }
                     
+                    params.EMIOptions = EMIsIds;
                 }
-                params.EMIOptions = EMIsIds;
 
                 let editStatus = await financeService.editFinanceStatus(params, 'financeFix');
 
