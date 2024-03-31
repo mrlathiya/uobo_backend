@@ -160,7 +160,7 @@ const financeOrdersSchema = mongoose.Schema({
         type: Boolean
     },
     financeApproval: {
-        type: String
+        type: Boolean
     },
     customerDepositAmount: {
         type: Number

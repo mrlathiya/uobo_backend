@@ -360,6 +360,7 @@ module.exports = {
             dealerProvidedOptions: params.dealerProvidedOptions ? params.dealerProvidedOptions : undefined,
             deliveryDate: params.deliveryDate ? params.deliveryDate : undefined,
             selectedEMIOptions: params.selectedEMIOptions ? params.selectedEMIOptions : undefined,
+            financeApproval: params.financeApproval ? Boolean(params.financeApproval) : undefined,
             // EMIOptions: params.EMIOptions ? params.EMIOptions : undefined,
             isTradeinCarAvilable: params.isTradeinCarAvilable,
             'tradeDetails.dealerEstimatedTradeValue': params.tradeInCarValue ? params.tradeInCarValue : params.dealerEstimatedTradeInValue
