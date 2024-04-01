@@ -294,7 +294,7 @@ module.exports = {
         }
 
         let customerFinance = await new financeModel({
-            dealerId: params.dealerId,
+            // dealerId: params.dealerId,
             customerId: customer._id,
             firstName: params.firstName,
             lastName: params.lastName,
@@ -349,6 +349,23 @@ module.exports = {
         return updateFinanceStatus;
     },
 
+    getCustomerSelectedOption: async (optionId) => {
+        let selectedOption = await financeModel.aggregate([
+            {
+                $unwind: '$options'
+            },
+            {
+                $match: {
+                    'options._id': mongoose.Types.ObjectId(optionId)
+                }
+            }
+        ]);
+
+        console.log(selectedOption);
+
+        return selectedOption;
+    },
+
     editFinanceStatus: async (params, type) => {
         let update = {
             status: params.status,
@@ -357,6 +374,7 @@ module.exports = {
             $push: { documents: params.documents },
             additionalDocuments: params.additionalDocuments,
             customerSelectedCar: params.customerSelectedCar ? params.customerSelectedCar : undefined,
+            dealerId: params.dealerId ? params.dealerId : undefined,
             dealerProvidedOptions: params.dealerProvidedOptions ? params.dealerProvidedOptions : undefined,
             deliveryDate: params.deliveryDate ? params.deliveryDate : undefined,
             selectedEMIOptions: params.selectedEMIOptions ? params.selectedEMIOptions : undefined,

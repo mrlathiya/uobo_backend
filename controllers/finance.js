@@ -224,7 +224,9 @@ module.exports = {
                     }
                     
                     params.EMIOptions = EMIsIds;
-                }
+                };
+
+                // let customerSelectedOption = await financeService.getCustomerSelectedOption(customerSelectedEMIOption);
 
                 let editStatus = await financeService.editFinanceStatus(params, 'financeFix');
 
@@ -249,9 +251,9 @@ module.exports = {
             const params = req.body;
             const customer = req.user;
 
-            if (!params.dealerId) {
-                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide dealerId' });
-            }
+            // if (!params.dealerId) {
+            //     return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide dealerId' });
+            // }
 
             if (!customer._id) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide customerId' });
@@ -273,10 +275,7 @@ module.exports = {
     editCustomerWithoutCarStatus: async (req, res, next) => {
         try {
             const params = req.body;
-
-            if (params.confirmAvailabilty === undefined || params.confirmAvailabilty === '' || params.confirmAvailabilty === null) {
-                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide confirmAvailabilty parameter' });
-            }
+            const user = req.user;
 
             if (!params.financeId) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide financeId parameter' });
@@ -288,57 +287,36 @@ module.exports = {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Requested car fix finance not found' });
             }
 
-            if (params.confirmAvailabilty === true) {
-                if (!params.status) {
-                    return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide status parameter' });
+            if (!params.status) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide status parameter' });
+            }
+
+            if (params.status === 'CustomerSelectedCar') {
+                params.dealerId = params?.customerSelectedCar?.dealerId;
+
+                if (!params.dealerId) {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer Id not found in customer selected car' });
                 }
-    
-                // if (!params.tradeInCarValue) {
-                //     return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide tradeInCarValue parameter' });
-                // }
-    
-                // if (!params.appointments) {
-                //     return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide appointments parameter' });
-                // }
+            }
 
-                // if (params.customerSelectedCar) {
-                //     if (params.customerSelectedCar.EMIOptions) {
-                //         let paramForEMIs = params?.customerSelectedCar?.EMIOptions;
-                //         let EMIs = await financeService.addNewEMIOptions(paramForEMIs);
-    
-                //         // if (EMIs) {
-                //         //     EMIs.forEach(EMI => {
-                //         //         EMIsIds.push(EMI._id)
-                //         //     });
-                //         // }
-    
-                //         params.customerSelectedCar.EMIOptions = EMIs._id;
-                //     }
-                // }
+            if (params.EMIOptions) {
+                let EMIs = await financeService.addBulkOfNewEMIOptions(params.EMIOptions);
 
-                if (params.EMIOptions) {
-                    let EMIs = await financeService.addBulkOfNewEMIOptions(params.EMIOptions);
-
-                    if (EMIs) {
-                        EMIs.forEach(EMI => {
-                            EMIsIds.push(EMI._id)
-                        });
-                    }
-
-                    params.EMIOptions = EMIsIds;
+                if (EMIs) {
+                    EMIs.forEach(EMI => {
+                        EMIsIds.push(EMI._id)
+                    });
                 }
 
-                let editStatus = await financeService.editFinanceStatus(params);
+                params.EMIOptions = EMIsIds;
+            }
 
-                if (editStatus) {
-                    return res.status(200).json({ IsSuccess: true, Data: editStatus, Message: `Finance status updated ${params.status}` });
-                } else {
-                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Finance status not updated' });
-                }
+            let editStatus = await financeService.editFinanceStatus(params);
+
+            if (editStatus) {
+                return res.status(200).json({ IsSuccess: true, Data: editStatus, Message: `Finance status updated ${params.status}` });
             } else {
-                let deleteFinance = await financeService.deleteFinanceOrder(params.financeId);
-
-                return res.status(200).json({  IsSuccess: true, Data: [], Message: 'Customer requested finance deleted'});
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Finance status not updated' });
             }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });

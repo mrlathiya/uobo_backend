@@ -2,6 +2,7 @@ const financeCashModel = require('../models/financeCashFlow');
 const financeFixModel = require('../models/financeCarFix');
 const financeWithoutCar = require('../models/financeWithoutCar');
 const financeModel = require('../models/finance');
+const mongoose = require('mongoose');
 
 module.exports = {
     addOrder: async (params) => {
@@ -51,17 +52,63 @@ module.exports = {
         return orders;
     },
 
-    getOrderByCustomerId: async(customerId) => {
-        // const orderFix = await financeFixModel.find({ customerId }).populate({ path: 'carId' }).populate({ path: 'dealerId' });
-        // const orderCash = await financeCashModel.find({ customerId }).populate({ path: 'carId' }).populate({ path: 'dealerId' });
-        // const orderWithoutCar = await financeWithoutCar.find({ customerId }).populate({ path: 'carId' }).populate({ path: 'dealerId' });
-        const orders = await financeModel.find({ customerId })
-                                .populate({ path: 'carId' })
-                                .populate({ path: 'dealerId' })
-                                .populate({ path: 'customerSelectedCar.carId' })
-                                .populate({ path: 'EMIOptions' })
-                                .populate({ path: 'customerSelectedEMIOption' })
-                                .populate({ path: 'dealerProvidedOptions.carId' });
+    getOrderByCustomerId: async(customerId, optionId) => {
+
+        let customerIdIs = new mongoose.Types.ObjectId(customerId);
+    
+        let orders = await financeModel.aggregate([
+            {
+                $match: {
+                    customerId: customerIdIs
+                }
+            },
+            // {
+            //     $lookup: {
+            //         from: 'users',
+            //         localField: 'customerId',
+            //         foreignField: '_id',
+            //         as: 'customerInfo'
+            //     }
+            // },
+            // {
+            //     $lookup: {
+            //         from: 'cars',
+            //         localField: 'carId',
+            //         foreignField: '_id',
+            //         as: 'carInfo'
+            //     }
+            // },
+            // {
+            //     $lookup: {
+            //         from: 'dealers',
+            //         localField: 'dealerId',
+            //         foreignField: '_id',
+            //         as: 'dealerInfo'
+            //     }
+            // },
+            // {
+            //     $lookup: {
+            //         from: 'dealers',
+            //         localField: 'EMIOptions',
+            //         foreignField: '_id',
+            //         as: 'dealerInfo'
+            //     }
+            // },
+            // {
+            //     $unwind: '$options'
+            // },
+        ]);
+
+        // const orders = await financeModel.find({ customerId })
+        //                         .populate({ path: 'carId' })
+        //                         .populate({ path: 'dealerId' })
+        //                         .populate({ path: 'customerSelectedCar.carId' })
+        //                         .populate({ path: 'EMIOptions' })
+        //                         .populate({
+        //                             path: 'customerSelectedEMIOption',
+        //                             match: { _id: '$customerSelectedEMIOption' } // Filter to match the desired _id
+        //                         })
+        //                         .populate({ path: 'dealerProvidedOptions.carId' });
 
         return orders;
     },
