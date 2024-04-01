@@ -203,8 +203,6 @@ module.exports = {
                 if (!params.status) {
                     return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide status parameter' });
                 }
-                
-                let dealer = req.user;
 
                 if (params.EMIOptions) {
                     let EMIs = await financeService.addBulkOfNewEMIOptions(params.EMIOptions);
@@ -217,6 +215,20 @@ module.exports = {
                     
                     params.EMIOptions = EMIsIds;
                 };
+
+                if (params.customerSelectedEMIOption) {
+                    let selectedOption = await financeService.getCustomerSelectedOption(customerSelectedEMIOption);
+    
+                    if (!selectedOption) {
+                        return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer selected EMI option plan not found' });
+                    }
+    
+                    params.selectedPlan = {
+                        bankName: selectedOption.bankName,
+                        dealerId: selectedOption.dealerId,
+                        plan: selectedOption.plan
+                    }
+                }
 
                 // let customerSelectedOption = await financeService.getCustomerSelectedOption(customerSelectedEMIOption);
 
