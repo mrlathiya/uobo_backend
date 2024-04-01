@@ -1,8 +1,5 @@
 const mongoose = require('mongoose');
 const financeModel = require('../models/finance');
-const financeCashFlowModel = require('../models/financeCashFlow');
-const financeCarFixModel = require('../models/financeCarFix');
-const financeWithoutCar = require('../models/financeWithoutCar');
 const userModel = require('../models/user');
 const mortgageTypeModel = require('../models/mortgageType');
 const EMIOptionsModel = require('../models/EMIOptions');
@@ -350,20 +347,19 @@ module.exports = {
     },
 
     getCustomerSelectedOption: async (optionId) => {
-        let selectedOption = await financeModel.aggregate([
+        const optionIdIs = new mongoose.Types.ObjectId(optionId);
+        let selectedEMIOption = await EMIOptionsModel.aggregate([
             {
-                $unwind: '$options'
+                $unwind: { path: "$options", preserveNullAndEmptyArrays: true }
             },
             {
                 $match: {
-                    'options._id': mongoose.Types.ObjectId(optionId)
+                    'options._id': optionIdIs 
                 }
             }
         ]);
 
-        console.log(selectedOption);
-
-        return selectedOption;
+        return selectedEMIOption;
     },
 
     editFinanceStatus: async (params, type) => {
@@ -380,7 +376,7 @@ module.exports = {
             selectedEMIOptions: params.selectedEMIOptions ? params.selectedEMIOptions : undefined,
             financeApproval: params.financeApproval ? Boolean(params.financeApproval) : undefined,
             EMIOptions: params.EMIOptions ? params.EMIOptions : undefined,
-            customerSelectedEMIOption: params.customerSelectedEMIOption ? params.customerSelectedEMIOption : undefined,
+            customerSelectedEMIOption: params.selectedPlan ? params.selectedPlan : undefined,
             isTradeinCarAvilable: params.isTradeinCarAvilable,
             'tradeDetails.dealerEstimatedTradeValue': params.tradeInCarValue ? params.tradeInCarValue : params.dealerEstimatedTradeInValue
         }
@@ -441,18 +437,6 @@ module.exports = {
                 { status: '' }
             ] 
         }).populate({ path: 'carId' }).populate({ path: 'customerId' });
-        // const orderCash = await financeCashFlowModel.find({ 
-        //     $and: [
-        //         { dealerId: dealer._id },
-        //         { status: '' }
-        //     ] 
-        // }).populate({ path: 'carId' }).populate({ path: 'customerId' });
-        // const orderWithoutCar = await financeWithoutCar.find({ 
-        //     $and: [
-        //         { dealerId: dealer._id },
-        //         { status: '' }
-        //     ] 
-        // }).populate({ path: 'carId' }).populate({ path: 'customerId' });
 
         return orders;
     },
@@ -466,14 +450,5 @@ module.exports = {
         });
 
         return orders;
-
-        // const fixOrders = await financeCashFlowModel.find({
-        //     $and: [
-        //         { dealerId: dealer._id },
-        //         { status: '' }
-        //     ]
-        // });
-
-        // return [...cashOrders, ...fixOrders];
     }
 }

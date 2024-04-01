@@ -203,19 +203,11 @@ module.exports = {
                 if (!params.status) {
                     return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide status parameter' });
                 }
-    
-                // if (!params.tradeInCarValue) {
-                //     return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide tradeInCarValue parameter' });
-                // }
-    
-                // if (!params.appointments) {
-                //     return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide appointments parameter' });
-                // }
+                
+                let dealer = req.user;
 
                 if (params.EMIOptions) {
                     let EMIs = await financeService.addBulkOfNewEMIOptions(params.EMIOptions);
-
-                    console.log(EMIs);
 
                     if (EMIs) {
                         EMIs.forEach(EMI => {
@@ -309,6 +301,20 @@ module.exports = {
                 }
 
                 params.EMIOptions = EMIsIds;
+            }
+
+            if (params.customerSelectedEMIOption) {
+                let selectedOption = await financeService.getCustomerSelectedOption(customerSelectedEMIOption);
+
+                if (!selectedOption) {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer selected EMI option plan not found' });
+                }
+
+                params.selectedPlan = {
+                    bankName: selectedOption.bankName,
+                    dealerId: selectedOption.dealerId,
+                    plan: selectedOption.plan
+                }
             }
 
             let editStatus = await financeService.editFinanceStatus(params);

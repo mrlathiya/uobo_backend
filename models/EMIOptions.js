@@ -4,6 +4,10 @@ const EMIOptionsSchema = mongoose.Schema({
     bankName: {
         type: String
     },
+    dealerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "dealers"
+    },
     options: [{
         monthDuration: {
             type: Number

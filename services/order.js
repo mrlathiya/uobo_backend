@@ -54,61 +54,57 @@ module.exports = {
 
     getOrderByCustomerId: async(customerId, optionId) => {
 
-        let customerIdIs = new mongoose.Types.ObjectId(customerId);
+        // let customerIdIs = new mongoose.Types.ObjectId(customerId);
     
-        let orders = await financeModel.aggregate([
-            {
-                $match: {
-                    customerId: customerIdIs
-                }
-            },
-            // {
-            //     $lookup: {
-            //         from: 'users',
-            //         localField: 'customerId',
-            //         foreignField: '_id',
-            //         as: 'customerInfo'
-            //     }
-            // },
-            // {
-            //     $lookup: {
-            //         from: 'cars',
-            //         localField: 'carId',
-            //         foreignField: '_id',
-            //         as: 'carInfo'
-            //     }
-            // },
-            // {
-            //     $lookup: {
-            //         from: 'dealers',
-            //         localField: 'dealerId',
-            //         foreignField: '_id',
-            //         as: 'dealerInfo'
-            //     }
-            // },
-            // {
-            //     $lookup: {
-            //         from: 'dealers',
-            //         localField: 'EMIOptions',
-            //         foreignField: '_id',
-            //         as: 'dealerInfo'
-            //     }
-            // },
-            // {
-            //     $unwind: '$options'
-            // },
-        ]);
+        // let orders = await financeModel.aggregate([
+        //     {
+        //         $match: {
+        //             customerId: customerIdIs
+        //         }
+        //     },
+        //     // {
+        //     //     $lookup: {
+        //     //         from: 'users',
+        //     //         localField: 'customerId',
+        //     //         foreignField: '_id',
+        //     //         as: 'customerInfo'
+        //     //     }
+        //     // },
+        //     // {
+        //     //     $lookup: {
+        //     //         from: 'cars',
+        //     //         localField: 'carId',
+        //     //         foreignField: '_id',
+        //     //         as: 'carInfo'
+        //     //     }
+        //     // },
+        //     // {
+        //     //     $lookup: {
+        //     //         from: 'dealers',
+        //     //         localField: 'dealerId',
+        //     //         foreignField: '_id',
+        //     //         as: 'dealerInfo'
+        //     //     }
+        //     // },
+        //     // {
+        //     //     $lookup: {
+        //     //         from: 'dealers',
+        //     //         localField: 'EMIOptions',
+        //     //         foreignField: '_id',
+        //     //         as: 'dealerInfo'
+        //     //     }
+        //     // },
+        //     // {
+        //     //     $unwind: '$options'
+        //     // },
+        // ]);
 
-        // const orders = await financeModel.find({ customerId })
-        //                         .populate({ path: 'carId' })
-        //                         .populate({ path: 'dealerId' })
-        //                         .populate({ path: 'customerSelectedCar.carId' })
-        //                         .populate({ path: 'EMIOptions' })
-        //                         .populate({
-        //                             path: 'customerSelectedEMIOption',
-        //                             match: { _id: '$customerSelectedEMIOption' } // Filter to match the desired _id
-        //                         })
-        //                         .populate({ path: 'dealerProvidedOptions.carId' });
+        const orders = await financeModel.find({ customerId })
+                                .populate({ path: 'carId' })
+                                .populate({ path: 'dealerId' })
+                                .populate({ path: 'customerSelectedCar.carId' })
+                                .populate({ path: 'EMIOptions' })
+                                .populate({ path: 'dealerProvidedOptions.carId' });
 
         return orders;
     },
