@@ -154,7 +154,8 @@ const financeOrdersSchema = mongoose.Schema({
         }
     }],
     status: {
-        type: String
+        type: String,
+        default: ''
     },
     isTradeinCarAvilable: {
         type: Boolean
