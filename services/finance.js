@@ -359,7 +359,7 @@ module.exports = {
             }
         ]);
 
-        console,log(selectedEMIOption);
+        console.log(selectedEMIOption);
 
         return selectedEMIOption;
     },
