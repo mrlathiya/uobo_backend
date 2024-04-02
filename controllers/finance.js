@@ -217,7 +217,7 @@ module.exports = {
                 };
 
                 if (params.customerSelectedEMIOption) {
-                    let selectedOption = await financeService.getCustomerSelectedOption(customerSelectedEMIOption);
+                    let selectedOption = await financeService.getCustomerSelectedOption(params.customerSelectedEMIOption);
     
                     if (!selectedOption) {
                         return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer selected EMI option plan not found' });
