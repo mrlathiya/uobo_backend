@@ -226,7 +226,7 @@ module.exports = {
                     params.selectedPlan = {
                         bankName: selectedOption[0].bankName,
                         dealerId: selectedOption[0].dealerId,
-                        plan: selectedOption[0].plan
+                        plan: selectedOption[0].options
                     }
                 }
 
