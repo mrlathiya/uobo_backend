@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www"
+    "start": "node ./bin/www"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.515.0",
@@ -24,6 +24,7 @@
     "multer": "^1.4.5-lts.1",
     "nodemon": "^3.0.1",
     "pm2": "^5.3.0",
+    "stripe": "^14.24.0",
     "uuid": "^7.0.3"
   }
 }

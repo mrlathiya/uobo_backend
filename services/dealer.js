@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const dealerSchema = require('../models/dealer');
 const dealerRating = require('../models/dealerRating');
+const stripeAccountSchema = require('../models/stripeAccount');
 
 module.exports = {
     addDealer: async (params) => {
@@ -305,6 +306,23 @@ module.exports = {
                                         });
 
         return ratings;
+    },
+
+    createDealerStripeAccount: async (params, dealerId) => {
+        let stripeAccountDetails = await new stripeAccountSchema({
+            dealerId,
+            stripeAccountId: params.id,
+            object: params.object,
+            country: params.country,
+            default_currency: params.default_currency,
+            type: params.type
+        });
+
+        if (stripeAccountDetails != null) {
+            return stripeAccountDetails.save();
+        } else {
+            return false;
+        }
     },
 
     getNearByDealer: async (dealer) => {

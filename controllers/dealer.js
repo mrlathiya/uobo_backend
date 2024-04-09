@@ -5,6 +5,7 @@ const awsServices = require('../config/aws-services');
 const fs = require('fs');
 const path = require('path');
 const dealer = require('../models/dealer');
+const stripe = require('stripe')('sk_test_51OYse8KialSzstv1KOoxA6BB1Fw1IbYiYiCzRxcJxH5fb87pgmGvufFjZ63B01BXL81pDRxqNP0NI4uQYFHWSkOt00xM8e1TpZ');
 
 const uploadedImage = async (base64Image, fileNameConst) => {
     const matches = base64Image.match(/^data:image\/(\w+);base64,(.+)$/);
@@ -88,7 +89,6 @@ const convertCsvToJson = async (csvFile, dealerId) => {
     
     return jsonData; 
 }
-
 
 const addCSVRawToDB = async (dataRow, dealerId) => {
     try {
@@ -211,6 +211,24 @@ module.exports = {
                 const token = await userServices.createUserToken(dealer._id);
 
                 if (token) {
+
+                    const account = await stripe.accounts.create({
+                        country: 'CA',
+                        type: 'custom',
+                        capabilities: {
+                          card_payments: {
+                            requested: true,
+                          },
+                          transfers: {
+                            requested: true,
+                          },
+                        },
+                    });
+
+                    if (account != null) {
+                        await dealerServices.createDealerStripeAccount(account, registerDealerData._id);
+                    }
+
                     if (csvFile) {
                         let dealerInventory = await convertCsvToJson(csvFile, registerDealerData._id);
     
@@ -218,7 +236,8 @@ module.exports = {
                             IsSuccess: true, 
                             Data: [registerDealerData], 
                             Inventory: dealerInventory,
-                            token, 
+                            token,
+                            StripeAccount: account, 
                             Message: 'Dealer registration successfully' 
                         });
     
@@ -226,7 +245,8 @@ module.exports = {
                         return res.status(200).json({ 
                             IsSuccess: true, 
                             Data: registerDealerData,
-                            token, 
+                            token,
+                            StripeAccount: account, 
                             Message: 'Dealer Register Successfully' 
                         });
                     }
