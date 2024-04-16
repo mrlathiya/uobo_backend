@@ -17,6 +17,7 @@ router.get('/', authController, carController.getAllCars);
 router.get('/:dealerId', authController, carController.getAllCars);
 router.put('/', authController, carController.editCarDetails);
 router.delete('/:dealerId', authController, carController.deleteCar);
+// router.delete('/:dealerId', authController, carController.deleteCar);
 
 
 module.exports = router;
