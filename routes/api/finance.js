@@ -24,5 +24,7 @@ router.put('/withoutcar', commonAuthController, financeController.editCustomerWi
 
 router.get('/liveOrders', dealerAuthController, financeController.getCustomerRequestedOrder);
 
+router.post('/sendEnvelope', financeController.sendDocuSignDoc);
+
 
 module.exports = router;

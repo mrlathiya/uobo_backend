@@ -2,6 +2,7 @@ require("dotenv").config();
 const { trusted } = require('mongoose');
 const financeService = require('../services/finance');
 const customerService = require('../services/user');
+const docusign = require('../docusign/jwtConsole');
 
 module.exports = {
     addCustomerFinanceDetails: async (req, res, next) => {
@@ -412,6 +413,24 @@ module.exports = {
             } else {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer requested orders not found' });
             }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
+
+    sendDocuSignDoc: async (req, res, next) => {
+        try {
+
+            // console.log('hello');
+
+            const { signerEmail, signerName, ccEmail, ccName } = req.body;
+
+            // Invoke DocuSign functionality
+            const envelopeId = await docusign.main(signerEmail, signerName, ccEmail, ccName);
+
+            // Return envelope ID in the response
+            res.json({ envelopeId });
+            
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
         }

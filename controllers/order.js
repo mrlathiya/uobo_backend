@@ -94,7 +94,7 @@ module.exports = {
                     Message: 'Customer orders found' 
                 });
             } else {
-                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer orders not found' });
+                return res.status(200).json({ IsSuccess: false, Data: [], Message: 'Customer orders not found' });
             }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
