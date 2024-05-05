@@ -78,6 +78,7 @@ async function authenticate(){
   }
 }
 
+
 function getArgs(apiAccountId, accessToken, basePath, signerEmail, signerName, ccEmail, ccName){
   // signerEmail = prompt("Enter the signer's email address: ");
   // signerName = prompt("Enter the signer's name: ");
