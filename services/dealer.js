@@ -77,6 +77,16 @@ module.exports = {
         return dealer;
     },
 
+    updateDealerFCMToken: async (dealerId, fcmToken) => {
+        let update = {
+            fcmToken
+        }
+
+        let editDealerToken = await dealerSchema.findByIdAndUpdate(dealerId, update, { new: true });
+
+        return editDealerToken;
+    },
+
     getAllDealers: async () => {
         const dealers = await dealerSchema.aggregate([
             {

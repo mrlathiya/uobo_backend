@@ -5,6 +5,9 @@ const dealerSchema = mongoose.Schema({
         type: String,
         require: true
     },
+    fcmToken: {
+        type: String
+    },
     address: {
         address1: {
             type: String

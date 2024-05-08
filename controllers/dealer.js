@@ -268,7 +268,18 @@ module.exports = {
 
             let dealer = await dealerServices.loginDealer(params);
 
+            if (!params.fcmToken) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer FCM token is required' });
+            }
+
             if (dealer) {
+
+                let dealerToken = await dealerServices.updateDealerFCMToken(dealer._id, params.fcmToken);
+
+                if (dealerToken === undefined || dealerToken === null) {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer FCM token is not updated' });
+                }
+
                 const token = await userServices.createUserToken(dealer._id);
 
                 if (token) {

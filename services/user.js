@@ -59,6 +59,16 @@ module.exports = {
         return user;
     },
 
+    updateCustomerFCMToken: async (customerId, fcmToken) => {
+        let update = {
+            fcmToken
+        }
+
+        let editCustomerToken = await userSchema.findByIdAndUpdate(customerId, update, { new: true });
+
+        return editCustomerToken;
+    },
+
     updateUserProfileInformation: async (params, user) => {
         let update = {
             firstName: params.firstName !== '' && params.firstName !== undefined ? params.firstName : undefined,

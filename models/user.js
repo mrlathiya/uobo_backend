@@ -37,6 +37,9 @@ const userSchema = mongoose.Schema(
         DOB: {
             type: String
         },
+        fcmToken: {
+            type: String
+        },
         address: {
             address1: {
                 type: String

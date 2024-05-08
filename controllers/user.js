@@ -1,5 +1,7 @@
 const userServices = require('../services/user');
 const fs = require('fs');
+const sendNotification = require('../config/send-notification');
+
 
 const uploadedImage = async (base64Image, fileNameConst) => {
     const matches = base64Image.match(/^data:image\/(\w+);base64,(.+)$/);
@@ -102,11 +104,23 @@ module.exports = {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Mobile number is required' });
             }
 
+            if (!params.fcmToken) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'FCM Token is required' });
+            }
+
             let checkExistUser = await userServices.getUserByMobileNumber(params);
 
             if (checkExistUser.length === 1) {
                 const userId = checkExistUser[0]._id;
+
+                let customerFCMToken = await userServices.updateCustomerFCMToken(userId, params.fcmToken);
+
+                if (customerFCMToken === undefined || customerFCMToken === null) {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'User FCM token not updated' });
+                }
+                
                 let token = await userServices.createUserToken(userId);
+
                 if (token) {
                     return res.status(200).json({ IsSuccess: true, Data: checkExistUser, token, Message: 'User logged In...!!!' });
                 } else {
@@ -276,6 +290,14 @@ module.exports = {
             }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    },
+
+    sendNoti: async (req, res, next) => {
+        try {
+            await sendNotification.sendFirebaseNotification('c9jGskZrr0HrnXB0K-evHG:APA91bH2wQUJCow5-lVfWSPRWWqNBqXuOZ-S015XfBRWyg7Sei256_lRXr6gm8zZTClPh6VyKrEVy3lhTKHQG2mLN_uCB9PPldacJTZGMSD_PNjZ_pQZpDFsjxSsLiR6Va-eD4B2-OEq');
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
         }
     }
 }

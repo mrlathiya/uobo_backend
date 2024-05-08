@@ -30,6 +30,7 @@
     "pm2": "^5.3.0",
     "prompt-sync": "^4.2.0",
     "remove-node-modules": "^1.7.6",
+    "request": "^2.88.2",
     "stripe": "^14.24.0",
     "uuid": "^7.0.3"
   }
