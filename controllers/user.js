@@ -295,7 +295,11 @@ module.exports = {
 
     sendNoti: async (req, res, next) => {
         try {
-            await sendNotification.sendFirebaseNotification('c9jGskZrr0HrnXB0K-evHG:APA91bH2wQUJCow5-lVfWSPRWWqNBqXuOZ-S015XfBRWyg7Sei256_lRXr6gm8zZTClPh6VyKrEVy3lhTKHQG2mLN_uCB9PPldacJTZGMSD_PNjZ_pQZpDFsjxSsLiR6Va-eD4B2-OEq');
+            let { token, title, body } = req.query;
+
+            let data = await sendNotification.sendFirebaseNotification(token, title, body);
+
+            return res.send(data);
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
         }

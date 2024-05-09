@@ -4,9 +4,11 @@
 var request = require('request');
 
 const sendFirebaseNotification = async (token, title, body, data, category, senderId, receiverId) => {
+
+  let notificationStatus;
   const payload = {
-    title: "Order Alert",
-    body: "New Order Alert Found For You.",
+    title: title,
+    body: body,
     data: {
         "sound": "surprise.mp3",
         "orderid": 'orderId',
