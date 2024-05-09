@@ -268,17 +268,17 @@ module.exports = {
 
             let dealer = await dealerServices.loginDealer(params);
 
-            if (!params.fcmToken) {
-                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer FCM token is required' });
-            }
+            // if (!params.fcmToken) {
+            //     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer FCM token is required' });
+            // }
 
             if (dealer) {
 
-                let dealerToken = await dealerServices.updateDealerFCMToken(dealer._id, params.fcmToken);
+                // let dealerToken = await dealerServices.updateDealerFCMToken(dealer._id, params.fcmToken);
 
-                if (dealerToken === undefined || dealerToken === null) {
-                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer FCM token is not updated' });
-                }
+                // if (dealerToken === undefined || dealerToken === null) {
+                //     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer FCM token is not updated' });
+                // }
 
                 const token = await userServices.createUserToken(dealer._id);
 
@@ -289,6 +289,27 @@ module.exports = {
                 }
             } else {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: "Dealer not found" });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    },
+
+    registerDealerFCMToken: async (req, res, next) => {
+        try {
+            const { fcmToken } = req.body;
+            const dealer = req.user;
+
+            if (!fcmToken) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide mobile countryCode' });
+            }
+
+            let dealerToken = await dealerServices.updateDealerFCMToken(dealer._id, fcmToken);
+
+            if (dealerToken === undefined || dealerToken === null) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer FCM token is not updated' });
+            } else {
+                return res.status(200).json({ IsSuccess: true, Data: dealerToken, Message: 'Dealer FCM token updated' });
             }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });

@@ -19,6 +19,7 @@ router.get('/', dealerAuthController, dealerController.getDealer);
 router.get('/all', dealerController.getAlldealerDetails);
 router.put('/', dealerAuthController, dealerController.updateDealer);
 router.delete('/:id', dealerAuthController, dealerController.deleteDealer);
+router.put('/fcmToken', dealerAuthController, dealerController.registerDealerFCMToken);
 
 //Dealer Rating API
 router.post('/rating', authController, dealerController.addDealerRating);
