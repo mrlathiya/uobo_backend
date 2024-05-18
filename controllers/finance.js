@@ -3,6 +3,7 @@ const { trusted } = require('mongoose');
 const financeService = require('../services/finance');
 const customerService = require('../services/user');
 const docusign = require('../docusign/jwtConsole');
+const awsServices = require('../config/aws-services');
 
 module.exports = {
     addCustomerFinanceDetails: async (req, res, next) => {
@@ -80,6 +81,14 @@ module.exports = {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide carId' });
             }
 
+            if (params.documents) {
+                let uploadFiles = await awsServices.listOfDocuments(params.documents, 'Customer_Cash_Finance');
+
+                params.documents = uploadFiles;
+
+                console.log(uploadFiles);
+            } 
+
             let addFinance = await financeService.addCustomerCashFinance(params, customer);
 
             if (addFinance) {
@@ -109,6 +118,14 @@ module.exports = {
             if (!params.carId) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide carId' });
             }
+
+            if (params.documents) {
+                let uploadFiles = await awsServices.listOfDocuments(params.documents, 'Customer_Fix_Finance');
+
+                params.documents = uploadFiles;
+
+                console.log(uploadFiles);
+            } 
 
             let addFinance = await financeService.addCustomerFixFinance(params, customer);
             let editCustomerFinancialInformation = await customerService.editCustomerFinancialDetails(customer._id, params);
@@ -155,6 +172,14 @@ module.exports = {
                 if (!params.status) {
                     return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide status parameter' });
                 }
+
+                if (params.documents) {
+                    let uploadFiles = await awsServices.listOfDocuments(params.documents, 'Customer_Cash_Finance');
+    
+                    params.documents = uploadFiles;
+    
+                    console.log(uploadFiles);
+                } 
     
                 // if (!params.tradeInCarValue) {
                 //     return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide tradeInCarValue parameter' });
@@ -230,6 +255,14 @@ module.exports = {
                         plan: selectedOption[0].options
                     }
                 }
+
+                if (params.documents) {
+                    let uploadFiles = await awsServices.listOfDocuments(params.documents, 'Customer_Fix_Finance');
+    
+                    params.documents = uploadFiles;
+    
+                    console.log(uploadFiles);
+                } 
 
                 // let customerSelectedOption = await financeService.getCustomerSelectedOption(customerSelectedEMIOption);
 

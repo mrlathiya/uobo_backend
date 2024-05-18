@@ -97,6 +97,85 @@ const _upload = async (file, folderName, fileType, fileNameIs) => {
   }
 };
 
+const listOfDocuments = async (files, folderName) => {
+  try {
+    const results = [];
+
+    // Iterate over each file in the array
+    for (const file of files) {
+      let documentIs = file.file;
+      let fileName = file.fileName !== undefined ? file.fileName : new Date().getTime().toString();
+
+      // let base64ContentArray = documentIs.split(",");
+      let base64ContentArray = documentIs;
+
+      // console.log(file.type);
+      
+      let mimeType;
+      if (file.type === "csv") {
+        mimeType = "text/csv";
+      } else if (file.type === "image") {
+        mimeType = 'image/jpeg';
+      } else if (file.type === "pdf") {
+        mimeType = "application/pdf";
+      } else if (file.type === "doc") {
+        mimeType = "application/msword";
+      } else {
+        mimeType = 'application/octet-stream';
+      }
+
+      let fileToStore = Buffer.from(base64ContentArray[1], 'base64');
+
+      // Create a promise for each file upload
+      const uploadPromise = new Promise((resolve, reject) => {
+        console.log("S3 upload...!!!")
+          
+        if (folderName == undefined || folderName == "") {
+          folderName = 'customer_documents';
+        }
+        
+        var profile = {
+          Bucket: process.env.BUCKET_NAME,
+          Key: `${folderName}/${fileName}.${file.type}`,
+          ACL: 'public-read',
+          Body: fileToStore,
+          ContentType: mimeType,
+          ContentEncoding: 'base64'
+        };
+      
+        s3.putObject(profile, function (err, rese) {
+          if (err) {
+            console.log('--------------ERROR---------------', err);
+            resolve({
+              status: 0,
+              err: err
+            });
+          } else {
+            console.log('--------------Solve---------------', `${process.env.AWS_S3_URL}${folderName}/${fileName}.${file.type}`);
+            resolve({
+              status: 1,
+              URL: `${process.env.AWS_S3_URL}${folderName}/${fileName}.${ file.type}`,
+              address: `${folderName}/${fileName}.${file.type}`,
+              name: `${fileName}.${file.type}`,
+              category: file.category,
+              file: `${process.env.AWS_S3_URL}${folderName}/${fileName}.${ file.type}`
+            });
+          }
+        });
+      });
+
+      // Push the upload promise to the results array
+      results.push(uploadPromise);
+    }
+
+    // Return a promise that resolves when all uploads are complete
+    return Promise.all(results);
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
 const _uploadCSV = async (file, folderName, fileType, fileNameIs) => {
   try {
     let fileName = fileNameIs !== undefined ? fileNameIs.replace(/\s/g, '_') : new Date().getTime().toString();
@@ -187,5 +266,6 @@ module.exports = {
   _upload,
   _uploadCSV,
   _delete,
-  uploadPDF
+  uploadPDF,
+  listOfDocuments
 };
