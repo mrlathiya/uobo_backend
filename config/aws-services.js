@@ -107,7 +107,14 @@ const listOfDocuments = async (files, folderName) => {
       let fileName = file.fileName !== undefined ? file.fileName : new Date().getTime().toString();
 
       // let base64ContentArray = documentIs.split(",");
-      let base64ContentArray = documentIs;
+      // let base64ContentArray = documentIs;
+
+      let base64Content;
+      if (documentIs.includes(',')) {
+        base64Content = documentIs.split(',')[1]; // Split and get the base64 string
+      } else {
+        base64Content = documentIs; // Already a base64 string
+      }
 
       // console.log(file.type);
       
@@ -124,7 +131,7 @@ const listOfDocuments = async (files, folderName) => {
         mimeType = 'application/octet-stream';
       }
 
-      let fileToStore = Buffer.from(base64ContentArray[1], 'base64');
+      let fileToStore = Buffer.from(base64Content, 'base64');
 
       // Create a promise for each file upload
       const uploadPromise = new Promise((resolve, reject) => {
