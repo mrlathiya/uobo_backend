@@ -4,10 +4,11 @@ const router = express.Router();
 
 const carController = require('../../controllers/car');
 const authController = require('../../middleware/auth');
+const commonAuthController = require('../../middleware/commonAuth');
 const dealerAuthController = require('../../middleware/dealerAuth');
 
 
-router.get('/search', dealerAuthController, carController.searchCarInventory);
+router.get('/search', commonAuthController, carController.searchCarInventory);
 
 router.post('/category', carController.addCarType);
 router.get('/category', carController.getVehicleCategories);
