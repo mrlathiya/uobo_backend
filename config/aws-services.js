@@ -114,7 +114,7 @@ const listOfDocuments = async (files, folderName) => {
       let mimeType;
       if (file.type === "csv") {
         mimeType = "text/csv";
-      } else if (file.type === "image") {
+      } else if (file.type === "image" || file.type === "jpeg" || file.type === "jpg" || file.type === "png") {
         mimeType = 'image/jpeg';
       } else if (file.type === "pdf") {
         mimeType = "application/pdf";
