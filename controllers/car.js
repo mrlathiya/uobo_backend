@@ -251,7 +251,7 @@ module.exports = {
         }
     },
 
-    testData: async (req, res, next) => {
+    testData1: async (req, res, next) => {
         try {
             let data = [
                 {
@@ -288,5 +288,44 @@ module.exports = {
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
         }
-    }
+    },
+
+    testData2: async (req, res, next) => {
+        try {
+            let data = [
+                {
+                    category: "Movie",
+                    amount: 45
+                },
+                {
+                    category: "Grocery",
+                    amount: 200
+                },
+                {
+                    category: "Fuel",
+                    amount: 75
+                },
+                {
+                    category: "Insurance",
+                    amount: 225
+                },
+                {
+                    category: "Mobile bill",
+                    amount: 60
+                },
+                {
+                    category: "Wifi Bill",
+                    amount: 60
+                },
+                {
+                    category: "Miscellaneous",
+                    amount: 40
+                },
+            ];
+
+            return res.status(200).json({ data: data });
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
 }
