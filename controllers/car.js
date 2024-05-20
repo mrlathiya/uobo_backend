@@ -249,5 +249,44 @@ module.exports = {
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
         }
+    },
+
+    testData: async (req, res, next) => {
+        try {
+            let data = [
+                {
+                    category: "Movie",
+                    amount: 15
+                },
+                {
+                    category: "Grocery",
+                    amount: 210
+                },
+                {
+                    category: "Fuel",
+                    amount: 70
+                },
+                {
+                    category: "Insurance",
+                    amount: 250
+                },
+                {
+                    category: "Mobile bill",
+                    amount: 50
+                },
+                {
+                    category: "Wifi Bill",
+                    amount: 65
+                },
+                {
+                    category: "Miscellaneous",
+                    amount: 15
+                },
+            ];
+
+            return res.status(200).json({ data: data });
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
     }
 }
