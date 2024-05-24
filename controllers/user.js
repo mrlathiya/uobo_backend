@@ -1,7 +1,10 @@
+require("dotenv").config();
 const userServices = require('../services/user');
 const fs = require('fs');
 const sendNotification = require('../config/send-notification');
+const Stripe = require('stripe');
 
+const stripe = Stripe(process.env.STRIPE_SECRET);
 
 const uploadedImage = async (base64Image, fileNameConst) => {
     const matches = base64Image.match(/^data:image\/(\w+);base64,(.+)$/);
@@ -290,6 +293,29 @@ module.exports = {
             }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    },
+
+    createStripePayment: async (req, res, next) => {
+        try {
+            const { amount, currency, dealerId } = req.body;
+
+            // Calculate commission and net amount
+            const commission = amount * 0.05;
+            const netAmount = amount - commission;
+
+            // Create a PaymentIntent with the total amount
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: Math.round(amount),
+                currency: currency,
+                metadata: { dealerId, commission, netAmount }
+            });
+
+            res.send({
+                clientSecret: paymentIntent.client_secret,
+            });
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
         }
     },
 
