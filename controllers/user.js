@@ -4,7 +4,7 @@ const fs = require('fs');
 const sendNotification = require('../config/send-notification');
 const Stripe = require('stripe');
 
-const stripe = Stripe(process.env.STRIPE_SECRET);
+const stripe = Stripe(process.env.STRIPE_SECRET_TEST);
 
 const uploadedImage = async (base64Image, fileNameConst) => {
     const matches = base64Image.match(/^data:image\/(\w+);base64,(.+)$/);
