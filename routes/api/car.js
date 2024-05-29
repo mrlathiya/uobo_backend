@@ -7,10 +7,6 @@ const authController = require('../../middleware/auth');
 const commonAuthController = require('../../middleware/commonAuth');
 const dealerAuthController = require('../../middleware/dealerAuth');
 
-router.get('/expense1', carController.testData1);
-router.get('/expense2', carController.testData2);
-
-
 router.get('/search', commonAuthController, carController.searchCarInventory);
 
 router.post('/category', carController.addCarType);

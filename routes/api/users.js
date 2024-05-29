@@ -16,6 +16,7 @@ router.post('/dlVerification', authController, userController.userVerification);
 router.patch('/location', authController, userController.updateUserLocation);
 router.post('/email', authController, userController.collectUserEmail);
 router.post('/stripe-payment', userController.createStripePayment);
+router.post('/transfer-stripe-payment', userController.transferStripePayment);
 
 
 module.exports = router;

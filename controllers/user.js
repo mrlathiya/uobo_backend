@@ -298,7 +298,7 @@ module.exports = {
 
     createStripePayment: async (req, res, next) => {
         try {
-            const { amount, currency, dealerId } = req.body;
+            const { amount, currency, dealerId, customerId } = req.body;
 
             // Calculate commission and net amount
             const commission = amount * 0.05;
@@ -308,14 +308,34 @@ module.exports = {
             const paymentIntent = await stripe.paymentIntents.create({
                 amount: Math.round(amount),
                 currency: currency,
-                metadata: { dealerId, commission, netAmount }
+                metadata: { dealerId, commission, netAmount, customerId }
             });
 
-            res.send({
+            return res.send({
                 clientSecret: paymentIntent.client_secret,
             });
         } catch (error) {
+            console.log(error)
             return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
+
+    transferStripePayment: async (req, res, next) => {
+        const { amount, destinationAccountId } = req.body;
+        try {
+            const transfer = await stripe.transfers.create({
+            amount,
+            currency: 'usd',
+            destination: destinationAccountId,
+            });
+
+            res.send({
+            transfer,
+            });
+        } catch (error) {
+            res.status(500).send({
+            message: error.message,
+            });
         }
     },
 
