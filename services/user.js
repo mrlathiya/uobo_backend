@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const userSchema = require('../models/user');
 const emailSchema = require('../models/emails');
+const dealerSchema = require('../models/dealer');
 
 module.exports = {
     registerUser: async (params) => {
@@ -172,5 +173,12 @@ module.exports = {
         let updateCustomerDetails = await userSchema.findByIdAndUpdate(customerId, update, { new: true });
 
         return updateCustomerDetails;
+    },
+
+    getCustomerDealer: async (customerId, dealerId) => {
+        let customer = await userSchema.findOne(customerId);
+        let dealer = await dealerSchema.findOne(dealerId);
+
+        return { customer, dealer }
     }
 }

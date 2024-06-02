@@ -12,6 +12,7 @@ router.get('/mortgageCategory', financeController.getMortgageCategory);
 
 // router.post('/', authController, financeController.addCustomerFinanceDetails);
 // router.get('/', authController, financeController.getCustomerFinance);
+router.get('/order', financeController.getFinanceOrder)
 
 router.post('/cash', authController, financeController.addCustomerFinanceCashFlow);
 router.post('/fix', commonAuthController, financeController.addCustomerFinanceFixFlow);

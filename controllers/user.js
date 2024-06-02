@@ -327,7 +327,7 @@ module.exports = {
         try {
             const transfer = await stripe.transfers.create({
             amount,
-            currency: 'usd',
+            currency: 'cad',
             destination: destinationAccountId,
             });
 

@@ -467,6 +467,27 @@ module.exports = {
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
         }
+    },
+
+    getFinanceOrder: async (req, res, next) => {
+        try {
+            const orderId = req.query.orderId;
+
+            if (orderId === undefined || orderId === null || orderId === '') {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Something went wrong' });
+            }
+
+            let orderInformation = await financeService.getFinanceById(orderId);
+
+            if (orderInformation) {
+                return res.status(200).json({ IsSuccess: true, Data: [orderInformation], Message: 'Order data found' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Data not found' });
+            }
+            
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
     }
 
 }
