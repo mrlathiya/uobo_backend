@@ -315,7 +315,7 @@ module.exports = {
                 amount: Math.round(amounIs) * 100,
                 currency: 'cad',
                 transfer_data: {
-                    destination: destinationId ? destinationId : 'acct_1PPAJQHyM4L26Acw',
+                    destination: destinationId ? destinationId : 'acct_1NECetLTrUb0toUo',
                   },
                 metadata: { dealerId, commission, netAmount, customerId }
             });
