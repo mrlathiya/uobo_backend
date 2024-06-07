@@ -4,8 +4,6 @@ const fs = require('fs');
 const sendNotification = require('../config/send-notification');
 const Stripe = require('stripe');
 
-const stripe = Stripe(process.env.STRIPE_SECRET);
-
 const uploadedImage = async (base64Image, fileNameConst) => {
     const matches = base64Image.match(/^data:image\/(\w+);base64,(.+)$/);
       
@@ -298,7 +296,13 @@ module.exports = {
 
     createStripePayment: async (req, res, next) => {
         try {
-            const { amount, currency, dealerId, customerId } = req.body;
+            const { amount, currency, dealerId, customerId, requestType } = req.body;
+
+            let stripe = Stripe(process.env.STRIPE_SECRET);
+
+            if (requestType === 'test') {
+                stripe = Stripe(process.env.STRIPE_SECRET_TEST);
+            }
 
             let amounIs = amount * 100
 
@@ -323,16 +327,23 @@ module.exports = {
     },
 
     transferStripePayment: async (req, res, next) => {
-        const { amount, destinationAccountId } = req.body;
+        const { amount, destinationAccountId, requestType } = req.body;
         try {
+
+            let stripe = Stripe(process.env.STRIPE_SECRET);
+
+            if (requestType === 'test') {
+                stripe = Stripe(process.env.STRIPE_SECRET_TEST);
+            }
+
             const transfer = await stripe.transfers.create({
-            amount,
-            currency: 'cad',
-            destination: destinationAccountId,
+                amount,
+                currency: 'cad',
+                destination: destinationAccountId,
             });
 
             res.send({
-            transfer,
+                transfer,
             });
         } catch (error) {
             res.status(500).send({
