@@ -304,15 +304,15 @@ module.exports = {
                 stripe = Stripe(process.env.STRIPE_SECRET_TEST);
             }
 
-            let amounIs = amount * 100
+            // let amounIs = amount
 
             // Calculate commission and net amount
-            const commission = amounIs * 0.05;
-            const netAmount = amounIs - commission;
+            const commission = amount * 0.05;
+            const netAmount = amount - commission;
 
             // Create a PaymentIntent with the total amount
             const paymentIntent = await stripe.paymentIntents.create({
-                amount: Math.round(amounIs) * 100,
+                amount: Math.round(amount),
                 currency: 'cad',
                 transfer_data: {
                     destination: destinationId ? destinationId : 'acct_1NECetLTrUb0toUo',
