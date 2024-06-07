@@ -313,7 +313,10 @@ module.exports = {
             // Create a PaymentIntent with the total amount
             const paymentIntent = await stripe.paymentIntents.create({
                 amount: Math.round(amounIs) * 100,
-                currency: currency,
+                currency: 'cad',
+                transfer_data: {
+                    destination: 'acct_1P6Ol44DazdS0w9d',
+                  },
                 metadata: { dealerId, commission, netAmount, customerId }
             });
 
