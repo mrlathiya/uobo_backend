@@ -304,15 +304,15 @@ module.exports = {
                 stripe = Stripe(process.env.STRIPE_SECRET_TEST);
             }
 
-            // let amounIs = amount * 100
+            let amounIs = amount * 100
 
             // Calculate commission and net amount
-            const commission = amount * 0.05;
-            const netAmount = amount - commission;
+            const commission = amounIs * 0.05;
+            const netAmount = amounIs - commission;
 
             // Create a PaymentIntent with the total amount
             const paymentIntent = await stripe.paymentIntents.create({
-                amount: Math.round(amount),
+                amount: Math.round(amounIs) * 100,
                 currency: currency,
                 metadata: { dealerId, commission, netAmount, customerId }
             });
