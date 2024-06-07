@@ -296,7 +296,7 @@ module.exports = {
 
     createStripePayment: async (req, res, next) => {
         try {
-            const { amount, currency, dealerId, customerId, requestType } = req.body;
+            const { amount, currency, dealerId, customerId, requestType, destinationId } = req.body;
 
             let stripe = Stripe(process.env.STRIPE_SECRET);
 
@@ -315,7 +315,7 @@ module.exports = {
                 amount: Math.round(amounIs) * 100,
                 currency: 'cad',
                 transfer_data: {
-                    destination: 'acct_1P6Ol44DazdS0w9d',
+                    destination: destinationId ? destinationId : 'acct_1PPAJQHyM4L26Acw',
                   },
                 metadata: { dealerId, commission, netAmount, customerId }
             });
