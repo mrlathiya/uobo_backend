@@ -305,14 +305,17 @@ module.exports = {
             }
 
             // let amounIs = amount
+            const amountInCents = Math.round(amount * 100);
 
             // Calculate commission and net amount
             const commission = amount * 0.05;
             const netAmount = amount - commission;
 
+            console.log(Math.round(amount))
+
             // Create a PaymentIntent with the total amount
             const paymentIntent = await stripe.paymentIntents.create({
-                amount: Math.round(amount),
+                amount: amountInCents,
                 currency: 'cad',
                 transfer_data: {
                     destination: destinationId ? destinationId : 'acct_1NECetLTrUb0toUo',
