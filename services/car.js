@@ -147,16 +147,29 @@ module.exports = {
         return vehicleTypeSchema.find();
     },
 
-    searchOperation: async (keyword, dealerId) => {
-        const query = {
-            $or: [
-                { Make: { $regex: keyword, $options: 'i' } },
-                { Model: { $regex: keyword, $options: 'i' } },
-                { Body_Style: { $regex: keyword, $options: 'i' } },
-                { Exterior_Colour: { $regex: keyword, $options: 'i' } }
-            ],
-            dealerId
-        };
+    searchOperation: async (keyword, userId, userType) => {
+        let query;
+
+        if (userType === 'dealer') {
+            query = {
+                $or: [
+                    { Make: { $regex: keyword, $options: 'i' } },
+                    { Model: { $regex: keyword, $options: 'i' } },
+                    { Body_Style: { $regex: keyword, $options: 'i' } },
+                    { Exterior_Colour: { $regex: keyword, $options: 'i' } }
+                ],
+                dealerId: userId
+            };
+        } else {
+            query = {
+                $or: [
+                    { Make: { $regex: keyword, $options: 'i' } },
+                    { Model: { $regex: keyword, $options: 'i' } },
+                    { Body_Style: { $regex: keyword, $options: 'i' } },
+                    { Exterior_Colour: { $regex: keyword, $options: 'i' } }
+                ]
+            };
+        }
 
         let cars = await carSchema.find(query);
 

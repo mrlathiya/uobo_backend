@@ -20,11 +20,15 @@ module.exports = async function (req, res, next) {
             }
 
             req.userToken = decodeToken.decodeToken;
+
             req.user = user;
+            req.userType = 'customer';
             
         } else {
             req.userToken = decodeToken.decodeToken;
+
             req.user = dealer;
+            req.userType = 'dealer';
         }
         next();
 

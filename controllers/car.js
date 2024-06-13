@@ -224,7 +224,7 @@ module.exports = {
         try {
             const { keyword } = req.query;
 
-            const dealer = req.user;
+            const userIs = req.user;
 
             if (!keyword) {
                 return res.status(401).json({ 
@@ -234,7 +234,7 @@ module.exports = {
                 });
             }
 
-            const cars = await carServices.searchOperation(keyword, dealer._id);
+            const cars = await carServices.searchOperation(keyword, userIs._id, req.userType);
 
             if (cars) {
                 return res.status(200).json({ 
