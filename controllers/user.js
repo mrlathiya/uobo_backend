@@ -313,10 +313,16 @@ module.exports = {
 
             console.log(Math.round(amount))
 
+            const commissionInCents = Math.round(amountInCents * 0.05);
+
+            // Calculate the net amount for the destination account (95% of the amount)
+            const netAmountInCents = amountInCents - commissionInCents;
+
             // Create a PaymentIntent with the total amount
             const paymentIntent = await stripe.paymentIntents.create({
-                amount: amountInCents,
+                amount: netAmountInCents,
                 currency: 'cad',
+                application_fee_amount: commissionInCents,
                 transfer_data: {
                     destination: destinationId ? destinationId : 'acct_1NECetLTrUb0toUo',
                   },
