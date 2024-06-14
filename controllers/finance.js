@@ -1,9 +1,9 @@
 require("dotenv").config();
-const { trusted } = require('mongoose');
 const financeService = require('../services/finance');
 const customerService = require('../services/user');
 const docusign = require('../docusign/jwtConsole');
 const awsServices = require('../config/aws-services');
+const sendNotification = require('../config/send-notification');
 
 module.exports = {
     addCustomerFinanceDetails: async (req, res, next) => {
@@ -92,6 +92,12 @@ module.exports = {
             let addFinance = await financeService.addCustomerCashFinance(params, customer);
 
             if (addFinance) {
+                if (customer.token) {
+                    const title = `New cash order created`;
+                    const content = `Order by ${customer.firstName} ${customer.lastName}`;
+                    const dataContent = '';
+                    await sendNotification.sendFirebaseNotification(customer.token,title, content, dataContent, 'CustomerCashFinanceAlert', customer._id, params.dealerId);
+                }
                 return res.status(200).json({ IsSuccess: true, Data: [addFinance], Message: 'Customer cash finance added' });
             } else {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer cash finance not added' });
@@ -124,13 +130,19 @@ module.exports = {
 
                 params.documents = uploadFiles;
 
-                console.log(uploadFiles);
+                // console.log(uploadFiles);
             } 
 
             let addFinance = await financeService.addCustomerFixFinance(params, customer);
             let editCustomerFinancialInformation = await customerService.editCustomerFinancialDetails(customer._id, params);
 
             if (addFinance) {
+                if (customer.token) {
+                    const title = `New Without order created`;
+                    const content = `Order by ${customer.firstName} ${customer.lastName}`;
+                    const dataContent = '';
+                    await sendNotification.sendFirebaseNotification(customer.token,title, content, dataContent, 'CustomerFixFinanceAlert', customer._id, params.dealerId);
+                }
                 return res.status(200).json({ IsSuccess: true, Data: [addFinance, editCustomerFinancialInformation], Message: 'Customer fix finance added' });
             } else {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer fix finance not added' });
