@@ -15,11 +15,12 @@ const authController = require('../../middleware/auth');
 // router.post('/', authController, dealerController.addNewDealer);
 router.post('/', uploadFile.single('inventory_csv'), dealerController.dealerRegistration);
 router.post('/login', dealerController.dealerLogin);
+router.put('/fcmToken', dealerController.editDealerFcmToken);
 router.get('/', dealerAuthController, dealerController.getDealer);
 router.get('/all', dealerController.getAlldealerDetails);
 router.put('/', dealerAuthController, dealerController.updateDealer);
 router.delete('/:id', dealerAuthController, dealerController.deleteDealer);
-router.put('/fcmToken', dealerAuthController, dealerController.registerDealerFCMToken);
+// router.put('/fcmToken', dealerAuthController, dealerController.registerDealerFCMToken);
 
 //Dealer Rating API
 router.post('/rating', authController, dealerController.addDealerRating);

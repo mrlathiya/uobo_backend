@@ -274,6 +274,10 @@ module.exports = {
 
             if (dealer) {
 
+                // if (params.fcmToken) {
+                //     await dealerServices.updateDealerFCMToken(dealer._id, params.fcmToken);
+                // }
+
                 // let dealerToken = await dealerServices.updateDealerFCMToken(dealer._id, params.fcmToken);
 
                 // if (dealerToken === undefined || dealerToken === null) {
@@ -292,6 +296,31 @@ module.exports = {
             }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    },
+
+    editDealerFcmToken: async (req, res, next) => {
+        try {
+            const params = req.body;
+
+            if (params.dealerId === '' || params.dealerId === undefined || params.dealerId === null) {
+                return res.status(400).json({ IsSuccess: false, Message: 'Please pass dealerId for the FCM Token' });
+            }
+
+            if (params.fcmToken === '' || params.fcmToken === undefined || params.fcmToken === null) {
+                return res.status(400).json({ IsSuccess: false, Message: 'Please pass FCM Token' });
+            }
+
+            let updateDealerFcmToken = await dealerServices.updateDealerFCMToken(params.dealerId, params.fcmToken);
+
+            if (updateDealerFcmToken) {
+                return res.status(200).json({ IsSuccess: true, Data: updateDealerFcmToken, Message: 'Dealer FCM token updated' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer FCM token not updated' });
+            }
+
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
         }
     },
 
