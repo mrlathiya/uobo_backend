@@ -13,6 +13,9 @@ const authController = require('../../middleware/auth');
 
 //Dealers API
 // router.post('/', authController, dealerController.addNewDealer);
+
+router.get('/notification', dealerController.getDashboardDealerNotifications);
+
 router.post('/', uploadFile.single('inventory_csv'), dealerController.dealerRegistration);
 router.post('/login', dealerController.dealerLogin);
 router.put('/fcmToken', dealerController.editDealerFcmToken);

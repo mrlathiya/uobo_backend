@@ -320,6 +320,9 @@ const financeOrdersSchema = mongoose.Schema({
     billOfSale: {
         type: String
     }
+},
+{
+    timestamps: true
 });
 
 module.exports = mongoose.model('live_orders', financeOrdersSchema);

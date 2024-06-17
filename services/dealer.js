@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const dealerSchema = require('../models/dealer');
 const dealerRating = require('../models/dealerRating');
 const stripeAccountSchema = require('../models/stripeAccount');
+const notificationStorageSchema = require('../models/notificationStorage');
 
 module.exports = {
     addDealer: async (params) => {
@@ -530,5 +531,14 @@ module.exports = {
         ]);
 
         return dealerInformation;
+    },
+
+    getDealerDashboardNotification: async (dealerId) => {
+        let getNotifications = await notificationStorageSchema.find({ receiverId: dealerId })
+                                                                .sort({ 
+                                                                    createdAt: -1 
+                                                                });
+
+        return getNotifications;
     }
 }

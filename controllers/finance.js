@@ -96,7 +96,7 @@ module.exports = {
                     const title = `New cash order created`;
                     const content = `Order by ${customer.firstName} ${customer.lastName}`;
                     const dataContent = '';
-                    await sendNotification.sendFirebaseNotification(customer.token,title, content, dataContent, 'CustomerCashFinanceAlert', customer._id, params.dealerId);
+                    await sendNotification.sendFirebaseNotification(customer.token,title, content, dataContent, 'CustomerCashFinanceAlert', customer._id, params.dealerId, false);
                 }
                 return res.status(200).json({ IsSuccess: true, Data: [addFinance], Message: 'Customer cash finance added' });
             } else {
@@ -141,7 +141,7 @@ module.exports = {
                     const title = `New Without order created`;
                     const content = `Order by ${customer.firstName} ${customer.lastName}`;
                     const dataContent = '';
-                    await sendNotification.sendFirebaseNotification(customer.token,title, content, dataContent, 'CustomerFixFinanceAlert', customer._id, params.dealerId);
+                    await sendNotification.sendFirebaseNotification(customer.token,title, content, dataContent, 'CustomerFixFinanceAlert', customer._id, params.dealerId, false);
                 }
                 return res.status(200).json({ IsSuccess: true, Data: [addFinance, editCustomerFinancialInformation], Message: 'Customer fix finance added' });
             } else {
@@ -155,9 +155,26 @@ module.exports = {
     editCustomerCashFinanceStatus: async (req, res, next) => {
         try {
             const params = req.body;
+            const user = req.user;
 
             if (params.status === 'CustomerPaidFullInCash') {
                 let editStatus = await financeService.editFinancePaidStatus(params);
+
+                if (req.userType === 'customer') {
+                    if (user.token) {
+                        const title = `Customer edited finance`;
+                        const content = `Cash Order edit by ${user.firstName} ${user.lastName}`;
+                        const dataContent = '';
+                        await sendNotification.sendFirebaseNotification(user.token,title, content, dataContent, 'CustomerCashFinanceUpdateByCustomerAlert', user._id, editStatus[0].dealerId, false);
+                    }
+                } else {
+                    if (user.token) {
+                        const title = `Dealer edited cash finance`;
+                        const content = `Cash Order edited by ${user.firstName} ${user.lastName}`;
+                        const dataContent = '';
+                        await sendNotification.sendFirebaseNotification(user.token,title, content, dataContent, 'CustomerCashFinanceUpdateByDealerAlert', user._id, editStatus[0].customerId, true);
+                    }
+                }                
 
                 if (editStatus) {
                     return res.status(200).json({ IsSuccess: true, Data: editStatus, Message: `Finance status updated ${params.status}` });
@@ -204,6 +221,23 @@ module.exports = {
                 let editStatus = await financeService.editFinanceStatus(params, 'cashFinance');
 
                 if (editStatus) {
+
+                    if (req.userType === 'customer') {
+                        if (user.token) {
+                            const title = `Customer edited finance`;
+                            const content = `Cash Order edit by ${user.firstName} ${user.lastName}`;
+                            const dataContent = '';
+                            await sendNotification.sendFirebaseNotification(user.token,title, content, dataContent, 'CustomerCashFinanceUpdateByCustomerAlert', user._id, editStatus[0].dealerId, false);
+                        }
+                    } else {
+                        if (user.token) {
+                            const title = `Dealer edited cash finance`;
+                            const content = `Cash Order edited by ${user.firstName} ${user.lastName}`;
+                            const dataContent = '';
+                            await sendNotification.sendFirebaseNotification(user.token,title, content, dataContent, 'CustomerCashFinanceUpdateByDealerAlert', user._id, editStatus[0].customerId, true);
+                        }
+                    }  
+                    
                     return res.status(200).json({ IsSuccess: true, Data: editStatus, Message: `Finance status updated ${params.status}` });
                 } else {
                     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Finance status not updated' });

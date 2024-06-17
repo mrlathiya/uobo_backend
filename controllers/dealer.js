@@ -569,4 +569,20 @@ module.exports = {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
         }
     },
+
+    getDashboardDealerNotifications: async (req, res, next) => {
+        try {
+            const user = req.user;
+
+            let notifications = await dealerServices.getDealerDashboardNotification(user._id);
+
+            if (notifications.length) {
+                return res.status(200).json({ IsSuccess: true, Data: notifications, Message: 'Dealer notifications found' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'No dealer notifications found' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    }
 }
