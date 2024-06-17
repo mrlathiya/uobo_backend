@@ -574,7 +574,11 @@ module.exports = {
         try {
             const user = req.user;
 
+            console.log(user);
+
             let notifications = await dealerServices.getDealerDashboardNotification(user._id);
+
+            console.log(notifications);
 
             if (notifications.length) {
                 return res.status(200).json({ IsSuccess: true, Data: notifications, Message: 'Dealer notifications found' });
