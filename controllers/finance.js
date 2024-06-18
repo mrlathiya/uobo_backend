@@ -235,19 +235,23 @@ module.exports = {
 
                 if (editStatus) {
 
+                    console.log(req.userType);
+
                     if (req.userType === 'customer') {
-                        if (user.token) {
+                        if (user.fcmToken) {
                             const title = `Customer edited finance`;
                             const content = `Cash Order edit by ${user.firstName} ${user.lastName}`;
                             const dataContent = '';
-                            await sendNotification.sendFirebaseNotification(user.token,title, content, dataContent, 'CustomerCashFinanceUpdateByCustomerAlert', user._id, editStatus[0].dealerId, false);
+                            await sendNotification.sendFirebaseNotification(user.fcmToken,title, content, dataContent, 'CustomerCashFinanceUpdateByCustomerAlert', user._id, editStatus.dealerId, false);
                         }
                     } else {
-                        if (user.token) {
+                        if (user.fcmToken) {
+                            let customerIs = await customerService.getUserById(editStatus.customerId);
+
                             const title = `Dealer edited cash finance`;
                             const content = `Cash Order edited by ${user.firstName} ${user.lastName}`;
                             const dataContent = '';
-                            await sendNotification.sendFirebaseNotification(user.token,title, content, dataContent, 'CustomerCashFinanceUpdateByDealerAlert', user._id, editStatus[0].customerId, true);
+                            await sendNotification.sendFirebaseNotification(customerIs.fcmToken,title, content, dataContent, 'CustomerCashFinanceUpdateByDealerAlert', customerIs._id, editStatus.dealerId, true);
                         }
                     }  
                     
