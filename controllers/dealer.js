@@ -190,16 +190,18 @@ module.exports = {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide OMVICLicenceLink' });
             }
 
-            // if (!params.countryCode) {
-            //     return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide mobile countryCode' });
-            // }
-
             if (!params.email) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide email parameter' });
             }
 
             if (!params.number) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide mobile number' });
+            }
+
+            let existDealer = await dealerServices.checkExistDealer(params.email, params.number);
+
+            if (existDealer.length > 0) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer already exist with this email or phone number' });
             }
 
             let csvFile = req.file;
@@ -212,22 +214,22 @@ module.exports = {
 
                 if (token) {
 
-                    const account = await stripe.accounts.create({
-                        country: 'CA',
-                        type: 'custom',
-                        capabilities: {
-                          card_payments: {
-                            requested: true,
-                          },
-                          transfers: {
-                            requested: true,
-                          },
-                        },
-                    });
+                    // const account = await stripe.accounts.create({
+                    //     country: 'CA',
+                    //     type: 'custom',
+                    //     capabilities: {
+                    //       card_payments: {
+                    //         requested: true,
+                    //       },
+                    //       transfers: {
+                    //         requested: true,
+                    //       },
+                    //     },
+                    // });
 
-                    if (account != null) {
-                        await dealerServices.createDealerStripeAccount(account, registerDealerData._id);
-                    }
+                    // if (account != null) {
+                    //     await dealerServices.createDealerStripeAccount(account, registerDealerData._id);
+                    // }
 
                     if (csvFile) {
                         let dealerInventory = await convertCsvToJson(csvFile, registerDealerData._id);
@@ -237,7 +239,7 @@ module.exports = {
                             Data: [registerDealerData], 
                             Inventory: dealerInventory,
                             token,
-                            StripeAccount: account, 
+                            // StripeAccount: account, 
                             Message: 'Dealer registration successfully' 
                         });
     
@@ -246,7 +248,7 @@ module.exports = {
                             IsSuccess: true, 
                             Data: registerDealerData,
                             token,
-                            StripeAccount: account, 
+                            // StripeAccount: account, 
                             Message: 'Dealer Register Successfully' 
                         });
                     }

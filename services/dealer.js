@@ -72,6 +72,17 @@ module.exports = {
         return dealer;
     },
 
+    checkExistDealer: async (email, contactNumber) => {
+        let dealer = await dealerSchema.find({
+            $or: [
+                { email },
+                { 'phoneNumber.number': Number(contactNumber) }
+            ]
+        });
+
+        return dealer;
+    },
+
     getDealerByDealerId: async (dealerId) => {
         let dealer = await dealerSchema.findById(dealerId);
 

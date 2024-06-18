@@ -1,6 +1,7 @@
 require("dotenv").config();
 const financeService = require('../services/finance');
 const customerService = require('../services/user');
+const dealerServices = require('../services/dealer');
 const docusign = require('../docusign/jwtConsole');
 const awsServices = require('../config/aws-services');
 const sendNotification = require('../config/send-notification');
@@ -89,14 +90,20 @@ module.exports = {
                 console.log(uploadFiles);
             } 
 
+            let dealerIs = await dealerServices.getDealerByDealerId(params.dealerId);
+
+            if(dealerIs === undefined || dealerIs === null) {
+                return res.status(200).json({ IsSuccess: false, Data: [], Message: 'Dealer not found' });
+            }
+
             let addFinance = await financeService.addCustomerCashFinance(params, customer);
 
             if (addFinance) {
-                if (customer.token) {
+                if (dealerIs.fcmToken) {
                     const title = `New cash order created`;
                     const content = `Order by ${customer.firstName} ${customer.lastName}`;
                     const dataContent = '';
-                    await sendNotification.sendFirebaseNotification(customer.token,title, content, dataContent, 'CustomerCashFinanceAlert', customer._id, params.dealerId, false);
+                    await sendNotification.sendFirebaseNotification(dealerIs.fcmToken,title, content, dataContent, 'CustomerCashFinanceAlert', customer._id, params.dealerId, false);
                 }
                 return res.status(200).json({ IsSuccess: true, Data: [addFinance], Message: 'Customer cash finance added' });
             } else {
