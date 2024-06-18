@@ -138,17 +138,23 @@ module.exports = {
                 params.documents = uploadFiles;
 
                 // console.log(uploadFiles);
-            } 
+            }
+            
+            let dealerIs = await dealerServices.getDealerByDealerId(params.dealerId);
+
+            if(dealerIs === undefined || dealerIs === null) {
+                return res.status(200).json({ IsSuccess: false, Data: [], Message: 'Dealer not found' });
+            }
 
             let addFinance = await financeService.addCustomerFixFinance(params, customer);
             let editCustomerFinancialInformation = await customerService.editCustomerFinancialDetails(customer._id, params);
 
             if (addFinance) {
-                if (customer.token) {
-                    const title = `New Without order created`;
+                if (dealerIs.fcmToken) {
+                    const title = `New Without car order created`;
                     const content = `Order by ${customer.firstName} ${customer.lastName}`;
                     const dataContent = '';
-                    await sendNotification.sendFirebaseNotification(customer.token,title, content, dataContent, 'CustomerFixFinanceAlert', customer._id, params.dealerId, false);
+                    await sendNotification.sendFirebaseNotification(dealerIs.fcmToken,title, content, dataContent, 'CustomerFixFinanceAlert', customer._id, params.dealerId, false);
                 }
                 return res.status(200).json({ IsSuccess: true, Data: [addFinance, editCustomerFinancialInformation], Message: 'Customer fix finance added' });
             } else {
