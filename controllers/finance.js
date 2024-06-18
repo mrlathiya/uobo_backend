@@ -235,23 +235,20 @@ module.exports = {
 
                 if (editStatus) {
 
-                    console.log(req.userType);
-
                     if (req.userType === 'customer') {
                         if (user.fcmToken) {
                             const title = `Customer edited finance`;
                             const content = `Cash Order edit by ${user.firstName} ${user.lastName}`;
                             const dataContent = '';
-                            await sendNotification.sendFirebaseNotification(user.fcmToken,title, content, dataContent, 'CustomerCashFinanceUpdateByCustomerAlert', user._id, editStatus.dealerId, false);
+                            await sendNotification.sendFirebaseNotification(user.fcmToken,title, content, dataContent, 'CustomerCashFinanceUpdateByCustomerAlert', editStatus.customerId, user._id, false);
                         }
                     } else {
                         if (user.fcmToken) {
                             let customerIs = await customerService.getUserById(editStatus.customerId);
-
                             const title = `Dealer edited cash finance`;
                             const content = `Cash Order edited by ${user.firstName} ${user.lastName}`;
                             const dataContent = '';
-                            await sendNotification.sendFirebaseNotification(customerIs.fcmToken,title, content, dataContent, 'CustomerCashFinanceUpdateByDealerAlert', customerIs._id, editStatus.dealerId, true);
+                            await sendNotification.sendFirebaseNotification(customerIs.fcmToken,title, content, dataContent, 'CustomerCashFinanceUpdateByDealerAlert', editStatus.dealerId, customerIs._id, true);
                         }
                     }  
                     
@@ -272,6 +269,7 @@ module.exports = {
     editCustomerFixFinanceStatus: async (req, res, next) => {
         try {
             const params = req.body;
+            const user = req.user;
 
             if (params.confirmAvailabilty === undefined || params.confirmAvailabilty === '' || params.confirmAvailabilty === null) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide confirmAvailabilty parameter' });
@@ -332,6 +330,33 @@ module.exports = {
                 let editStatus = await financeService.editFinanceStatus(params, 'financeFix');
 
                 if (editStatus) {
+
+                    let editStatus = await financeService.editFinanceStatus(params, 'cashFinance');
+
+                if (editStatus) {
+
+                    if (req.userType === 'customer') {
+                        if (user.fcmToken) {
+                            const title = `Customer edited finance`;
+                            const content = `Without car Order edit by ${user.firstName} ${user.lastName}`;
+                            const dataContent = '';
+                            await sendNotification.sendFirebaseNotification(user.fcmToken,title, content, dataContent, 'CustomerFixFinanceUpdateByCustomerAlert', editStatus.customerId, user._id, false);
+                        }
+                    } else {
+                        let customerIs = await customerService.getUserById(editStatus.customerId);
+                        if (customerIs.fcmToken) {
+                            const title = `Dealer edited cash finance`;
+                            const content = `Cash Order edited by ${customerIs.firstName} ${customerIs.lastName}`;
+                            const dataContent = '';
+                            await sendNotification.sendFirebaseNotification(customerIs.fcmToken,title, content, dataContent, 'CustomerFixFinanceUpdateByDealerAlert', editStatus.dealerId, customerIs._id, true);
+                        }
+                    }  
+                    
+                    return res.status(200).json({ IsSuccess: true, Data: editStatus, Message: `Finance status updated ${params.status}` });
+                } else {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Finance status not updated' });
+                }
+
                     return res.status(200).json({ IsSuccess: true, Data: editStatus, Message: `Finance status updated ${params.status}` });
                 } else {
                     // await financeService.deleteEMIOptions(EMIsIds);

@@ -6,15 +6,17 @@ const sendFirebaseNotification = async (token, title, body, data, category, send
   try {
     
     const payload = {
-      title: title,
-      body: body,
+      notification: {
+        title: title,
+        body: body,
+        sound: "surprise.mp3",
+      },
       data: {
-          "sound": "surprise.mp3",
-          "orderid": 'orderId',
-          "distance": 'latlong',
-          "click_action": "FLUTTER_NOTIFICATION_CLICK",
-          title,
-          body
+        orderid: 'orderId',
+        distance: 'latlong',
+        click_action: "FLUTTER_NOTIFICATION_CLICK",
+        title,
+        body
       },
       to: token
     };
