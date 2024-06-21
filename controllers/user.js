@@ -367,7 +367,7 @@ module.exports = {
 
     sendAlertForPaymentProcessCompletion: async (req, res, next) => {
         try {
-            let { customerId, dealerId, status } = req.body;
+            let { customerId, dealerId, status, amount } = req.body;
 
             let customer = await userServices.getUserById(customerId);
             let dealer = await dealerServices.getDealerByDealerId(dealerId);
