@@ -323,9 +323,13 @@ module.exports = {
                     params.documents = uploadFiles;
     
                     console.log(uploadFiles);
-                } 
+                }
+                
+                let dealerIs = await dealerServices.getDealerByDealerId(params.dealerId);
 
-                // let customerSelectedOption = await financeService.getCustomerSelectedOption(customerSelectedEMIOption);
+                if (dealerIs === undefined || dealerIs === null) {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer not found' });
+                }
 
                 let editStatus = await financeService.editFinanceStatus(params, 'financeFix');
 
@@ -333,31 +337,30 @@ module.exports = {
 
                     let editStatus = await financeService.editFinanceStatus(params, 'cashFinance');
 
-                if (editStatus) {
+                    if (editStatus) {
 
-                    if (req.userType === 'customer') {
-                        if (user.fcmToken) {
-                            const title = `Customer edited finance`;
-                            const content = `Without car Order edit by ${user.firstName} ${user.lastName}`;
-                            const dataContent = '';
-                            await sendNotification.sendFirebaseNotification(user.fcmToken,title, content, dataContent, 'CustomerFixFinanceUpdateByCustomerAlert', editStatus.customerId, user._id, false);
-                        }
+                        if (req.userType === 'customer') {
+                            if (dealerIs.fcmToken) {
+                                const title = `Customer edited finance`;
+                                const content = `Without car Order edit by ${user.firstName} ${user.lastName}`;
+                                const dataContent = '';
+                                await sendNotification.sendFirebaseNotification(dealerIs.fcmToken,title, content, dataContent, 'CustomerFixFinanceUpdateByCustomerAlert', editStatus.customerId, dealerIs._id, false);
+                            }
+                        } else {
+                            let customerIs = await customerService.getUserById(editStatus.customerId);
+                            if (customerIs.fcmToken) {
+                                const title = `Dealer edited cash finance`;
+                                const content = `Cash Order edited by ${customerIs.firstName} ${customerIs.lastName}`;
+                                const dataContent = '';
+                                await sendNotification.sendFirebaseNotification(customerIs.fcmToken,title, content, dataContent, 'CustomerFixFinanceUpdateByDealerAlert', editStatus.dealerId, customerIs._id, true);
+                            }
+                        }  
+                        
+                        return res.status(200).json({ IsSuccess: true, Data: editStatus, Message: `Finance status updated ${params.status}` });
                     } else {
-                        let customerIs = await customerService.getUserById(editStatus.customerId);
-                        if (customerIs.fcmToken) {
-                            const title = `Dealer edited cash finance`;
-                            const content = `Cash Order edited by ${customerIs.firstName} ${customerIs.lastName}`;
-                            const dataContent = '';
-                            await sendNotification.sendFirebaseNotification(customerIs.fcmToken,title, content, dataContent, 'CustomerFixFinanceUpdateByDealerAlert', editStatus.dealerId, customerIs._id, true);
-                        }
-                    }  
-                    
-                    return res.status(200).json({ IsSuccess: true, Data: editStatus, Message: `Finance status updated ${params.status}` });
-                } else {
-                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Finance status not updated' });
-                }
+                        return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Finance status not updated' });
+                    }
 
-                    return res.status(200).json({ IsSuccess: true, Data: editStatus, Message: `Finance status updated ${params.status}` });
                 } else {
                     // await financeService.deleteEMIOptions(EMIsIds);
                     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Finance status not updated' });
