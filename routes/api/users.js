@@ -6,6 +6,7 @@ const userController = require('../../controllers/user');
 const authController = require('../../middleware/auth');
 
 router.get('/noti', userController.sendNoti);
+router.post('/payment-alert', userController.sendAlertForPaymentProcessCompletion);
 
 router.post('/', userController.userRegistration);
 router.get('/all', userController.getAllUsers);
@@ -17,7 +18,6 @@ router.patch('/location', authController, userController.updateUserLocation);
 router.post('/email', authController, userController.collectUserEmail);
 router.post('/stripe-payment', userController.createStripePayment);
 router.post('/transfer-stripe-payment', userController.transferStripePayment);
-router.post('/payment-alert', userController.sendAlertForPaymentProcessCompletion);
 
 
 module.exports = router;
