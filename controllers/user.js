@@ -1,5 +1,6 @@
 require("dotenv").config();
 const userServices = require('../services/user');
+const dealerServices = require('../services/dealer');
 const fs = require('fs');
 const sendNotification = require('../config/send-notification');
 const Stripe = require('stripe');
@@ -361,6 +362,36 @@ module.exports = {
             res.status(500).send({
             message: error.message,
             });
+        }
+    },
+
+    sendAlertForPaymentProcessCompletion: async (req, res, next) => {
+        try {
+            let { customerId, dealerId, status } = req.body;
+
+            let customer = await userServices.getUserById(customerId);
+            let dealer = await dealerServices.getDealerByDealerId(dealerId);
+
+            if (customer && dealer) {
+                if (customer) {
+                    let title = `Stripe payment ${status}`;
+                    let body = `Stripe payment of ${amount} is ${status}`;
+                    await sendNotification.sendFirebaseNotification(customer.fcmToken, title, body, 'Stripe Payment', 'stripePayment', dealer._id, customer._id, true);
+                    return res.status(200).json({ IsSuccess: true, Data: true, Message: 'Payment alert send' });
+                }
+    
+                if (dealer) {
+                    let title = `Payment from customer ${customer.firstName}`;
+                    let body = `Payment from customer ${customer.firstName} of ${amount} is ${status}`;
+                    await sendNotification.sendFirebaseNotification(dealer.fcmToken, title, body, 'Stripe Payment', 'stripePayment', customer._id, dealer._id, false);
+                    return res.status(200).json({ IsSuccess: true, Data: true, Message: 'Payment alert send' });
+                }
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer or Dealer not found' });
+            }
+
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
         }
     },
 
