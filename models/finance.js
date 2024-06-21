@@ -111,10 +111,10 @@ const financeOrdersSchema = mongoose.Schema({
         }
     },
     address: [{
-        address1: {
+        address: {
             type: String
         },
-        address2: {
+        addressType: {
             type: String
         },
         city: {
@@ -126,7 +126,7 @@ const financeOrdersSchema = mongoose.Schema({
         province: {
             type: String
         },
-        suitNumber: {
+        suiteNumber: {
             type: String
         },
         stayDuration: {
