@@ -359,6 +359,7 @@ module.exports = {
         let update = {
             status: params.status,
             appointments: params.appointments,
+            customerDepositAmount: params?.customerDepositAmount ? params.customerDepositAmount : undefined,
             billOfSale: params.billOfSale,
             $push: { documents: params.documents },
             additionalDocuments: params.additionalDocuments,
