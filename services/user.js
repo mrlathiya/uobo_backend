@@ -168,6 +168,7 @@ module.exports = {
             grossIncome: params.grossIncome,
             otherIncomeSource: params.otherIncomeSource,
             SIN: params.SIN,
+            marriedStatus: params.marriedStatus,
         };
 
         let updateCustomerDetails = await userSchema.findByIdAndUpdate(customerId, update, { new: true });

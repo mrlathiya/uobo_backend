@@ -11,6 +11,9 @@ const userSchema = mongoose.Schema(
         middleName: {
             type: String
         },
+        salutation: {
+            type: String
+        },
         preferName: {
             type: String
         },
@@ -25,7 +28,7 @@ const userSchema = mongoose.Schema(
                 type: Number
             }
         },
-        sex: {
+        gender: {
             type: String
         },
         height: {
@@ -167,18 +170,30 @@ const userSchema = mongoose.Schema(
                 type: String
             },
             workLocation: {
-                address1: {
+                address: {
                     type: String
                 },
-                address2: {
+                addressType: {
+                    type: String
+                },
+                city: {
                     type: String
                 },
                 postalCode: {
                     type: String
                 },
-                contact: {
+                province: {
                     type: String
-                }
+                },
+                suitNumber: {
+                    type: String
+                },
+                telephone: {
+                    type: String
+                },
+                extension: {
+                    type: String
+                },
             },
             jobDuration: {
                 year: {
@@ -225,6 +240,9 @@ const userSchema = mongoose.Schema(
         preferredDeliveryMode: {
             type: String,
         },
+        marriedStatus: {
+            type: String
+        }
     },
     {
         timestamps: true
