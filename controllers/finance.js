@@ -2,6 +2,7 @@ require("dotenv").config();
 const financeService = require('../services/finance');
 const customerService = require('../services/user');
 const dealerServices = require('../services/dealer');
+const carServices = require('../services/car');
 const docusign = require('../docusign/jwtConsole');
 const awsServices = require('../config/aws-services');
 const sendNotification = require('../config/send-notification');
@@ -218,15 +219,7 @@ module.exports = {
     
                     params.documents = uploadFiles;
 
-                } 
-    
-                // if (!params.tradeInCarValue) {
-                //     return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide tradeInCarValue parameter' });
-                // }
-    
-                // if (!params.appointments) {
-                //     return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide appointments parameter' });
-                // }
+                }
 
                 let editStatus = await financeService.editFinanceStatus(params, 'cashFinance');
 
@@ -326,6 +319,8 @@ module.exports = {
 
                 let dealerIs = await dealerServices.getDealerByDealerId(editStatus.dealerId);
 
+                let carIs = await carServices.getCarById(editStatus.carId);
+
                 if (dealerIs === undefined || dealerIs === null) {
                     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer not found' });
                 }
@@ -338,9 +333,30 @@ module.exports = {
 
                         if (req.userType === 'customer') {
                             if (dealerIs.fcmToken) {
-                                const title = `Customer edited finance`;
-                                const content = `Without car Order edit by ${user.firstName} ${user.lastName}`;
-                                const dataContent = '';
+                                let title = `Customer edited finance`;
+                                let content = `Without car Order edit by ${user.firstName} ${user.lastName}`;
+                                let dataContent = '';
+
+                                if (editStatus.status === 'CustomerSentAdditionalDocs') {
+                                    title = `${user.firstName} ${user.lastName} has sent additional documents`;
+                                    content = `Review them now and take action`;
+                                }
+
+                                if (editStatus.status === 'DepositPaidByCustomer') {
+                                    title = `${user.firstName} ${user.lastName} has paid downpayment for the car ${carIs.Make} ${carIs.Model}`;
+                                    content = `Send ${user.firstName} EMI options and delivery date`;
+                                }
+
+                                if (editStatus.status === 'CustomerSelectEMIOptionAndChooseTime') {
+                                    title = `${user.firstName} ${user.lastName} has selected EMI option and chose delivery date`;
+                                    content = `Confirm it now and send bill of sale to ${user.firstName} `;
+                                }
+
+                                if (editStatus.status === 'CustomerSignedBillOfSale') {
+                                    title = `${user.firstName} ${user.lastName} has signed bill of sale`;
+                                    content = `Review it now and prepare for dispatch ${carIs.Make} ${carIs.Model}`;
+                                }
+
                                 await sendNotification.sendFirebaseNotification(dealerIs.fcmToken,title, content, dataContent, 'CustomerFixFinanceUpdateByCustomerAlert', editStatus.customerId, dealerIs._id, false);
                             }
                         } else {
@@ -348,13 +364,31 @@ module.exports = {
                             if (customerIs.fcmToken) {
 
                                 let title = `${user.firstName} has confirmed car availability`;
-                                let content = `Pay downpayment and secure your car`;
+                                let content = `Pay downpayment and secure your ${carIs.Make} ${carIs.Model}`;
                                 let dataContent = '';
+
+                                if (editStatus.status === 'AdditionalDocumentAskedFromDealer') {
+                                    title = `${user.firstName} has asked for few additional documents`;
+                                    content = `Send them now to speed up your order`;
+                                    
+                                }
+
+                                if (editStatus.status === 'DealerSentAvailability') {
+                                    title = `${user.firstName} has confirmed car availability`;
+                                    content = `Pay downpayment and secure your ${carIs.Make} ${carIs.Model}`;
+                                    
+                                }
 
                                 if (editStatus.status === 'DealerSentEMIOptions') {
                                     title = `${user.firstName} has sent EMI Options and appointment availability`;
-                                    content = `Choose EMI option and confirm delivery date nows`;
-                                    dataContent = '';
+                                    content = `Choose EMI option and confirm delivery date now`;
+                                    
+                                }
+
+                                if (editStatus.status === 'DealerSentBillOfSale') {
+                                    title = `${user.firstName} has sent bill of sale`;
+                                    content = `Let's close the deal`;
+                                    
                                 }
                                 
                                 await sendNotification.sendFirebaseNotification(customerIs.fcmToken,title, content, dataContent, 'CustomerFixFinanceUpdateByDealerAlert', editStatus.dealerId, customerIs._id, true);
