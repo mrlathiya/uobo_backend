@@ -16,7 +16,6 @@ module.exports = {
         });
 
         if (newDealer !== null) {
-            console.log('inn')
             return newDealer.save();
         } else {
             return undefined;
@@ -302,8 +301,6 @@ module.exports = {
             service: params.service,
             vehicle: params.vehicle,
         });
-
-        console.log(addRating);
 
         if(addRating !== undefined) {
             return addRating.save();

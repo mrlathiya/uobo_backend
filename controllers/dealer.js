@@ -92,19 +92,13 @@ const convertCsvToJson = async (csvFile, dealerId) => {
 
 const addCSVRawToDB = async (dataRow, dealerId) => {
     try {
-        console.log('in');
-        console.log(dataRow);
         if (dataRow !== undefined && dataRow !== null) {
             const VINNumber = dataRow.VIN;
             const checkExist = await carServices.getCarByVIN(VINNumber);
 
-            console.log(checkExist);
-
             if (checkExist.length) {
-                console.log('her')
                 const updateCarDetails = await carServices.editCarDetails(dataRow, dealerId);
             } else {
-                console.log('him')
                 const addCarDetails = await carServices.addNewCar(dataRow, dealerId);
             }
         }    
@@ -355,7 +349,6 @@ module.exports = {
             }
 
             if (dealer) {
-                console.log('in')
 
                 let dealerInformation = await dealerServices.getNearByDealer(dealer);
                 
@@ -550,7 +543,6 @@ module.exports = {
             }
 
             if (dealerId !== undefined && dealerId !== null && dealerId !== '') {
-                console.log('inn', dealerId)
                 let dealerRatings = await dealerServices.getDealerRating(dealerId);
 
                 if (dealerRatings) {
@@ -576,11 +568,7 @@ module.exports = {
         try {
             const user = req.user;
 
-            console.log(user);
-
             let notifications = await dealerServices.getDealerDashboardNotification(user._id);
-
-            console.log(notifications);
 
             if (notifications.length) {
                 return res.status(200).json({ IsSuccess: true, Data: notifications, Message: 'Dealer notifications found' });

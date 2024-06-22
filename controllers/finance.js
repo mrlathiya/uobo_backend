@@ -86,8 +86,6 @@ module.exports = {
                 let uploadFiles = await awsServices.listOfDocuments(params.documents, 'Customer_Cash_Finance');
 
                 params.documents = uploadFiles;
-
-                console.log(uploadFiles);
             } 
 
             let dealerIs = await dealerServices.getDealerByDealerId(params.dealerId);
@@ -219,8 +217,7 @@ module.exports = {
                     let uploadFiles = await awsServices.listOfDocuments(params.documents, 'Customer_Cash_Finance');
     
                     params.documents = uploadFiles;
-    
-                    console.log(uploadFiles);
+
                 } 
     
                 // if (!params.tradeInCarValue) {
@@ -324,14 +321,14 @@ module.exports = {
     
                     console.log(uploadFiles);
                 }
-                
-                let dealerIs = await dealerServices.getDealerByDealerId(user._id);
+
+                let editStatus = await financeService.editFinanceStatus(params, 'financeFix');
+
+                let dealerIs = await dealerServices.getDealerByDealerId(editStatus.dealerId);
 
                 if (dealerIs === undefined || dealerIs === null) {
                     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer not found' });
                 }
-
-                let editStatus = await financeService.editFinanceStatus(params, 'financeFix');
 
                 if (editStatus) {
 

@@ -312,8 +312,6 @@ module.exports = {
             const commission = amount * 0.05;
             const netAmount = amount - commission;
 
-            console.log(Math.round(amount))
-
             const commissionInCents = Math.round(amountInCents * 0.05);
 
             // Calculate the net amount for the destination account (95% of the amount)

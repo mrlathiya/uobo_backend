@@ -352,8 +352,6 @@ module.exports = {
             }
         ]);
 
-        console.log(selectedEMIOption);
-
         return selectedEMIOption;
     },
 
