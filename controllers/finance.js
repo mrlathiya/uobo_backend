@@ -182,8 +182,8 @@ module.exports = {
                     }
                 } else {
                     if (user.fcmToken) {
-                        const title = `Dealer edited cash finance`;
-                        const content = `Cash Order edited by ${user.firstName} ${user.lastName}`;
+                        const title = `Dealer confirm your order`;
+                        const content = `Proceed with payment and choose delivery date`;
                         const dataContent = '';
                         await sendNotification.sendFirebaseNotification(user.fcmToken,title, content, dataContent, 'CustomerCashFinanceUpdateByDealerAlert', user._id, editStatus[0].customerId, true);
                     }
@@ -349,8 +349,8 @@ module.exports = {
                         } else {
                             let customerIs = await customerService.getUserById(editStatus.customerId);
                             if (customerIs.fcmToken) {
-                                const title = `Dealer edited cash finance`;
-                                const content = `Cash Order edited by ${customerIs.firstName} ${customerIs.lastName}`;
+                                const title = `${user.firstName} has confirmed car availability`;
+                                const content = `Dealer is awaiting..!!Please proceed with further steps`;
                                 const dataContent = '';
                                 await sendNotification.sendFirebaseNotification(customerIs.fcmToken,title, content, dataContent, 'CustomerFixFinanceUpdateByDealerAlert', editStatus.dealerId, customerIs._id, true);
                             }
