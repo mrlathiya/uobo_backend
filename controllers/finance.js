@@ -350,7 +350,7 @@ module.exports = {
                             let customerIs = await customerService.getUserById(editStatus.customerId);
                             if (customerIs.fcmToken) {
                                 const title = `${user.firstName} has confirmed car availability`;
-                                const content = `Dealer is awaiting..!!Please proceed with further steps`;
+                                const content = `Pay downpayment and secure your car`;
                                 const dataContent = '';
                                 await sendNotification.sendFirebaseNotification(customerIs.fcmToken,title, content, dataContent, 'CustomerFixFinanceUpdateByDealerAlert', editStatus.dealerId, customerIs._id, true);
                             }
