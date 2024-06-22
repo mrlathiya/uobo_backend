@@ -346,9 +346,17 @@ module.exports = {
                         } else {
                             let customerIs = await customerService.getUserById(editStatus.customerId);
                             if (customerIs.fcmToken) {
-                                const title = `${user.firstName} has confirmed car availability`;
-                                const content = `Pay downpayment and secure your car`;
-                                const dataContent = '';
+
+                                let title = `${user.firstName} has confirmed car availability`;
+                                let content = `Pay downpayment and secure your car`;
+                                let dataContent = '';
+
+                                if (editStatus.status === 'DealerSentEMIOptions') {
+                                    title = `${user.firstName} has sent EMI Options and appointment availability`;
+                                    content = `Choose EMI option and confirm delivery date nows`;
+                                    dataContent = '';
+                                }
+                                
                                 await sendNotification.sendFirebaseNotification(customerIs.fcmToken,title, content, dataContent, 'CustomerFixFinanceUpdateByDealerAlert', editStatus.dealerId, customerIs._id, true);
                             }
                         }  
@@ -522,7 +530,11 @@ module.exports = {
         try {
 
             const dealer = req.user;
+
+            console.log(dealer)
             const orders = await financeService.getOrderByDealerId(dealer);
+
+            console.log(orders);
 
             if (orders.length) {
                 return res.status(200).json({ 
