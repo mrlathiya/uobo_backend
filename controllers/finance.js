@@ -325,7 +325,7 @@ module.exports = {
                     console.log(uploadFiles);
                 }
                 
-                let dealerIs = await dealerServices.getDealerByDealerId(params.dealerId);
+                let dealerIs = await dealerServices.getDealerByDealerId(user._id);
 
                 if (dealerIs === undefined || dealerIs === null) {
                     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer not found' });
