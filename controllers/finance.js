@@ -234,6 +234,11 @@ module.exports = {
                         if (dealerIs.fcmToken) {
                             let title = `Customer edited finance`;
                             let content = `Cash Order edit by ${user.firstName} ${user.lastName}`;
+
+                            if (editStatus.status === 'CustomerSentAdditionalDocs') {
+                                title = `${customerIs.firstName} ${customerIs.lastName} has sent additional documents`;
+                                content = `Review them now and take action`;
+                            }
                             
                             if (editStatus.status === 'CustomerPaidFullInCashAndChooseTime') {
                                 title = `${customerIs.firstName} ${customerIs.lastName} has paid full in cash and chose delivery date`;
@@ -248,10 +253,15 @@ module.exports = {
                             await sendNotification.sendFirebaseNotification(dealerIs.fcmToken,title, content, dataContent, 'CustomerCashFinanceUpdateByCustomerAlert', editStatus.customerId, dealerIs._id, false);
                         }
                     } else {
-                        if (user.fcmToken) {
+                        if (customerIs.fcmToken) {
 
                             let title = '';
                             let content = '';
+
+                            if (editStatus.status === 'AdditionalDocumentAskedFromDealer') {
+                                title = `${dealerIs.firstName} has asked for few additional documents`;
+                                content = `Send them now to speed up your order`;   
+                            }
 
                             if (editStatus.status === 'DealerSentAvailability') {
                                 title = `${dealerIs.firstName} has confirmed car availability`;
