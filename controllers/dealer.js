@@ -97,7 +97,8 @@ const addCSVRawToDB = async (dataRow, dealerId) => {
             const checkExist = await carServices.getCarByVIN(VINNumber);
 
             if (checkExist.length) {
-                const updateCarDetails = await carServices.editCarDetails(dataRow, dealerId);
+                let inventoryId = checkExist[0]._id;
+                const updateCarDetails = await carServices.editCarDetails(dataRow, dealerId, inventoryId);
             } else {
                 const addCarDetails = await carServices.addNewCar(dataRow, dealerId);
             }
@@ -227,15 +228,19 @@ module.exports = {
 
                     if (csvFile) {
                         let dealerInventory = await convertCsvToJson(csvFile, registerDealerData._id);
-    
-                        return res.status(200).json({ 
-                            IsSuccess: true, 
-                            Data: [registerDealerData], 
-                            Inventory: dealerInventory,
-                            token,
-                            // StripeAccount: account, 
-                            Message: 'Dealer registration successfully' 
-                        });
+
+                        if (dealerInventory) {
+                            return res.status(200).json({ 
+                                IsSuccess: true, 
+                                Data: [registerDealerData], 
+                                Inventory: dealerInventory,
+                                token,
+                                // StripeAccount: account, 
+                                Message: 'Dealer registration successfully' 
+                            });
+                        } else {
+                            return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Something went wrong while uploading inventory' });
+                        }
     
                     } else {
                         return res.status(200).json({ 

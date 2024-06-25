@@ -74,7 +74,10 @@ module.exports = {
         return car;
     },
 
-    editCarDetails: async (params, dealerId) => {
+    editCarDetails: async (params, dealerId, carId) => {
+
+        let carIdIs = params._id !== undefined && params._id !== null && params._id !== '' ? params._id : carId;
+
         let update = {
             dealerId: dealerId ? dealerId : undefined,
             VIN: params.VIN,
@@ -115,7 +118,7 @@ module.exports = {
             feature: params.feature
         }
 
-        let updateCar = await carSchema.findByIdAndUpdate(params._id, update, { new: true });
+        let updateCar = await carSchema.findByIdAndUpdate(carIdIs, update, { new: true });
         
         return updateCar;
     },

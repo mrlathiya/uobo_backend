@@ -141,4 +141,4 @@ const carSchema = mongoose.Schema({
     timestamps: true
 });
 
-module.exports = mongoose.model('cars', carSchema);
+module.exports = mongoose.model('inventory', carSchema);
