@@ -564,11 +564,8 @@ module.exports = {
         try {
 
             const dealer = req.user;
-
-            console.log(dealer)
+            
             const orders = await financeService.getOrderByDealerId(dealer);
-
-            console.log(orders);
 
             if (orders.length) {
                 return res.status(200).json({ 

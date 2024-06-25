@@ -11,7 +11,7 @@ const financeCashFlowSchema = mongoose.Schema({
     },
     carId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'cars',
+        ref: 'inventory',
     },
     orderType: {
         type: String,

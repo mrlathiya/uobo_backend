@@ -12,7 +12,7 @@ const financeOrdersSchema = mongoose.Schema({
     customerSelectedCar: {
         carId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'cars'
+            ref: 'inventory'
         },
         EMIOptions: {
             type: mongoose.Schema.Types.ObjectId,
@@ -22,7 +22,7 @@ const financeOrdersSchema = mongoose.Schema({
     dealerProvidedOptions: {
         carId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'cars'
+            ref: 'inventory'
         },
         EMIOptions: {
             type: mongoose.Schema.Types.ObjectId,
@@ -78,7 +78,7 @@ const financeOrdersSchema = mongoose.Schema({
     },
     carId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'cars',
+        ref: 'inventory',
     },
     orderType: {
         type: String,

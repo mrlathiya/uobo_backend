@@ -11,7 +11,7 @@ const paymentSchema = mongoose.Schema({
     },
     carId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'cars',
+        ref: 'inventory',
     },
     price: {
         type: Number
