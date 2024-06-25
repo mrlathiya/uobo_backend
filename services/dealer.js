@@ -110,7 +110,7 @@ module.exports = {
             },
             {
                 $lookup: {
-                    from: 'cars',
+                    from: 'inventories',
                     localField: '_id',
                     foreignField: 'dealerId',
                     as: 'inventory'
@@ -353,7 +353,7 @@ module.exports = {
             },
             {
                 $lookup: {
-                    from: 'cars',
+                    from: 'inventories',
                     localField: '_id',
                     foreignField: 'dealerId',
                     as: 'inventory'
@@ -522,7 +522,7 @@ module.exports = {
             },
             {
                 $lookup: {
-                    from: 'cars',
+                    from: 'inventories',
                     localField: '_id',
                     foreignField: 'dealerId',
                     as: 'inventory'

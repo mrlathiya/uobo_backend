@@ -389,56 +389,6 @@ module.exports = {
 
             const dealers = await dealerServices.getAllDealers();
 
-            // headers = {
-            //     "Content-Type": "application/json; charset=utf-8",
-            //     "Authorization": "Basic NzRkMDhmMjAtNzhmOS00NDJjLTllZGUtMmU0M2M3YzYyZWY3"
-            //   };
-
-            //   let titleIs = 'hello'; 
-            //   let bodyIs = 'hello monil'; 
-          
-            // let message = { 
-            //     app_id: process.env.APP_ID_ANDROID,
-            //     contents: {
-            //         "en": bodyIs
-            //     },
-            //     headings: {"en": `${titleIs}`, "es": "Spanish Title"},
-            //     data: { messageIs: 'hiii' },   
-            //     content_available: 1,
-            //     include_player_ids: ['erwogZvwTaeOdZ2G2LHT9q:APA91bExmdYhfvDYaQQi6q51fCt14gi6Np6y8N2dUIpOd6XzAXdpoddZj7IxAG000n1942JREnJhVvh4MhuSW4qIFD3MxoQ7aADIR5RLXm3c5me97DYXvE1Ebcb1_omKu4-NYsFPSTlT'],
-            //     android_channel_id: "NzRkMDhmMjAtNzhmOS00NDJjLTllZGUtMmU0M2M3YzYyZWY3"
-            // };
-
-            // console.log(message)
-
-            // var options = {
-            //     host: "onesignal.com",
-            //     port: 443,
-            //     path: "/api/v1/notifications",
-            //     method: "POST",
-            //     headers: headers
-            //   };
-
-            //   console.log(options);
-              
-            //   var https = require('https');
-            //   var req = https.request(options, function(res) {  
-            //     res.on('message', function(message) {
-            //       console.log("Response:");
-            //       // console.log(JSON.parse(data));
-            //     });
-            //   });
-
-            // //   console.log(req)
-              
-            //   req.on('error', function(e) {
-            //     console.log("ERROR:");
-            //     console.log(e);
-            //   });
-              
-            //   req.write(JSON.stringify(message));
-            //   req.end();
-
             if (dealers.length) {
                 return res.status(200).json({ 
                     IsSuccess: true, 
