@@ -98,8 +98,9 @@ module.exports = {
             let addFinance = await financeService.addCustomerCashFinance(params, customer);
 
             if (addFinance) {
+                let carIs = await carServices.getCarById(params.carId);
                 if (dealerIs.fcmToken) {
-                    const title = `New cash order created`;
+                    const title = `${customer.firstName} ${customer.lastName} inquired for cash purchase ${carIs.Make} ${carIs.Model}`;
                     const content = `Order by ${customer.firstName} ${customer.lastName}`;
                     const dataContent = '';
                     await sendNotification.sendFirebaseNotification(dealerIs.fcmToken,title, content, dataContent, 'CustomerCashFinanceAlert', customer._id, params.dealerId, false);
@@ -169,31 +170,31 @@ module.exports = {
             const params = req.body;
             const user = req.user;
 
-            if (params.status === 'CustomerPaidFullInCash') {
-                let editStatus = await financeService.editFinancePaidStatus(params);
+            // if (params.status === 'CustomerPaidFullInCash') {
+            //     let editStatus = await financeService.editFinancePaidStatus(params);
 
-                if (req.userType === 'customer') {
-                    if (user.fcmToken) {
-                        const title = `Customer edited finance`;
-                        const content = `Cash Order edit by ${user.firstName} ${user.lastName}`;
-                        const dataContent = '';
-                        await sendNotification.sendFirebaseNotification(user.fcmToken,title, content, dataContent, 'CustomerCashFinanceUpdateByCustomerAlert', user._id, editStatus[0].dealerId, false);
-                    }
-                } else {
-                    if (user.fcmToken) {
-                        const title = `Dealer confirm your order`;
-                        const content = `Proceed with payment and choose delivery date`;
-                        const dataContent = '';
-                        await sendNotification.sendFirebaseNotification(user.fcmToken,title, content, dataContent, 'CustomerCashFinanceUpdateByDealerAlert', user._id, editStatus[0].customerId, true);
-                    }
-                }                
+            //     if (req.userType === 'customer') {
+            //         if (user.fcmToken) {
+            //             const title = `Customer edited finance`;
+            //             const content = `Cash Order edit by ${user.firstName} ${user.lastName}`;
+            //             const dataContent = '';
+            //             await sendNotification.sendFirebaseNotification(user.fcmToken,title, content, dataContent, 'CustomerCashFinanceUpdateByCustomerAlert', user._id, editStatus[0].dealerId, false);
+            //         }
+            //     } else {
+            //         if (user.fcmToken) {
+            //             const title = `Dealer confirm your order`;
+            //             const content = `Proceed with payment and choose delivery date`;
+            //             const dataContent = '';
+            //             await sendNotification.sendFirebaseNotification(user.fcmToken,title, content, dataContent, 'CustomerCashFinanceUpdateByDealerAlert', user._id, editStatus[0].customerId, true);
+            //         }
+            //     }                
 
-                if (editStatus) {
-                    return res.status(200).json({ IsSuccess: true, Data: editStatus, Message: `Finance status updated ${params.status}` });
-                } else {
-                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Finance status not updated' });
-                }
-            }
+            //     if (editStatus) {
+            //         return res.status(200).json({ IsSuccess: true, Data: editStatus, Message: `Finance status updated ${params.status}` });
+            //     } else {
+            //         return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Finance status not updated' });
+            //     }
+            // }
 
             if (params.confirmAvailabilty === undefined || params.confirmAvailabilty === '' || params.confirmAvailabilty === null) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide confirmAvailabilty parameter' });
@@ -225,19 +226,44 @@ module.exports = {
 
                 if (editStatus) {
 
+                    let carIs = await carServices.getCarById(params.carId);
+                    let dealerIs = await dealerServices.getDealerByDealerId(editStatus.dealerId);
+                    let customerIs = await customerService.getUserById(editStatus.customerId);
+
                     if (req.userType === 'customer') {
-                        if (user.fcmToken) {
-                            const title = `Customer edited finance`;
-                            const content = `Cash Order edit by ${user.firstName} ${user.lastName}`;
-                            const dataContent = '';
-                            await sendNotification.sendFirebaseNotification(user.fcmToken,title, content, dataContent, 'CustomerCashFinanceUpdateByCustomerAlert', editStatus.customerId, user._id, false);
+                        if (dealerIs.fcmToken) {
+                            let title = `Customer edited finance`;
+                            let content = `Cash Order edit by ${user.firstName} ${user.lastName}`;
+                            
+                            if (editStatus.status === 'CustomerPaidFullInCashAndChooseTime') {
+                                title = `${customerIs.firstName} ${customerIs.lastName} has paid full in cash and chose delivery date`;
+                                content = `Confirm it now and send bill of sale to ${customerIs.firstName}`;
+                            }
+
+                            if (editStatus.status === 'CustomerSignedBillOfSale') {
+                                title = `${customerIs.firstName} ${customerIs.lastName} has signed bill of sale`;
+                                content = `Review it now and prepare for dispatch ${carIs.Make} ${carIs.Model}`;
+                            }
+
+                            await sendNotification.sendFirebaseNotification(dealerIs.fcmToken,title, content, dataContent, 'CustomerCashFinanceUpdateByCustomerAlert', editStatus.customerId, dealerIs._id, false);
                         }
                     } else {
                         if (user.fcmToken) {
-                            let customerIs = await customerService.getUserById(editStatus.customerId);
-                            const title = `Dealer edited cash finance`;
-                            const content = `Cash Order edited by ${user.firstName} ${user.lastName}`;
-                            const dataContent = '';
+
+                            let title = '';
+                            let content = '';
+
+                            if (editStatus.status === 'DealerSentAvailability') {
+                                title = `${dealerIs.firstName} has confirmed car availability`;
+                                content = `Make a payment and choose delivery date to secure your ${carIs.Make} ${carIs.Model}`;
+                            }
+
+                            if (editStatus.status === 'DealerSentBillOfSale') {
+                                title = `${dealerIs.firstName} has sent bill of sale`;
+                                content = `Let's close the deal`;
+                                
+                            }
+                            
                             await sendNotification.sendFirebaseNotification(customerIs.fcmToken,title, content, dataContent, 'CustomerCashFinanceUpdateByDealerAlert', editStatus.dealerId, customerIs._id, true);
                         }
                     }  
@@ -564,7 +590,7 @@ module.exports = {
         try {
 
             const dealer = req.user;
-            
+
             const orders = await financeService.getOrderByDealerId(dealer);
 
             if (orders.length) {

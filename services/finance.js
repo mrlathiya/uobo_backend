@@ -376,12 +376,6 @@ module.exports = {
         }
 
         let updateFinanceStatus = await financeModel.findByIdAndUpdate(params.financeId, update, { new: true });;
-
-        // if (type == 'financeFix') {  
-        //     updateFinanceStatus = await financeCarFixModel.findByIdAndUpdate(params.financeId, update, { new: true });
-        // } else if (type == 'cashFinance') {
-        //     updateFinanceStatus = await financeCashFlowModel.findByIdAndUpdate(params.financeId, update, { new: true });
-        // }
         
         return updateFinanceStatus;
     },
