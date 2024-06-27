@@ -250,7 +250,7 @@ module.exports = {
                                 content = `Review it now and prepare for dispatch ${carIs.Make} ${carIs.Model}`;
                             }
 
-                            await sendNotification.sendFirebaseNotification(dealerIs.fcmToken,title, content, dataContent, 'CustomerCashFinanceUpdateByCustomerAlert', editStatus.customerId, dealerIs._id, false);
+                            await sendNotification.sendFirebaseNotification(dealerIs.fcmToken,title, content, '', 'CustomerCashFinanceUpdateByCustomerAlert', editStatus.customerId, dealerIs._id, false);
                         }
                     } else {
                         if (customerIs.fcmToken) {
