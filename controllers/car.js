@@ -222,108 +222,31 @@ module.exports = {
 
     searchCarInventory: async (req, res, next) => {
         try {
-            const { keyword } = req.query;
+            // const { keyword } = req.query;
 
-            const userIs = req.user;
+            // const userIs = req.user;
 
-            if (!keyword) {
-                return res.status(401).json({ 
-                    IsSuccess: false, 
-                    Data: [], 
-                    Message: 'Keyword is required in the query parameters' 
-                });
-            }
+            // if (!keyword) {
+            //     return res.status(401).json({ 
+            //         IsSuccess: false, 
+            //         Data: [], 
+            //         Message: 'Keyword is required in the query parameters' 
+            //     });
+            // }
 
-            const cars = await carServices.searchOperation(keyword, userIs._id, req.userType);
+            await carServices.testcheck();
+            // const cars = await carServices.searchOperation(keyword, userIs._id, req.userType);
 
-            if (cars) {
-                return res.status(200).json({ 
-                    IsSuccess: true, 
-                    Count: cars.length, 
-                    Data: cars, 
-                    Message: 'Search car result found' 
-                });
-            } else {
-                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Search car found' });
-            }
-        } catch (error) {
-            return res.status(500).json({ IsSuccess: false, Message: error.message });
-        }
-    },
-
-    testData1: async (req, res, next) => {
-        try {
-            let data = [
-                {
-                    category: "Movie",
-                    amount: 15
-                },
-                {
-                    category: "Grocery",
-                    amount: 210
-                },
-                {
-                    category: "Fuel",
-                    amount: 70
-                },
-                {
-                    category: "Insurance",
-                    amount: 250
-                },
-                {
-                    category: "Mobile bill",
-                    amount: 50
-                },
-                {
-                    category: "Wifi Bill",
-                    amount: 65
-                },
-                {
-                    category: "Miscellaneous",
-                    amount: 15
-                },
-            ];
-
-            return res.status(200).json({ data: data });
-        } catch (error) {
-            return res.status(500).json({ IsSuccess: false, Message: error.message });
-        }
-    },
-
-    testData2: async (req, res, next) => {
-        try {
-            let data = [
-                {
-                    category: "Movie",
-                    amount: 45
-                },
-                {
-                    category: "Grocery",
-                    amount: 200
-                },
-                {
-                    category: "Fuel",
-                    amount: 75
-                },
-                {
-                    category: "Insurance",
-                    amount: 225
-                },
-                {
-                    category: "Mobile bill",
-                    amount: 60
-                },
-                {
-                    category: "Wifi Bill",
-                    amount: 60
-                },
-                {
-                    category: "Miscellaneous",
-                    amount: 40
-                },
-            ];
-
-            return res.status(200).json({ data: data });
+            // if (cars) {
+            //     return res.status(200).json({ 
+            //         IsSuccess: true, 
+            //         Count: cars.length, 
+            //         Data: cars, 
+            //         Message: 'Search car result found' 
+            //     });
+            // } else {
+            //     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Search car found' });
+            // }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
         }

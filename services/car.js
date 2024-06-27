@@ -177,5 +177,9 @@ module.exports = {
         let cars = await carSchema.find(query);
 
         return cars;
+    },
+
+    testcheck: async () => {
+        await carSchema.updateMany({ carFAXLink: 'https://vhr.carfax.ca/?id=8IksBDs/7pZGv6Y67AWUY9lcao3Z06+8' });
     }
 };

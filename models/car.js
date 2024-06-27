@@ -135,6 +135,9 @@ const carSchema = mongoose.Schema({
                 type: String
             }
         },
+    },
+    carFAXLink: {
+        typ: String
     }
 },
 {
