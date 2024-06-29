@@ -1,6 +1,7 @@
 require("dotenv").config();
 const userServices = require('../services/user');
 const dealerServices = require('../services/dealer');
+const financeServices = require('../services/finance');
 const fs = require('fs');
 const sendNotification = require('../config/send-notification');
 const Stripe = require('stripe');
@@ -400,6 +401,48 @@ module.exports = {
             let data = await sendNotification.sendFirebaseNotification(token, title, body);
 
             return res.send(data);
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
+
+    listenToPaveEvent: async (req, res, next) => {
+        try {
+            const payload = req.body;
+
+            if (payload?.session?.user_account?.email) {
+                console.log(payload.session.user_account.email);
+
+                let userEmail = payload.session.user_account.email;
+
+                if (userEmail) {
+                    let user = await userServices.getUserByEmail(userEmail);
+
+                    if (user.length) {
+                        let customerOrders = await financeServices.getAllCustomerOrdersByCustomerId(user[0]._id);
+
+                        if (customerOrders.length) {
+
+                            let orders = await financeServices.editPaveReportURLToCustomerOrders(customerOrders, payload.landing_page);
+
+                            return res.status(200).json({ 
+                                IsSuccess: true, 
+                                Count: orders.length, 
+                                Data: orders, 
+                                Message: 'Customer orders found' });
+                        } else {
+                            return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer orders not found' });
+                        }
+                    } else {
+                        return res.status(400).json({ IsSuccess: false, Data: [], Message: 'User not found' });
+                    }
+                    
+                } else {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'User not found' });
+                }
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'User not found' });
+            }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
         }

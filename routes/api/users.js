@@ -12,6 +12,7 @@ router.post('/', userController.userRegistration);
 router.get('/all', userController.getAllUsers);
 router.get('/', userController.signInUser);
 router.get('/:id', userController.getUser);
+router.post('/pave', userController.listenToPaveEvent);
 router.put('/', authController, userController.editUserProfile);
 router.post('/dlVerification', authController, userController.userVerification);
 router.patch('/location', authController, userController.updateUserLocation);

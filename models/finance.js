@@ -319,6 +319,10 @@ const financeOrdersSchema = mongoose.Schema({
     },
     billOfSale: {
         type: String
+    },
+    paveReportURL: {
+        type: String,
+        default: ''
     }
 },
 {

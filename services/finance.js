@@ -438,5 +438,24 @@ module.exports = {
         });
 
         return orders;
+    },
+
+    getAllCustomerOrdersByCustomerId: async (customerId) => {
+        const orders = await financeModel.find({ customerId });
+
+        return orders;
+    },
+
+    editPaveReportURLToCustomerOrders: async (ordersList, paveReportURL) => {
+
+        let orders = [];
+        for (i in ordersList) {
+            console.log(ordersList[i], paveReportURL)
+            let orderData = await financeModel.findByIdAndUpdate(ordersList[i]._id, { paveReportURL }, { new: true });
+
+            orders.push(orderData);
+        }
+
+        return orders;
     }
 }
