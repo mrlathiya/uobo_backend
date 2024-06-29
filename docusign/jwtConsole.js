@@ -6,11 +6,9 @@ const prompt = require('prompt-sync')();
 
 const jwtConfig = require('./jwtConfig.json');
 const { ProvisioningInformation } = require('docusign-esign');
-// const demoDocsPath = path.resolve(__dirname, '../demo_documents');
 const demoDocsPath = path.resolve(__dirname, '../config/demo_documents');
-const doc2File = 'World_Wide_Corp_Battle_Plan_Trafalgar.docx';
+const doc2File = 'Order_Flows.docx';
 const doc3File = 'World_Wide_Corp_lorem.pdf';
-
 
 const SCOPES = [
   'signature', 'impersonation'
@@ -78,13 +76,70 @@ async function authenticate(){
   }
 }
 
+function getEnvelopeDefinition(args) {
+  let env = new docusign.EnvelopeDefinition();
+  env.emailSubject = 'Please sign this document';
+
+  let doc2DocxBytes = fs.readFileSync(args.envelopeArgs.doc2File);
+  let doc2DocxBase64 = Buffer.from(doc2DocxBytes).toString('base64');
+
+  let doc3PdfBytes = fs.readFileSync(args.envelopeArgs.doc3File);
+  let doc3PdfBase64 = Buffer.from(doc3PdfBytes).toString('base64');
+
+  let doc2 = docusign.Document.constructFromObject({
+    documentBase64: doc2DocxBase64,
+    name: 'Order_Flows', 
+    fileExtension: 'docx',
+    documentId: '2'
+  });
+
+  let doc3 = docusign.Document.constructFromObject({
+    documentBase64: doc3PdfBase64,
+    name: 'World_Wide_Corp_lorem',
+    fileExtension: 'pdf',
+    documentId: '3'
+  });
+
+  env.documents = [doc2, doc3];
+
+  let signer1 = docusign.Signer.constructFromObject({
+    email: args.envelopeArgs.signerEmail,
+    name: args.envelopeArgs.signerName,
+    recipientId: '1',
+    routingOrder: '1'
+  });
+
+  let cc1 = docusign.CarbonCopy.constructFromObject({
+    email: args.envelopeArgs.ccEmail,
+    name: args.envelopeArgs.ccName,
+    recipientId: '2',
+    routingOrder: '2'
+  });
+
+  let signHere1 = docusign.SignHere.constructFromObject({
+    anchorString: "Please Sign Here",
+    anchorXOffset: "1",
+    anchorYOffset: "0",
+    anchorUnits: "inches"
+  });
+
+  let signer1Tabs = docusign.Tabs.constructFromObject({
+    signHereTabs: [signHere1]
+  });
+
+  signer1.tabs = signer1Tabs;
+
+  env.recipients = docusign.Recipients.constructFromObject({
+    signers: [signer1],
+    carbonCopies: [cc1]
+  });
+
+  env.status = args.envelopeArgs.status;
+
+  return env;
+}
 
 function getArgs(apiAccountId, accessToken, basePath, signerEmail, signerName, ccEmail, ccName){
-  // signerEmail = prompt("Enter the signer's email address: ");
-  // signerName = prompt("Enter the signer's name: ");
-  // ccEmail = prompt("Enter the carbon copy's email address: ");
-  // ccName = prompt("Enter the carbon copy's name: ");
-
   const envelopeArgs = {
     signerEmail: signerEmail,
     signerName: signerName,
@@ -104,16 +159,22 @@ function getArgs(apiAccountId, accessToken, basePath, signerEmail, signerName, c
   return args;
 }
 
-
 async function main(signerEmail, signerName, ccEmail, ccName){
-
-  // console.log(signerEmail, signerName, ccEmail, ccName);
   let accountInfo = await authenticate();
   let args = getArgs(accountInfo.apiAccountId, accountInfo.accessToken, accountInfo.basePath, signerEmail, signerName, ccEmail, ccName);
-  let envelopeId = signingViaEmail.sendEnvelope(args);
-  console.log(envelopeId);
+
+  let dsApiClient = new docusign.ApiClient();
+  dsApiClient.setBasePath(args.basePath);
+  dsApiClient.addDefaultHeader('Authorization', 'Bearer ' + args.accessToken);
+
+  let envelopesApi = new docusign.EnvelopesApi(dsApiClient);
+
+  let envelope = getEnvelopeDefinition(args);
+  let results = await envelopesApi.createEnvelope(args.accountId, { envelopeDefinition: envelope });
+  let envelopeId = results.envelopeId;
+
+  console.log(`Envelope was created. EnvelopeId: ${envelopeId}`);
+  return envelopeId;
 }
 
 module.exports = { main };
-
-// main();
