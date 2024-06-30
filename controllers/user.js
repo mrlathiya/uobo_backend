@@ -469,7 +469,13 @@ module.exports = {
 
     getUserNotifications: async (req, res, next) => {
         try {
-            const customer = req.params.userId;
+            const customerId = req.params.userId;
+
+            if (customerId === undefined || customerId === null || customerId === '') {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'CustomerId is required' });
+            }
+
+            let customer = await userServices.getUserById(customerId);
 
             if (customer) {
                 let notificationIs = await userServices.getCustomerNotifications(customer._id);
