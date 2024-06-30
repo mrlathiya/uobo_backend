@@ -82,6 +82,14 @@ module.exports = {
         return dealer;
     },
 
+    getDealerByContactNumber: async (contactNumber) => {
+        let dealer = await dealerSchema.findOne({
+            'phoneNumber.number': Number(contactNumber)
+        });
+
+        return dealer;
+    },
+
     getDealerByDealerId: async (dealerId) => {
         let dealer = await dealerSchema.findById(dealerId);
 

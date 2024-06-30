@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const userSchema = require('../models/user');
 const emailSchema = require('../models/emails');
 const dealerSchema = require('../models/dealer');
+const notificationSchema = require('../models/notificationStorage');
 
 module.exports = {
     registerUser: async (params) => {
@@ -182,5 +183,11 @@ module.exports = {
         let dealer = await dealerSchema.findOne(dealerId);
 
         return { customer, dealer }
+    },
+
+    getCustomerNotifications: async (customerId) => {
+        let notificationData = await notificationSchema.find({ receiverId: customerId });
+
+        return notificationData;
     }
 }

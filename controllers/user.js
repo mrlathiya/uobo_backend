@@ -411,7 +411,6 @@ module.exports = {
             const payload = req.body;
 
             if (payload?.session?.user_account?.email) {
-                console.log(payload.session.user_account.email);
 
                 let userEmail = payload.session.user_account.email;
 
@@ -424,6 +423,26 @@ module.exports = {
                         if (customerOrders.length) {
 
                             let orders = await financeServices.editPaveReportURLToCustomerOrders(customerOrders, payload.landing_page);
+
+                            let dealerIs = await dealerServices.getDealerByContactNumber(dealerContactNumber);
+
+                            if (user.fcmToken) {
+                                let title = 'Thank you for submitting Trade In Car';
+                                let body = `Please wait while we get the best evaluation from ${dealerIs?.firstName ? dealerIs?.firstName : 'dealer'} and further order updates`;
+
+                                await sendNotification.sendFirebaseNotification(user.fcmToken, title, body, '', 'PaveReportNotificationToCustomer',dealerIs?._id, user._id, true);
+                            }
+
+                            let dealerContactNumber = payload?.session?.options?.sms?.from;
+
+                            dealerContactNumber = dealerContactNumber.slice(2) ? dealerContactNumber.slice(2) : dealerContactNumber;
+
+                            if (dealerIs && dealerIs?.fcmToken) {
+                                let title = `${user?.firstName} submitted trade in car.`;
+                                let body = 'Evaluate the car and confirm the order availability now.';
+
+                                await sendNotification.sendFirebaseNotification(dealerIs.fcmToken, title, body, '', 'PaveReportNotificationToDealer',user._id, dealerIs?._id, false);
+                            }
 
                             return res.status(200).json({ 
                                 IsSuccess: true, 
@@ -442,6 +461,31 @@ module.exports = {
                 }
             } else {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'User not found' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
+
+    getUserNotifications: async (req, res, next) => {
+        try {
+            const customer = req.user;
+
+            if (customer) {
+                let notificationIs = await userServices.getCustomerNotifications(customer._id);
+
+                if (notificationIs.length) {
+                    return res.status(200).json({ 
+                        IsSuccess: true, 
+                        Count: notificationIs.length, 
+                        Data: notificationIs, 
+                        Message: 'Customer notifications found' });
+                } else {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Empty notifications' });
+                }
+
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'No customer found' });
             }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error.message });

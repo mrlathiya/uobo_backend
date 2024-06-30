@@ -20,5 +20,7 @@ router.post('/email', authController, userController.collectUserEmail);
 router.post('/stripe-payment', userController.createStripePayment);
 router.post('/transfer-stripe-payment', userController.transferStripePayment);
 
+router.get('/notification', authController, userController.getUserNotifications);
+
 
 module.exports = router;
