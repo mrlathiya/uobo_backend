@@ -424,6 +424,8 @@ module.exports = {
 
                             let orders = await financeServices.editPaveReportURLToCustomerOrders(customerOrders, payload.landing_page);
 
+                            let dealerContactNumber = payload?.session?.options?.sms?.from;
+                            
                             let dealerIs = await dealerServices.getDealerByContactNumber(dealerContactNumber);
 
                             if (user.fcmToken) {
@@ -432,8 +434,6 @@ module.exports = {
 
                                 await sendNotification.sendFirebaseNotification(user.fcmToken, title, body, '', 'PaveReportNotificationToCustomer',dealerIs?._id, user._id, true);
                             }
-
-                            let dealerContactNumber = payload?.session?.options?.sms?.from;
 
                             dealerContactNumber = dealerContactNumber.slice(2) ? dealerContactNumber.slice(2) : dealerContactNumber;
 
@@ -469,7 +469,7 @@ module.exports = {
 
     getUserNotifications: async (req, res, next) => {
         try {
-            const customer = req.user;
+            const customer = req.params.userId;
 
             if (customer) {
                 let notificationIs = await userServices.getCustomerNotifications(customer._id);
