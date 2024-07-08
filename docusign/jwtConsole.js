@@ -39,7 +39,7 @@ async function authenticate() {
 }
 
 // Main function to orchestrate the signing process
-async function main(signerEmail, signerName, placeholders) {
+async function main(signerEmail, signerName, placeholders, file) {
   try {
     // Authenticate and get account info
     let { accessToken, apiAccountId, basePath } = await authenticate();
@@ -48,13 +48,12 @@ async function main(signerEmail, signerName, placeholders) {
     let env = new docusign.EnvelopeDefinition();
     env.emailSubject = 'Please sign this document';
 
-    // Ensure docPdfFile is defined and valid
-    let docPdfBytes = fs.readFileSync(path.resolve(demoDocsPath, docFile));
-    let docPdfBase64 = Buffer.from(docPdfBytes).toString('base64');
+    // Read uploaded file content directly
+    let docPdfBase64 = file.buffer.toString('base64');
 
     let docPdf = docusign.Document.constructFromObject({
       documentBase64: docPdfBase64,
-      name: docFileName, // Use docFileName to set document name dynamically
+      name: file.originalname, // Use the original file name
       fileExtension: 'pdf',
       documentId: '1'
     });
@@ -72,12 +71,10 @@ async function main(signerEmail, signerName, placeholders) {
     let signHereTabs = placeholders.map((placeholder, index) => {
       return docusign.SignHere.constructFromObject({
         anchorString: `*${placeholder.label}*`,
-        anchorXOffset: '1',
+        anchorXOffset: '0',
         anchorYOffset: '0',
         anchorUnits: 'inches',
         pageNumber: '1', // Page number where the placeholder is located
-        xPosition: parseInt(placeholder.x), // Ensure xPosition is integer
-        yPosition: parseInt(placeholder.y), // Ensure yPosition is integer
       });
     });
 

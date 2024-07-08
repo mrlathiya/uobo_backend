@@ -6,6 +6,10 @@ const authController = require('../../middleware/auth');
 const dealerAuthController = require('../../middleware/dealerAuth');
 const commonAuthController = require('../../middleware/commonAuth');
 const financeController = require('../../controllers/finance');
+const multer = require('multer');
+
+const storage = multer.memoryStorage();
+const uploadFile = multer({ storage: storage });
 
 router.post('/mortgageCategory', financeController.addMortgageCategory);
 router.get('/mortgageCategory', financeController.getMortgageCategory);
@@ -25,7 +29,7 @@ router.put('/withoutcar', commonAuthController, financeController.editCustomerWi
 
 router.get('/liveOrders', dealerAuthController, financeController.getCustomerRequestedOrder);
 
-router.post('/sendEnvelope', financeController.sendDocuSignDoc);
+router.post('/sendEnvelope', uploadFile.single('file'), financeController.sendDocuSignDoc);
 
 
 module.exports = router;
