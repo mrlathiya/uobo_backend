@@ -627,7 +627,7 @@ module.exports = {
             const { signerEmail, signerName, ccEmail, ccName, placeholders } = req.body;
 
             // Invoke DocuSign functionalitydocusignDealer
-            const envelopeId = await docusign.main(signerEmail, signerName, ccEmail, ccName, placeholders);
+            const envelopeId = await docusign.main(signerEmail, signerName, placeholders, ccEmail, ccName);
             // const envelopeId = await docusignDealer.main(signerEmail, signerName, ccEmail, ccName);
 
             // Return envelope ID in the response

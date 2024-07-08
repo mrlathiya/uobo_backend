@@ -11,7 +11,6 @@ const SCOPES = [
   'signature', 'impersonation'
 ];
 
-// Function to authenticate and obtain access token
 async function authenticate() {
   const jwtLifeSec = 10 * 60; // requested lifetime for the JWT is 10 min
   const dsApi = new docusign.ApiClient();
@@ -40,7 +39,7 @@ async function authenticate() {
 }
 
 // Main function to orchestrate the signing process
-async function main(signerEmail, signerName, ccEmail, ccName, placeholders) {
+async function main(signerEmail, signerName, placeholders) {
   try {
     // Authenticate and get account info
     let { accessToken, apiAccountId, basePath } = await authenticate();
@@ -72,7 +71,7 @@ async function main(signerEmail, signerName, ccEmail, ccName, placeholders) {
     // Dynamically add signHere tabs for each placeholder
     let signHereTabs = placeholders.map((placeholder, index) => {
       return docusign.SignHere.constructFromObject({
-        anchorString: `*sign${index + 1}*`, // Unique identifier for each placeholder
+        anchorString: `*${placeholder.label}*`,
         anchorXOffset: '1',
         anchorYOffset: '0',
         anchorUnits: 'inches',
