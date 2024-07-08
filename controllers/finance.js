@@ -4,6 +4,7 @@ const customerService = require('../services/user');
 const dealerServices = require('../services/dealer');
 const carServices = require('../services/car');
 const docusign = require('../docusign/jwtConsole');
+const docusignDealer = require('../docusign/jwtDealerConsole');
 const awsServices = require('../config/aws-services');
 const sendNotification = require('../config/send-notification');
 
@@ -623,15 +624,17 @@ module.exports = {
 
             // console.log('hello');
 
-            const { signerEmail, signerName, ccEmail, ccName } = req.body;
+            const { signerEmail, signerName, ccEmail, ccName, placeholders } = req.body;
 
-            // Invoke DocuSign functionality
-            const envelopeId = await docusign.main(signerEmail, signerName, ccEmail, ccName);
+            // Invoke DocuSign functionalitydocusignDealer
+            const envelopeId = await docusign.main(signerEmail, signerName, ccEmail, ccName, placeholders);
+            // const envelopeId = await docusignDealer.main(signerEmail, signerName, ccEmail, ccName);
 
             // Return envelope ID in the response
             res.json({ envelopeId });
             
         } catch (error) {
+            console.log(error)
             return res.status(500).json({ IsSuccess: false, Message: error.message });
         }
     },
