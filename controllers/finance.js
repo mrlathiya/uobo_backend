@@ -7,6 +7,8 @@ const docusign = require('../docusign/jwtConsole');
 const docusignDealer = require('../docusign/jwtDealerConsole');
 const awsServices = require('../config/aws-services');
 const sendNotification = require('../config/send-notification');
+const path = require('path');
+const fs = require('fs');
 
 module.exports = {
     addCustomerFinanceDetails: async (req, res, next) => {
@@ -622,13 +624,21 @@ module.exports = {
     sendDocuSignDoc: async (req, res, next) => {
         try {
 
-            // console.log('hello');
-
             const { signerEmail, signerName, ccEmail, ccName, placeholders } = req.body;
 
             const file = req.file;
 
-            console.log(file)
+            const filePath = `uploads/${file.originalname}`;
+    
+            // Save the image to the "uploads" folder
+            fs.writeFile(filePath, file.buffer, (err) => {
+                if (err) {
+                console.error(err);
+                throw new Error('Error uploading image');
+                } else {
+                console.log('Image uploaded successfully');
+                }
+            });
 
             // Invoke DocuSign functionalitydocusignDealer
             const envelopeId = await docusign.main(signerEmail, signerName, placeholders, file, ccEmail, ccName);

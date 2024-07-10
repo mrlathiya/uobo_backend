@@ -41,6 +41,7 @@ async function authenticate() {
 // Main function to orchestrate the signing process
 async function main(signerEmail, signerName, placeholders, file) {
   try {
+
     // Authenticate and get account info
     let { accessToken, apiAccountId, basePath } = await authenticate();
 
@@ -68,15 +69,26 @@ async function main(signerEmail, signerName, placeholders, file) {
     });
 
     // Dynamically add signHere tabs for each placeholder
-    let signHereTabs = placeholders.map((placeholder, index) => {
-      return docusign.SignHere.constructFromObject({
-        anchorString: `*${placeholder.label}*`,
+    // let signHereTabs = placeholders.map((placeholder, index) => {
+    //   return docusign.SignHere.constructFromObject({
+    //     anchorString: `*${placeholder.label}*`,
+    //     anchorXOffset: '0',
+    //     anchorYOffset: '0',
+    //     anchorUnits: 'inches',
+    //     pageNumber: '1', // Page number where the placeholder is located
+    //   });
+    // });
+
+    let signHereTabs = [];
+    for (let i = 1; i <= 10; i++) { // Assuming up to 10 placeholders, adjust as needed
+      signHereTabs.push(docusign.SignHere.constructFromObject({
+        anchorString: `sign${i}`,
         anchorXOffset: '0',
         anchorYOffset: '0',
         anchorUnits: 'inches',
         pageNumber: '1', // Page number where the placeholder is located
-      });
-    });
+      }));
+    }
 
     let signer1Tabs = docusign.Tabs.constructFromObject({
       signHereTabs: signHereTabs
