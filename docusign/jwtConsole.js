@@ -1,11 +1,11 @@
 const docusign = require('docusign-esign');
 const fs = require('fs');
-const path = require('path');
+// const path = require('path');
 const jwtConfig = require('./jwtConfig.json');
 
-const demoDocsPath = path.resolve(__dirname, '../config/demo_documents');
-const docFile = 'ordertest.pdf'; // Ensure this matches your actual file name
-const docFileName = 'ordertest';
+// const demoDocsPath = path.resolve(__dirname, '../config/demo_documents');
+// const docFile = 'ordertest.pdf'; // Ensure this matches your actual file name
+// const docFileName = 'ordertest';
 
 const SCOPES = [
   'signature', 'impersonation'
@@ -39,7 +39,7 @@ async function authenticate() {
 }
 
 // Main function to orchestrate the signing process
-async function main(signerEmail, signerName, placeholders, file) {
+async function main(signerEmail, signerName, placeholders, file, ccEmail, ccName) {
   try {
 
     // Authenticate and get account info
@@ -64,6 +64,8 @@ async function main(signerEmail, signerName, placeholders, file) {
     let signer1 = docusign.Signer.constructFromObject({
       email: signerEmail,
       name: signerName,
+      ccEmail: ccEmail,
+      ccName: ccName,
       recipientId: '1',
       routingOrder: '1'
     });

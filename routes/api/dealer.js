@@ -18,6 +18,9 @@ const authController = require('../../middleware/auth');
 router.post('/', uploadFile.single('inventory_csv'), dealerController.dealerRegistration);
 router.post('/login', dealerController.dealerLogin);
 router.put('/fcmToken', dealerController.editDealerFcmToken);
+
+router.get('/docusign-webhooks', dealerController.getDocusignContent);
+
 router.get('/', dealerAuthController, dealerController.getDealer);
 router.get('/all', dealerController.getAlldealerDetails);
 router.put('/', dealerAuthController, dealerController.updateDealer);
@@ -27,5 +30,6 @@ router.get('/notification', dealerAuthController, dealerController.getDashboardD
 //Dealer Rating API
 router.post('/rating', authController, dealerController.addDealerRating);
 router.get('/rating', dealerAuthController, dealerController.getDealerRatings);
+
 
 module.exports = router;

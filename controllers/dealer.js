@@ -533,5 +533,14 @@ module.exports = {
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
         }
+    },
+
+    getDocusignContent: async (req, res, next) => {
+        try {
+            const envelopeData = req.body;
+            console.log(envelopeData);
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
     }
 }

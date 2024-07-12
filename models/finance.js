@@ -323,6 +323,9 @@ const financeOrdersSchema = mongoose.Schema({
     paveReportURL: {
         type: String,
         default: ''
+    },
+    envelopId: {
+        type: String
     }
 },
 {
