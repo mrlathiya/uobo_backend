@@ -212,7 +212,8 @@ module.exports = {
             if (finance === undefined || finance === null) {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Requested cash finance not found' });
             }
-
+            let carIs = await carServices.getCarById(params.carId);
+            
             if (params.confirmAvailabilty === true) {
                 if (!params.status) {
                     return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide status parameter' });
@@ -229,7 +230,6 @@ module.exports = {
 
                 if (editStatus) {
 
-                    let carIs = await carServices.getCarById(params.carId);
                     let dealerIs = await dealerServices.getDealerByDealerId(editStatus.dealerId);
                     let customerIs = await customerService.getUserById(editStatus.customerId);
 
@@ -286,9 +286,19 @@ module.exports = {
                     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Finance status not updated' });
                 }
             } else {
-                let deleteFinance = await financeService.deleteFinanceOrder(params.financeId);
+                let updateCancelledOrderStatus = await financeService.editOrderStatusCancelled(params.financeId);
 
-                return res.status(200).json({  IsSuccess: true, Data: [], Message: 'Customer requested finance deleted'});
+                let title = 'Sorry! Your requested car is not available';
+                let content = `${carIs.make} ${carIs.model} ${carIs.year}`;
+
+                let dealerIs = await dealerServices.getDealerByDealerId(updateCancelledOrderStatus.dealerId);
+                let customerIs = await customerService.getUserById(updateCancelledOrderStatus.customerId);
+
+                if (customerIs?.fcmToken) {
+                    await sendNotification.sendFirebaseNotification(customerIs.fcmToken, title, content, '', 'cancelledOrders', dealerIs?._id, customerIs._id);
+                }
+
+                return res.status(200).json({  IsSuccess: true, Data: [], Message: 'Customer order cancelled'});
             }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });

@@ -418,6 +418,12 @@ module.exports = {
         return true;
     },
 
+    editOrderStatusCancelled: async (financeId) => {
+        let editCancelledStatus = await financeModel.findByIdAndUpdate(financeId, { status: 'cancelled' }, { new: true });
+
+        return editCancelledStatus;
+    },
+
     getOrderByDealerId: async(dealer) => {
         const orders = await financeModel.find({ 
             $and: [
