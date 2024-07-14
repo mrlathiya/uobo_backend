@@ -303,6 +303,14 @@ const financeOrdersSchema = mongoose.Schema({
             },
         }
     },
+    selectedAppointment: {
+        date: {
+            type: String
+        },
+        time: {
+            type: String
+        },
+    },
     deliveryAddress: {
         address1: {
             type: String
