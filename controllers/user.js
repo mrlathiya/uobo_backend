@@ -500,13 +500,9 @@ module.exports = {
 
     editCustomerLicenceVerification: async(req, res, next) => {
         try {
-            const { customerId } = req.query;
+            const { customerId } = req.body;
 
             if (customerId === undefined && customerId === null && customerId === '') {
-                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer id is required parameters'});
-            }
-
-            if (customerId !== undefined && customerId !== null && customerId !== '') {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer id is required parameters'});
             }
 
