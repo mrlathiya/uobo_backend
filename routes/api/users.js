@@ -8,6 +8,7 @@ const authController = require('../../middleware/auth');
 router.get('/noti', userController.sendNoti);
 router.post('/payment-alert', userController.sendAlertForPaymentProcessCompletion);
 router.get('/notification', userController.getUserNotifications);
+router.put('/licenceVerification', userController.editCustomerLicenceVerification);
 
 router.post('/', userController.userRegistration);
 router.get('/all', userController.getAllUsers);

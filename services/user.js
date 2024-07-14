@@ -189,5 +189,13 @@ module.exports = {
         let notificationData = await notificationSchema.find({ receiverId: customerId });
 
         return notificationData;
-    }
+    },
+
+    customerLicenceVerification: async (customerId,isVerify) => {
+        let updateCustomerLicenceVerificationStatus = await userSchema.findByIdAndUpdate(customerId, 
+                                        { 'licenceDetails.isVerify': isVerify }, 
+                                        { new: true });
+
+        return updateCustomerLicenceVerificationStatus;
+    },
 }

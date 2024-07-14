@@ -496,5 +496,29 @@ module.exports = {
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
         }
+    },
+
+    editCustomerLicenceVerification: async(req, res, next) => {
+        try {
+            const { customerId } = req.body;
+
+            if (customerId !== undefined && customerId !== null && customerId !== '') {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer id is required parameters'});
+            }
+
+            // if (customerId !== undefined && customerId !== null && customerId !== '') {
+            //     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer id is required parameters'});
+            // }
+
+            let editCustomerLicence = await userServices.customerLicenceVerification(customerId, true);
+
+            if (editCustomerLicence) {
+                return res.status(200).json({ IsSuccess: true, Data: [editCustomerLicence], Message: 'Customer licence verified' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer licence not verified or customer not found' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
     }
 }
