@@ -19,7 +19,7 @@ router.post('/', uploadFile.single('inventory_csv'), dealerController.dealerRegi
 router.post('/login', dealerController.dealerLogin);
 router.put('/fcmToken', dealerController.editDealerFcmToken);
 
-router.get('/docusign-webhooks', dealerController.getDocusignContent);
+router.post('/docusign-webhooks', dealerController.getDocusignContent);
 
 router.get('/', dealerAuthController, dealerController.getDealer);
 router.get('/all', dealerController.getAlldealerDetails);
