@@ -222,31 +222,31 @@ module.exports = {
 
     searchCarInventory: async (req, res, next) => {
         try {
-            // const { keyword } = req.query;
+            const { keyword } = req.query;
 
-            // const userIs = req.user;
+            const userIs = req.user;
 
-            // if (!keyword) {
-            //     return res.status(401).json({ 
-            //         IsSuccess: false, 
-            //         Data: [], 
-            //         Message: 'Keyword is required in the query parameters' 
-            //     });
-            // }
+            if (!keyword) {
+                return res.status(401).json({ 
+                    IsSuccess: false, 
+                    Data: [], 
+                    Message: 'Keyword is required in the query parameters' 
+                });
+            }
 
-            await carServices.testcheck();
-            // const cars = await carServices.searchOperation(keyword, userIs._id, req.userType);
+            // await carServices.testcheck();
+            const cars = await carServices.searchOperation(keyword, userIs._id, req.userType);
 
-            // if (cars) {
-            //     return res.status(200).json({ 
-            //         IsSuccess: true, 
-            //         Count: cars.length, 
-            //         Data: cars, 
-            //         Message: 'Search car result found' 
-            //     });
-            // } else {
-            //     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Search car found' });
-            // }
+            if (cars) {
+                return res.status(200).json({ 
+                    IsSuccess: true, 
+                    Count: cars.length, 
+                    Data: cars, 
+                    Message: 'Search car result found' 
+                });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Search car found' });
+            }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
         }

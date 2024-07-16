@@ -243,8 +243,8 @@ module.exports = {
                                 content = `Review them now and take action`;
                             }
                             
-                            if (editStatus.status === 'CustomerPaidFullInCashAndChooseTime') {
-                                title = `${customerIs.firstName} ${customerIs.lastName} has paid full in cash and chose delivery date`;
+                            if (editStatus.status === 'CustomerPaidFullInCashAndChooseTime' || editStatus.status === 'CustomerBookedAppointment') {
+                                title = `${customerIs.firstName} ${customerIs.lastName} choose delivery date`;
                                 content = `Confirm it now and send bill of sale to ${customerIs.firstName}`;
                             }
 
