@@ -10,6 +10,12 @@ const sendNotification = require('../config/send-notification');
 const path = require('path');
 const fs = require('fs');
 
+const generateOrderNumber = () => {
+    const prefix = 'ORD-';
+    const randomNumber = Math.floor(10000 + Math.random() * 90000);
+    return `${prefix}${randomNumber}`;
+}
+
 module.exports = {
     addCustomerFinanceDetails: async (req, res, next) => {
         try {
@@ -98,6 +104,10 @@ module.exports = {
                 return res.status(200).json({ IsSuccess: false, Data: [], Message: 'Dealer not found' });
             }
 
+            const orderNumber = generateOrderNumber();
+
+            params.financeOrderId = orderNumber;
+
             let addFinance = await financeService.addCustomerCashFinance(params, customer);
 
             if (addFinance) {
@@ -148,6 +158,10 @@ module.exports = {
             if(dealerIs === undefined || dealerIs === null) {
                 return res.status(200).json({ IsSuccess: false, Data: [], Message: 'Dealer not found' });
             }
+
+            const orderNumber = generateOrderNumber();
+
+            params.financeOrderId = orderNumber;
 
             let addFinance = await financeService.addCustomerFixFinance(params, customer);
             let editCustomerFinancialInformation = await customerService.editCustomerFinancialDetails(customer._id, params);
@@ -286,7 +300,7 @@ module.exports = {
                     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Finance status not updated' });
                 }
             } else {
-                let updateCancelledOrderStatus = await financeService.editOrderStatusCancelled(params.financeId);
+                let updateCancelledOrderStatus = await financeService.editOrderStatus(params.financeId, 'cancelled');
 
                 let title = 'Sorry! Your requested car is not available';
                 let content = `${carIs.make} ${carIs.model} ${carIs.year}`;
@@ -476,6 +490,10 @@ module.exports = {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide customerId' });
             }
 
+            const orderNumber = generateOrderNumber();
+
+            params.financeOrderId = orderNumber;
+
             let addFinance = await financeService.addWithoutCarOrder(params, customer);
             let editCustomerFinancialInformation = await customerService.editCustomerFinancialDetails(customer._id, params);
 
@@ -634,28 +652,56 @@ module.exports = {
     sendDocuSignDoc: async (req, res, next) => {
         try {
 
-            const { signerEmail, signerName, ccEmail, ccName, placeholders } = req.body;
+            const { signerEmail, signerName, ccEmail, ccName, placeholders, orderId } = req.body;
 
             const file = req.file;
 
-            const filePath = `uploads/${file.originalname}`;
+            if (!file) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please pass valid bill of sale' });
+            }
+
+            if (orderId === undefined || orderId === null || orderId === '') {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please pass valid orderId' });
+            }
+
+            let checkExist = await financeService.getFinanceByIdWithCustomerDealerDetails(orderId);
+
+            // const filePath = `uploads/${file.originalname}`;
     
-            // Save the image to the "uploads" folder
-            fs.writeFile(filePath, file.buffer, (err) => {
-                if (err) {
-                console.error(err);
-                throw new Error('Error uploading image');
+            // // Save the image to the "uploads" folder
+            // fs.writeFile(filePath, file.buffer, (err) => {
+            //     if (err) {
+            //     console.error(err);
+            //     throw new Error('Error uploading image');
+            //     } else {
+            //     console.log('Image uploaded successfully');
+            //     }
+            // });
+
+            if (checkExist) {
+                // Invoke DocuSign functionalitydocusignDealer
+                const envelopeId = await docusign.main(signerEmail, signerName, placeholders, file, ccEmail, ccName);
+                // const envelopeId = await docusignDealer.main(signerEmail, signerName, ccEmail, ccName);
+
+                if (envelopeId) {
+                    await financeService.editOrderStatus(orderId, 'DealerSentBillOfSale');
+
+                    if (checkExist?.customerId?.fcmToken) {
+                        title = `${checkExist?.dealerId?.firstName} has sent bill of sale`;
+                        content = `Let's close the deal`;
+
+                        const fcmToken = checkExist?.customerId?.fcmToken;
+
+                        await sendNotification.sendFirebaseNotification(fcmToken, title, content, '', 'DealerSentBillOfSale', checkExist?.dealerId?._id, checkExist?.customerId?._id, true);
+                    }
+
+                    return res.status(200).json({ envelopeId });
                 } else {
-                console.log('Image uploaded successfully');
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Envelope not created' });
                 }
-            });
-
-            // Invoke DocuSign functionalitydocusignDealer
-            const envelopeId = await docusign.main(signerEmail, signerName, placeholders, file, ccEmail, ccName);
-            // const envelopeId = await docusignDealer.main(signerEmail, signerName, ccEmail, ccName);
-
-            // Return envelope ID in the response
-            res.json({ envelopeId });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Finance order not found' });
+            }
             
         } catch (error) {
             console.log(error)

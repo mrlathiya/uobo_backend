@@ -334,6 +334,9 @@ const financeOrdersSchema = mongoose.Schema({
     },
     envelopId: {
         type: String
+    },
+    financeOrderId: {
+        type: String
     }
 },
 {

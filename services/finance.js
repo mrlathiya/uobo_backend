@@ -170,6 +170,7 @@ module.exports = {
             carId: params.carId,
             firstName: params.firstName,
             lastName: params.lastName,
+            financeOrderId: params.financeOrderId,
             email: customer.email ? customer.email : params.email,
             category: 'Cash',
             contact: {
@@ -231,6 +232,7 @@ module.exports = {
             carId: params.carId,
             firstName: params.firstName,
             lastName: params.lastName,
+            financeOrderId: params.financeOrderId,
             email: customer.email ? customer.email : params.email,
             category: 'Fix',
             contact: {
@@ -288,6 +290,7 @@ module.exports = {
             customerId: customer._id,
             firstName: params.firstName,
             lastName: params.lastName,
+            financeOrderId: params.financeOrderId,
             email: customer.email ? customer.email : params.email,
             orderType: 'WithoutCar',
             contact: {
@@ -317,14 +320,22 @@ module.exports = {
         }
     },
 
-    getFinanceById: async (financeId, type) => {
+    getFinanceById: async (financeId) => {
 
-        let finance = await financeModel.findById(financeId);;
-        // if (type == 'financeFix') {
-        //     finance = await financeModel.findById(financeId);
-        // } else {
-        //     finance = await financeModel.findById(financeId);
-        // } 
+        let finance = await financeModel.findById(financeId);
+
+        return finance;
+    },
+
+    getFinanceByIdWithCustomerDealerDetails: async (financeId) => {
+
+        let finance = await financeModel.findById(financeId)
+                                        .populate({
+                                            path: 'customerId'
+                                        })
+                                        .populate({
+                                            path: 'dealerId'
+                                        });
 
         return finance;
     },
@@ -419,10 +430,10 @@ module.exports = {
         return true;
     },
 
-    editOrderStatusCancelled: async (financeId) => {
-        let editCancelledStatus = await financeModel.findByIdAndUpdate(financeId, { status: 'cancelled' }, { new: true });
+    editOrderStatus: async (financeId, status) => {
+        let editedStatus = await financeModel.findByIdAndUpdate(financeId, { status }, { new: true });
 
-        return editCancelledStatus;
+        return editedStatus;
     },
 
     getOrderByDealerId: async(dealer) => {
