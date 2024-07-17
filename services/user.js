@@ -45,11 +45,12 @@ module.exports = {
     createUserToken: async (userId) => {
         const token = jwt.sign(
         { 
-            user_id: userId },
-            process.env.JWT_SECRET_KEY,
-            {
-                expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
-            },
+            user_id: userId 
+        },
+        process.env.JWT_SECRET_KEY,
+        {
+            expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
+        },
         );
     
         return token;

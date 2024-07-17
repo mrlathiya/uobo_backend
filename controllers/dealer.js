@@ -206,7 +206,7 @@ module.exports = {
 
             if (registerDealerData) {
 
-                const token = await userServices.createUserToken(dealer._id);
+                const token = await userServices.createUserToken(registerDealerData._id);
 
                 if (token) {
 
