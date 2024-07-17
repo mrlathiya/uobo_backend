@@ -5,7 +5,12 @@ const router = express.Router();
 
 // Set up multer storage
 const storage = multer.memoryStorage();
-const uploadFile = multer({ storage: storage });
+const uploadFile = multer({ 
+    storage: storage,
+    limits: {
+        fieldSize: 25 * 1024 * 1024,
+    },
+});
 
 const dealerController = require('../../controllers/dealer');
 const dealerAuthController = require('../../middleware/dealerAuth');
