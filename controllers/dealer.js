@@ -56,40 +56,46 @@ const deleteImage = async (fileName) => {
 const convertCsvToJson = async (csvFile, dealerId) => {
     const jsonData = [];
     const csvData = csvFile.buffer.toString('utf-8');
-    
+
     const rows = csvData.trim().split('\n');
-    
-    const headers = rows[0].split(',');
-    
+    const headers = rows[0].split(',').map(header => header.replace(/"/g, '').trim());
+
     for (let i = 1; i < rows.length; i++) {
         const row = rows[i].split(',');
         const rowData = {};
-        
+
+        // Skip empty rows
+        if (row.every(field => field.trim() === '')) {
+            continue;
+        }
+
         for (let j = 0; j < headers.length; j++) {
-            // Replace spaces with underscores in keys
-            let cleanedKey = headers[j].replace(/"/g, '').replace(/\s+/g, '_');
-            
-            // Remove double quotes from values
-            const cleanedValue = row[j].replace(/"/g, '');
-            
+            // Replace spaces with underscores and trim any extra underscores from the keys
+            let cleanedKey = headers[j].replace(/\s+/g, '_').replace(/_+$/, '');
+
+            // Remove double quotes from values and trim whitespace/newlines
+            const cleanedValue = row[j].replace(/"/g, '').trim();
+
+            // Handle special cases for key names
             if (cleanedKey === 'New/Used') {
                 cleanedKey = 'New_or_Used';
             }
-            
+
             if (cleanedKey === 'Certified_Pre-owned') {
                 cleanedKey = 'Certified_Pre_owned';
             }
-            
+
             rowData[cleanedKey] = cleanedValue;
         }
-        
+
         jsonData.push(rowData);
-        
+
         await addCSVRawToDB(rowData, dealerId);
     }
-    
-    return jsonData; 
-}
+
+    return jsonData;
+};
+
 
 const addCSVRawToDB = async (dataRow, dealerId) => {
     try {
