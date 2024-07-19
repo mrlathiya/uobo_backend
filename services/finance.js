@@ -455,7 +455,6 @@ module.exports = {
     editOrderByEnvelopeId: async (envelopeId) => {
         let editOrder = await financeModel.findOneAndUpdate({ envelopeId }, { status: 'CustomerSignedBillofSale' }, { new: true });
 
-        console.log('-------------', editOrder);
         return editOrder;
     },
 

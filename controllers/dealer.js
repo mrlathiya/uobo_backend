@@ -549,18 +549,39 @@ module.exports = {
             console.log(envelopeData);
 
             const envelopeId = envelopeData?.data?.envelopeId;
+            const eventName = envelopeData?.event;
 
             if (envelopeId) {
-                const order = await financeService.editOrderByEnvelopeId(envelopeId);
 
-                console.log('sign order', order);
+                if (eventName === 'recipient-completed') {
+                    const order = await financeService.editOrderByEnvelopeId(envelopeId);
 
-                let token = 'f_PK-e85e0brscOgph3707:APA91bEpREytWDm2LAqptxwiqC8ib_ajZpI5ynIKP7ONt9iYWiPMFsjY6KM2_2tBkcwdTjKHS-TV49s0oQatquRDdqpjsKPFaSXVwhpqCkGnDAxSRVh7YdPfHJAWPs25FOwFv-6Pr_oo';
+                    let dealerId = order?.dealerId;
+                    let customerId = order?.customerId;
 
-                let title = 'hello test webhook';
-                let body = 'Docusign webhook testing';
+                    let getDealer = await dealerServices.getDealerByDealerId(dealerId);
+                    let getCustomer = await userServices.getUserById(customerId);
+                    // let getCar = await userServices.getUserById(customerId);
 
-                await sendNotification.sendFirebaseNotification(token, title, body, '', 'test', '65ae80f6d8561a1cab156a87', '66703934d759e662e41c25b4', false);
+                    if (getDealer.fcmToken) {
+                        let token = getDealer.fcmToken;
+
+                        let title = `${getCustomer.firstName} ${getCustomer.lastName} has signed bill of sale`;
+                        let body = `Order Number: ${order?.financeOrderId}`;
+
+                        await sendNotification.sendFirebaseNotification(token, title, body, '', '', getCustomer._id, getDealer._id, false);
+                    }
+
+                    if (getCustomer.fcmToken) {
+                        let token = getCustomer.fcmToken;
+
+                        let title = `Thank you for signing bill of sale`;
+                        let body = `Order Number: ${order?.financeOrderId}`;
+
+                        await sendNotification.sendFirebaseNotification(token, title, body, '', '', getDealer._id, getCustomer._id, true);
+                    }
+                }
+                
             }
 
             return res.send('done');
