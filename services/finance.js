@@ -430,10 +430,32 @@ module.exports = {
         return true;
     },
 
-    editOrderStatus: async (financeId, status) => {
-        let editedStatus = await financeModel.findByIdAndUpdate(financeId, { status }, { new: true });
+    editOrderStatus: async (financeId, status, envelopeId) => {
+        let editedStatus = await financeModel.findByIdAndUpdate(
+            financeId, 
+            { 
+                status, 
+                envelopeId: envelopeId !== undefined && envelopeId !== null && envelopeId !== '' ? envelopeId : ''  
+            }, 
+            { new: true }
+        );
 
         return editedStatus;
+    },
+
+    getOrderByEnvelopeId: async (envelopeId) => {
+        let orderIs = await financeModel.findOne({ envelopeId });
+
+        console.log('-------------', orderIs);
+
+        return orderIs;
+    },
+
+    editOrderByEnvelopeId: async (envelopeId) => {
+        let editOrder = await financeModel.findOneAndUpdate({ envelopeId }, { status: 'CustomerSignedBillofSale' }, { new: true });
+
+        console.log('-------------', editOrder);
+        return editOrder;
     },
 
     getOrderByDealerId: async(dealer) => {
