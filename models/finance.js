@@ -332,7 +332,7 @@ const financeOrdersSchema = mongoose.Schema({
         type: String,
         default: ''
     },
-    envelopId: {
+    envelopeId: {
         type: String
     },
     financeOrderId: {

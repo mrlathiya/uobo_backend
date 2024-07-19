@@ -431,12 +431,15 @@ module.exports = {
     },
 
     editOrderStatus: async (financeId, status, envelopeId) => {
+
+        const update = { 
+            status, 
+            envelopeId: envelopeId !== undefined && envelopeId !== null && envelopeId !== '' ? envelopeId : ''  
+        }
+
         let editedStatus = await financeModel.findByIdAndUpdate(
             financeId, 
-            { 
-                status, 
-                envelopeId: envelopeId !== undefined && envelopeId !== null && envelopeId !== '' ? envelopeId : ''  
-            }, 
+            update, 
             { new: true }
         );
 
@@ -445,8 +448,6 @@ module.exports = {
 
     getOrderByEnvelopeId: async (envelopeId) => {
         let orderIs = await financeModel.findOne({ envelopeId });
-
-        console.log('-------------', orderIs);
 
         return orderIs;
     },

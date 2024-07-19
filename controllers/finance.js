@@ -666,18 +666,6 @@ module.exports = {
 
             let checkExist = await financeService.getFinanceByIdWithCustomerDealerDetails(orderId);
 
-            // const filePath = `uploads/${file.originalname}`;
-    
-            // // Save the image to the "uploads" folder
-            // fs.writeFile(filePath, file.buffer, (err) => {
-            //     if (err) {
-            //     console.error(err);
-            //     throw new Error('Error uploading image');
-            //     } else {
-            //     console.log('Image uploaded successfully');
-            //     }
-            // });
-
             if (checkExist) {
                 // Invoke DocuSign functionalitydocusignDealer
                 const envelopeId = await docusign.main(signerEmail, signerName, placeholders, file, ccEmail, ccName);
