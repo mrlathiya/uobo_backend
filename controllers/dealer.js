@@ -3,7 +3,6 @@ const carServices = require('../services/car');
 const userServices = require('../services/user');
 const awsServices = require('../config/aws-services');
 const sendNotification = require('../config/send-notification');
-const financeService = require('../services/finance');
 const fs = require('fs');
 const path = require('path');
 const dealer = require('../models/dealer');
@@ -548,20 +547,12 @@ module.exports = {
             const envelopeData = req.body;
             console.log(envelopeData);
 
-            const envelopeId = envelopeData?.data?.envelopeId;
+            let token = 'f_PK-e85e0brscOgph3707:APA91bEpREytWDm2LAqptxwiqC8ib_ajZpI5ynIKP7ONt9iYWiPMFsjY6KM2_2tBkcwdTjKHS-TV49s0oQatquRDdqpjsKPFaSXVwhpqCkGnDAxSRVh7YdPfHJAWPs25FOwFv-6Pr_oo';
 
-            if (envelopeId) {
-                const order = await financeService.editOrderByEnvelopeId(envelopeId);
+            let title = 'hello test webhook';
+            let body = 'Docusign webhook testing';
 
-                console.log('sign order', order);
-
-                let token = 'f_PK-e85e0brscOgph3707:APA91bEpREytWDm2LAqptxwiqC8ib_ajZpI5ynIKP7ONt9iYWiPMFsjY6KM2_2tBkcwdTjKHS-TV49s0oQatquRDdqpjsKPFaSXVwhpqCkGnDAxSRVh7YdPfHJAWPs25FOwFv-6Pr_oo';
-
-                let title = 'hello test webhook';
-                let body = 'Docusign webhook testing';
-
-                await sendNotification.sendFirebaseNotification(token, title, body, '', 'test', '65ae80f6d8561a1cab156a87', '66703934d759e662e41c25b4', false);
-            }
+            await sendNotification.sendFirebaseNotification(token, title, body, '', 'test', '65ae80f6d8561a1cab156a87', '66703934d759e662e41c25b4', false);
 
             return res.send('done');
         } catch (error) {

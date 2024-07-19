@@ -684,7 +684,7 @@ module.exports = {
                 // const envelopeId = await docusignDealer.main(signerEmail, signerName, ccEmail, ccName);
 
                 if (envelopeId) {
-                    await financeService.editOrderStatus(orderId, 'DealerSentBillOfSale', envelopeId);
+                    await financeService.editOrderStatus(orderId, 'DealerSentBillOfSale');
 
                     if (checkExist?.customerId?.fcmToken) {
                         title = `${checkExist?.dealerId?.firstName} has sent bill of sale`;
