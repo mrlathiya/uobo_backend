@@ -672,7 +672,17 @@ module.exports = {
                 // const envelopeId = await docusignDealer.main(signerEmail, signerName, ccEmail, ccName);
 
                 if (envelopeId) {
-                    await financeService.editOrderStatus(orderId, 'DealerSentBillOfSale', envelopeId);
+                    let fileName = `${checkExist?.customerId?.firstName}_${checkExist?.customerId?.lastName}_${checkExist?.customerId?._id}_${checkExist?.dealerId?._id}`;
+                    let uploadedFile = await awsServices.uploadPDF(file, 'Customer_Bill_of_Sale', fileName);
+
+                    console.log('uploadedFile-----', uploadedFile);
+
+                    let billOfSaleFile = {
+                        category: 'BillOfSale',
+                        file: uploadedFile?.URL ? uploadedFile?.URL : ''
+                    };
+
+                    await financeService.editOrderStatus(orderId, 'DealerSentBillOfSale', envelopeId, billOfSaleFile);
 
                     if (checkExist?.customerId?.fcmToken) {
                         title = `${checkExist?.dealerId?.firstName} has sent bill of sale`;

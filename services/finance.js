@@ -430,11 +430,14 @@ module.exports = {
         return true;
     },
 
-    editOrderStatus: async (financeId, status, envelopeId) => {
+    editOrderStatus: async (financeId, status, envelopeId, customerBillOfSaleURL) => {
 
         const update = { 
             status, 
-            envelopeId: envelopeId !== undefined && envelopeId !== null && envelopeId !== '' ? envelopeId : ''  
+            envelopeId: envelopeId !== undefined && envelopeId !== null && envelopeId !== '' ? envelopeId : '',
+            $push: {
+                documents: customerBillOfSaleURL
+            }  
         }
 
         let editedStatus = await financeModel.findByIdAndUpdate(

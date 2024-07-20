@@ -229,44 +229,117 @@ const _uploadCSV = async (file, folderName, fileType, fileNameIs) => {
 };
 
 /* Upload PDF on s3 bucket */
-const uploadPDF = async (file, fileName, folderName) => {
+const uploadPDFFromBase64 = async (file, folderName) => {
 
-  if (fs.existsSync(file)) {
+  let documentIs = file;
+  let fileName = file.fileName !== undefined ? file.fileName : new Date().getTime().toString();
 
-    return new Promise((resolve, reject) => {
-        
-      if(folderName == undefined || folderName == ""){
-        folderName = 'estimations'
-      }
-      
-      var profile = {
-        Bucket: process.env.BUCKET_NAME,
-        Key: `${folderName}/${fileName}`,
-        ACL: 'public-read',
-        Body: fs.createReadStream(file),
-      };
-    
-      s3.putObject(profile, function (err, rese) {
-        if (err) {
-    
-          resolve({
-            status: 0,
-            err: err
-          });
-    
-        } else {
-          fs.unlinkSync(file);
-          resolve({
-            status: 1,
-            URL: `${process.env.AWS_S3_URL}${folderName}/${fileName}`,
-            address: `${folderName}/${fileName}`,
-            name: `${fileName}`
-          });
-  
-        }
-      });
-    })
+  let base64Content;
+  if (documentIs.includes(',')) {
+    base64Content = documentIs.split(',')[1]; // Split and get the base64 string
+  } else {
+    base64Content = documentIs; // Already a base64 string
   }
+      
+  let mimeType;
+  if (file.type === "csv") {
+    mimeType = "text/csv";
+  } else if (file.type === "image" || file.type === "jpeg" || file.type === "jpg" || file.type === "png") {
+    mimeType = 'image/jpeg';
+  } else if (file.type === "pdf") {
+    mimeType = "application/pdf";
+  } else if (file.type === "doc") {
+    mimeType = "application/msword";
+  } else {
+    mimeType = 'application/octet-stream';
+  }
+
+  let fileToStore = Buffer.from(base64Content, 'base64');
+
+  // Create a promise for each file upload
+  const uploadPromise = new Promise((resolve, reject) => {
+    console.log("S3 upload...!!!")
+      
+    if (folderName == undefined || folderName == "") {
+      folderName = 'customer_documents';
+    }
+    
+    var profile = {
+      Bucket: process.env.BUCKET_NAME,
+      Key: `${folderName}/${fileName}.${file.type}`,
+      ACL: 'public-read',
+      Body: fileToStore,
+      ContentType: mimeType,
+      ContentEncoding: 'base64'
+    };
+  
+    s3.putObject(profile, function (err, rese) {
+      if (err) {
+        console.log('--------------ERROR---------------', err);
+        resolve({
+          status: 0,
+          err: err
+        });
+      } else {
+        console.log('--------------Solve---------------', `${process.env.AWS_S3_URL}${folderName}/${fileName}.${file.type}`);
+        resolve({
+          status: 1,
+          URL: `${process.env.AWS_S3_URL}${folderName}/${fileName}.${ file.type}`,
+          address: `${folderName}/${fileName}.${file.type}`,
+          name: `${fileName}.${file.type}`,
+          category: file.category,
+          file: `${process.env.AWS_S3_URL}${folderName}/${fileName}.${ file.type}`
+        });
+      }
+    });
+  });
+
+  return uploadPromise;
+};
+
+const uploadPDF = async (file, folderName, fileNameIs) => {
+  let fileName = file.originalname ? file.originalname.split('.')[0] : fileNameIs;
+  let mimeType = file.mimetype;
+
+  // Default folderName if not provided
+  if (!folderName) {
+    folderName = 'customer_documents';
+  }
+
+  const uploadPromise = new Promise((resolve, reject) => {
+    console.log("S3 upload...!!!");
+
+    var profile = {
+      Bucket: process.env.BUCKET_NAME,
+      Key: `${folderName}/${fileName}.${file.originalname.split('.').pop()}`,
+      ACL: 'public-read',
+      Body: file.buffer,
+      ContentType: mimeType,
+    };
+
+    s3.putObject(profile, function (err, data) {
+      if (err) {
+        console.log('--------------ERROR---------------', err);
+        resolve({
+          status: 0,
+          err: err
+        });
+      } else {
+        const fileURL = `${process.env.AWS_S3_URL}${folderName}/${fileName}.${file.originalname.split('.').pop()}`;
+        console.log('--------------Solve---------------', fileURL);
+        resolve({
+          status: 1,
+          URL: fileURL,
+          address: `${folderName}/${fileName}.${file.originalname.split('.').pop()}`,
+          name: `${fileName}.${file.originalname.split('.').pop()}`,
+          category: file.category,
+          file: fileURL
+        });
+      }
+    });
+  });
+
+  return uploadPromise;
 }
 
 module.exports = {
