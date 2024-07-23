@@ -54,7 +54,8 @@ module.exports = {
         });
 
         if (newDealer !== null) {
-            return newDealer.save();
+            // return newDealer.save();
+            return newDealer;
         } else {
             return undefined;
         }
@@ -92,6 +93,12 @@ module.exports = {
 
     getDealerByDealerId: async (dealerId) => {
         let dealer = await dealerSchema.findById(dealerId);
+
+        return dealer;
+    },
+
+    getDealerStripeAccountByDealerId: async (dealerId) => {
+        let dealer = await stripeAccountSchema.findOne({dealerId});
 
         return dealer;
     },

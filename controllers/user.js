@@ -298,13 +298,15 @@ module.exports = {
 
     createStripePayment: async (req, res, next) => {
         try {
-            const { amount, currency, dealerId, customerId, requestType, destinationId } = req.body;
+            const { amount, dealerId, customerId, requestType } = req.body;
 
             let stripe = Stripe(process.env.STRIPE_SECRET);
 
             if (requestType === 'test') {
                 stripe = Stripe(process.env.STRIPE_SECRET_TEST);
             }
+
+            let getDealerStripeAccount = await dealerServices.getDealerStripeAccountByDealerId(dealerId);
 
             // let amounIs = amount
             const amountInCents = Math.round(amount * 100);
@@ -324,7 +326,7 @@ module.exports = {
                 currency: 'cad',
                 application_fee_amount: commissionInCents,
                 transfer_data: {
-                    destination: destinationId ? destinationId : 'acct_1NECetLTrUb0toUo',
+                    destination: getDealerStripeAccount?.stripeAccountId ? getDealerStripeAccount?.stripeAccountId : 'acct_1NECetLTrUb0toUo',
                   },
                 metadata: { dealerId, commission, netAmount, customerId }
             });

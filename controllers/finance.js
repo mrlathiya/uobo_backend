@@ -675,8 +675,6 @@ module.exports = {
                     let fileName = `${checkExist?.customerId?.firstName}_${checkExist?.customerId?.lastName}_${checkExist?.customerId?._id}_${checkExist?.dealerId?._id}`;
                     let uploadedFile = await awsServices.uploadPDF(file, 'Customer_Bill_of_Sale', fileName);
 
-                    console.log('uploadedFile-----', uploadedFile);
-
                     let billOfSaleFile = {
                         category: 'BillOfSale',
                         file: uploadedFile?.URL ? uploadedFile?.URL : ''

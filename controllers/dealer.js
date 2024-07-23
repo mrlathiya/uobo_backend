@@ -217,22 +217,24 @@ module.exports = {
 
                 if (token) {
 
-                    // const account = await stripe.accounts.create({
-                    //     country: 'CA',
-                    //     type: 'custom',
-                    //     capabilities: {
-                    //       card_payments: {
-                    //         requested: true,
-                    //       },
-                    //       transfers: {
-                    //         requested: true,
-                    //       },
-                    //     },
-                    // });
+                    const account = await stripe.accounts.create({
+                        country: 'CA',
+                        type: 'custom',
+                        capabilities: {
+                          card_payments: {
+                            requested: true,
+                          },
+                          transfers: {
+                            requested: true,
+                          },
+                        },
+                    });
 
-                    // if (account != null) {
-                    //     await dealerServices.createDealerStripeAccount(account, registerDealerData._id);
-                    // }
+                    console.log(account);
+
+                    if (account != null) {
+                        await dealerServices.createDealerStripeAccount(account, registerDealerData._id);
+                    }
 
                     if (csvFile) {
                         let dealerInventory = await convertCsvToJson(csvFile, registerDealerData._id);
