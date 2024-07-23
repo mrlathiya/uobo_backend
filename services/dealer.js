@@ -568,5 +568,11 @@ module.exports = {
                                                                 });
 
         return getNotifications;
+    },
+
+    getDealerStripeOnBoardingLink: async (dealerId) => {
+        let stripeDetails = await stripeAccountSchema.findOne({ dealerId });
+
+        return stripeDetails;
     }
 }

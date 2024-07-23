@@ -598,5 +598,25 @@ module.exports = {
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
         }
+    },
+
+    getDealerStripeDetails: async (req, res, next) => {
+        try {
+            const dealer = req.user;
+
+            // if (dealerId  === undefined || dealerId === null || dealerId === '') {
+            //     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer Id not found' });
+            // }
+
+            let stripeDetails = await dealerServices.getDealerStripeOnBoardingLink(dealer._id);
+
+            if (stripeDetails) {
+                return res.status(200).json({ IsSuccess: true, Data: [stripeDetails], Message: 'Dealer stripe details found' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer stripe details not found' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
     }
 }

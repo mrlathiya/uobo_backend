@@ -35,6 +35,7 @@ router.get('/notification', dealerAuthController, dealerController.getDashboardD
 //Dealer Rating API
 router.post('/rating', authController, dealerController.addDealerRating);
 router.get('/rating', dealerAuthController, dealerController.getDealerRatings);
+router.get('/stripe-onboarding', dealerAuthController, dealerController.getDealerRatings);
 
 
 module.exports = router;
