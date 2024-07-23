@@ -219,7 +219,7 @@ module.exports = {
 
                     const account = await stripe.accounts.create({
                         country: 'CA',
-                        type: 'custom',
+                        type: 'express',
                         capabilities: {
                           card_payments: {
                             requested: true,
@@ -230,10 +230,18 @@ module.exports = {
                         },
                     });
 
-                    console.log(account);
+                    let accountLink;
 
                     if (account != null) {
-                        await dealerServices.createDealerStripeAccount(account, registerDealerData._id);
+                        
+                        accountLink = await stripe.accountLinks.create({
+                            account: account.id,
+                            refresh_url: 'https://uobo.ca/',
+                            return_url: 'https://uobo.ca/dealer-dashboard',
+                            type: 'account_onboarding',
+                        });
+                        
+                        await dealerServices.createDealerStripeAccount(account, accountLink, registerDealerData._id);
                     }
 
                     if (csvFile) {
@@ -245,7 +253,7 @@ module.exports = {
                                 Data: [registerDealerData], 
                                 Inventory: dealerInventory,
                                 token,
-                                // StripeAccount: account, 
+                                StripeAccountOnBoardingLink: accountLink.url, 
                                 Message: 'Dealer registration successfully' 
                             });
                         } else {
@@ -257,7 +265,7 @@ module.exports = {
                             IsSuccess: true, 
                             Data: registerDealerData,
                             token,
-                            // StripeAccount: account, 
+                            StripeAccountOnBoardingLink: accountLink.url, 
                             Message: 'Dealer Register Successfully' 
                         });
                     }

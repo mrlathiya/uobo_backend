@@ -20,6 +20,12 @@ const stripeAccountSchema = mongoose.Schema({
     type: {
         type: String
     },
+    loginLink: {
+        type: String
+    },
+    onBoardingLink: {
+        type: String
+    } 
 },
 {
     timestamps: true

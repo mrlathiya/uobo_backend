@@ -54,8 +54,8 @@ module.exports = {
         });
 
         if (newDealer !== null) {
-            // return newDealer.save();
-            return newDealer;
+            return newDealer.save();
+            // return newDealer;
         } else {
             return undefined;
         }
@@ -344,14 +344,16 @@ module.exports = {
         return ratings;
     },
 
-    createDealerStripeAccount: async (params, dealerId) => {
+    createDealerStripeAccount: async (params, onBoardingLinks, dealerId) => {
         let stripeAccountDetails = await new stripeAccountSchema({
             dealerId,
             stripeAccountId: params.id,
             object: params.object,
             country: params.country,
             default_currency: params.default_currency,
-            type: params.type
+            type: params.type,
+            loginLink: login_links.url,
+            onBoardingLink: onBoardingLinks.url,
         });
 
         if (stripeAccountDetails != null) {
