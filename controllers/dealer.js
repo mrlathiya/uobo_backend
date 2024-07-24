@@ -7,7 +7,7 @@ const financeService = require('../services/finance');
 const fs = require('fs');
 const path = require('path');
 const dealer = require('../models/dealer');
-const stripe = require('stripe')('sk_test_51OYse8KialSzstv1KOoxA6BB1Fw1IbYiYiCzRxcJxH5fb87pgmGvufFjZ63B01BXL81pDRxqNP0NI4uQYFHWSkOt00xM8e1TpZ');
+const Stripe = require('stripe');
 
 const uploadedImage = async (base64Image, fileNameConst) => {
     const matches = base64Image.match(/^data:image\/(\w+);base64,(.+)$/);
@@ -214,6 +214,8 @@ module.exports = {
             if (registerDealerData) {
 
                 const token = await userServices.createUserToken(registerDealerData._id);
+
+                let stripe = Stripe(process.env.STRIPE_SECRET);
 
                 if (token) {
 
