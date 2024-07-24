@@ -303,7 +303,7 @@ module.exports = {
             let stripe = Stripe(process.env.STRIPE_SECRET);
 
             if (requestType === 'test') {
-                stripe = Stripe(process.env.STRIPE_SECRET_TEST);
+                stripe = Stripe(process.env.STRIPE_SECRET);
             }
 
             let getDealerStripeAccount = await dealerServices.getDealerStripeAccountByDealerId(dealerId);
@@ -347,7 +347,7 @@ module.exports = {
             let stripe = Stripe(process.env.STRIPE_SECRET);
 
             if (requestType === 'test') {
-                stripe = Stripe(process.env.STRIPE_SECRET_TEST);
+                stripe = Stripe(process.env.STRIPE_SECRET);
             }
 
             const transfer = await stripe.transfers.create({
