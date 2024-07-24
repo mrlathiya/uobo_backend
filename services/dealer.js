@@ -352,7 +352,7 @@ module.exports = {
             country: params.country,
             default_currency: params.default_currency,
             type: params.type,
-            loginLink: login_links.url,
+            loginLink: params.login_links.url,
             onBoardingLink: onBoardingLinks.url,
         });
 
