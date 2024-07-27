@@ -1,5 +1,8 @@
 const carServices = require('../services/car');
+const financeServices = require('../services/finance');
 const dealerServices = require('../services/dealer');
+const customerServices = require('../services/user');
+const sendNotification = require('../config/send-notification');
 const csv = require('csv-parser');
 const fs = require('fs');
 const path = require('path');
@@ -246,6 +249,108 @@ module.exports = {
                 });
             } else {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Search car found' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
+
+    additionalCarServices: async (req, res, next) => {
+        try {
+            const params = req.body;
+
+            if (!params.name) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Name is required' });
+            }
+
+            let addNewService = await carServices.addNewAdditionalCarServices(params);
+            
+            if (addNewService) {
+                return res.status(200).json({ IsSuccess: true, Data: [addNewService], Message: 'New car service added' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'New car service not added' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
+
+    getAdditionalCarServices: async (req, res, next) => {
+        try {
+            const dealerId = req.params.dealerId;
+
+            let getCarServices = await carServices.getAdditionalCarServices(dealerId);
+            
+            if (getCarServices.length) {
+                return res.status(200).json({ 
+                    IsSuccess: true, 
+                    Count: getCarServices.length, 
+                    Data: getCarServices, 
+                    Message: 'Additional car services found' 
+                });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'No additional car services found' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
+
+    addCarServicesToOrder: async (req, res, next) => {
+        try {
+            const params = req.body;
+
+            if (!params.orderId) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Order Id is required' });
+            }
+
+            // if (!params.name) {
+            //     return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Name is required' });
+            // }
+
+            // if (!params.description) {
+            //     return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Description is required' });
+            // }
+
+            let addServicesToOrder = await financeServices.editAdditionalCarServices(params);
+            
+            if (addServicesToOrder) {
+                let dealerId = addServicesToOrder.dealerId;
+                let customerId = addServicesToOrder.customerId;
+
+                let dealer = await dealerServices.getDealerByDealerId(dealerId);
+                let customer = await customerServices.getUserById(customerId); 
+
+                let title = `${dealer.firstName} has sent EMI Options and appointment availability`;
+                let content = `Choose EMI option and confirm delivery date now`;
+
+                if (customer?.fcmToken) {
+                    await sendNotification.sendFirebaseNotification(customer?.fcmToken, title, content, '', 'DealerSentEMIOptionAndAdditionalServices', dealer._id, customer._id, true);
+                }
+
+                return res.status(200).json({ IsSuccess: true, Data: [addServicesToOrder], Message: 'Service added to the order' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Service not added to the order' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
+
+    deleteAdditionalCarServices: async (req, res, next) => {
+        try {
+            const params = req.body;
+
+            if (!params.name) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Name is required' });
+            }
+
+            let addNewService = await carServices.addNewAdditionalCarServices(params);
+            
+            if (addNewService) {
+                return res.status(200).json({ IsSuccess: true, Data: [addNewService], Message: 'New car service added' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'New car service not added' });
             }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error.message });

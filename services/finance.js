@@ -500,5 +500,18 @@ module.exports = {
         }
 
         return orders;
+    },
+
+    editAdditionalCarServices: async (params) => {
+        let update = {
+            $push: {
+                additionalService: { $each: params.services }
+            },
+            status: 'DealerSentEMIOptions'
+        }
+
+        let updateFinanceOrderAdditionalService = await financeModel.findByIdAndUpdate(params.orderId, update, { new: true });
+
+        return updateFinanceOrderAdditionalService;
     }
 }

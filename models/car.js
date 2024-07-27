@@ -139,7 +139,7 @@ const carSchema = mongoose.Schema({
     carFAXLink: {
         type: String,
         default: ''
-    }
+    },
 },
 {
     timestamps: true

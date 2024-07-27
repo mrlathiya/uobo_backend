@@ -20,4 +20,8 @@ router.get('/:dealerId', authController, carController.getAllCars);
 router.put('/', authController, carController.editCarDetails);
 router.delete('/:dealerId', authController, carController.deleteCar);
 
+router.post('/additional/services', carController.additionalCarServices);
+router.get('/additional/services', carController.getAdditionalCarServices);
+router.put('/additional/services', carController.addCarServicesToOrder);
+
 module.exports = router;

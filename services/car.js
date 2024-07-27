@@ -1,5 +1,6 @@
 const carSchema = require('../models/car');
 const vehicleTypeSchema = require('../models/vehicleType');
+const additionalCarServices = require('../models/additionalCarServices');
 
 module.exports = {
     addNewCar: async (params, dealerId) => {
@@ -177,6 +178,34 @@ module.exports = {
         let cars = await carSchema.find(query);
 
         return cars;
+    },
+
+    addNewAdditionalCarServices: async (params) => {
+        let addService = await new additionalCarServices({
+            name: params.name,
+            description: params.description,
+            icon: params.icon,
+            price: params.price ? Number(params.price) : undefined,
+            dealerId: params.dealerId ? params.dealerId : undefined,
+        });
+
+        if (addService) {
+            return addService.save();
+        } else {
+            return undefined;
+        }
+    },
+
+    getAdditionalCarServices: async (dealerId) => {
+        let services = [];
+
+        if (dealerId !== undefined && dealerId !== null && dealerId !== '') {
+            services = await additionalCarServices.findOne({ dealerId });
+        } else {
+            services = await additionalCarServices.find();
+        }
+
+        return services;
     },
 
     testcheck: async () => {

@@ -337,6 +337,20 @@ const financeOrdersSchema = mongoose.Schema({
     },
     financeOrderId: {
         type: String
+    },
+    additionalService: {
+        name: {
+            type: String
+        },
+        description: {
+            type: String
+        },
+        price: {
+            type: Number
+        },
+        icon: {
+            type: String
+        },
     }
 },
 {
