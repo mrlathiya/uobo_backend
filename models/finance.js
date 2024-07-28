@@ -338,7 +338,7 @@ const financeOrdersSchema = mongoose.Schema({
     financeOrderId: {
         type: String
     },
-    additionalService: {
+    additionalService: [{
         name: {
             type: String
         },
@@ -351,7 +351,21 @@ const financeOrdersSchema = mongoose.Schema({
         icon: {
             type: String
         },
-    }
+    }],
+    selectedAdditionalService: [{
+        name: {
+            type: String
+        },
+        description: {
+            type: String
+        },
+        price: {
+            type: Number
+        },
+        icon: {
+            type: String
+        },
+    }],
 },
 {
     timestamps: true

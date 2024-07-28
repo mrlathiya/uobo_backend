@@ -384,6 +384,7 @@ module.exports = {
             selectedAppointment: params.selectedAppointment ? params.selectedAppointment : undefined,
             customerSelectedEMIOption: params.selectedPlan ? params.selectedPlan : undefined,
             isTradeinCarAvilable: params.isTradeinCarAvilable,
+            selectedAdditionalService: params.selectedAdditionalService ? params.selectedAdditionalService : undefined,
             'tradeDetails.dealerEstimatedTradeValue': params.tradeInCarValue ? params.tradeInCarValue : params.dealerEstimatedTradeInValue
         }
 
