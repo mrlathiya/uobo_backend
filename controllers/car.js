@@ -356,4 +356,28 @@ module.exports = {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
         }
     },
+
+    updateCar360ImageURL: async (req, res, next) => {
+        try {
+            const {VIN, url} = req.body;
+
+            if (!VIN) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'VIN is required' });
+            }
+
+            if (!url) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'url is required' });
+            }
+
+            let editImageURL = await carServices.edit360ImageURL(url, VIN);
+            
+            if (editImageURL) {
+                return res.status(200).json({ IsSuccess: true, Data: editImageURL, Message: 'Image 360 URL updated' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'No car found for this VIN number' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
 }

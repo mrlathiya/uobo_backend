@@ -208,6 +208,12 @@ module.exports = {
         return services;
     },
 
+    edit360ImageURL: async (url, VINNumber) => {
+        let updateCar = await carSchema.findOneAndUpdate({ VIN: VINNumber }, { image360URL: url }, { new: true });
+
+        return updateCar;
+    },
+
     testcheck: async () => {
         await carSchema.updateMany({ carFAXLink: 'https://vhr.carfax.ca/?id=8IksBDs/7pZGv6Y67AWUY9lcao3Z06+8' });
     }

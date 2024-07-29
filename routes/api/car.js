@@ -24,4 +24,6 @@ router.post('/additional/services', carController.additionalCarServices);
 router.get('/additional/services', carController.getAdditionalCarServices);
 router.put('/additional/services', carController.addCarServicesToOrder);
 
+router.put('/360/Image', carController.updateCar360ImageURL);
+
 module.exports = router;

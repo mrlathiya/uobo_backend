@@ -140,6 +140,9 @@ const carSchema = mongoose.Schema({
         type: String,
         default: ''
     },
+    image360URL: {
+        type: String
+    }
 },
 {
     timestamps: true
