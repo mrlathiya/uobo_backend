@@ -366,6 +366,12 @@ const financeOrdersSchema = mongoose.Schema({
             type: String
         },
     }],
+    maxDownPayment: {
+        type: Number
+    },
+    desiredDownPayment: {
+        type: Number
+    }
 },
 {
     timestamps: true
