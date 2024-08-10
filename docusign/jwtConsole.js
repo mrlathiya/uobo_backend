@@ -62,7 +62,13 @@ async function main(signerEmail, signerName, placeholders, file, ccEmail, ccName
     let initialHereTabs = [];
 
     placeholders.forEach((placeholder, index) => {
-      if (placeholder.label.startsWith('sign')) {
+
+      if (!placeholder || !placeholder.label) {
+        console.error(`Invalid placeholder data at index ${index}`);
+        return;
+      }
+
+      if (placeholder.label.startsWith('Sign')) {
         signHereTabs.push(docusign.SignHere.constructFromObject({
           anchorString: placeholder.label,
           anchorXOffset: '0',
@@ -70,7 +76,7 @@ async function main(signerEmail, signerName, placeholders, file, ccEmail, ccName
           anchorUnits: 'inches',
           pageNumber: placeholder.pageNumber.toString(),
         }));
-      } else if (placeholder.label.startsWith('init')) {
+      } else if (placeholder.label.startsWith('Init')) {
         initialHereTabs.push(docusign.InitialHere.constructFromObject({
           anchorString: placeholder.label,
           anchorXOffset: '0',
@@ -78,6 +84,8 @@ async function main(signerEmail, signerName, placeholders, file, ccEmail, ccName
           anchorUnits: 'inches',
           pageNumber: placeholder.pageNumber.toString(),
         }));
+      } else {
+        console.warn(`Unknown placeholder type at index ${index}`);
       }
     });
 
@@ -110,5 +118,6 @@ async function main(signerEmail, signerName, placeholders, file, ccEmail, ccName
     throw error;
   }
 }
+
 
 module.exports = { main };
