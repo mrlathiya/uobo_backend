@@ -57,30 +57,33 @@ async function main(signerEmail, signerName, placeholders, file, ccEmail, ccName
       routingOrder: '1'
     });
 
+    // Initialize tabs arrays
     let signHereTabs = [];
-    for (let i = 1; i <= 10; i++) { // Assuming up to 10 placeholders, adjust as needed
-      signHereTabs.push(docusign.SignHere.constructFromObject({
-        anchorString: `sign${i}`,
-        anchorXOffset: '0',
-        anchorYOffset: '0',
-        anchorUnits: 'inches',
-        pageNumber: '1',
-      }));
-    }
+    let initialHereTabs = [];
 
-    // Dynamically add signHere tabs for each placeholder
-    // const signHereTabs = placeholders.map((placeholder, index) => {
-    //   return docusign.SignHere.constructFromObject({
-    //     anchorString: placeholder.label, // Use the actual label from placeholders
-    //     anchorXOffset: '0',
-    //     anchorYOffset: '0',
-    //     anchorUnits: 'inches',
-    //     pageNumber: '1', // Page number where the placeholder is located
-    //   });
-    // });
+    placeholders.forEach((placeholder, index) => {
+      if (placeholder.label.startsWith('sign')) {
+        signHereTabs.push(docusign.SignHere.constructFromObject({
+          anchorString: placeholder.label,
+          anchorXOffset: '0',
+          anchorYOffset: '0',
+          anchorUnits: 'inches',
+          pageNumber: placeholder.pageNumber.toString(),
+        }));
+      } else if (placeholder.label.startsWith('init')) {
+        initialHereTabs.push(docusign.InitialHere.constructFromObject({
+          anchorString: placeholder.label,
+          anchorXOffset: '0',
+          anchorYOffset: '0',
+          anchorUnits: 'inches',
+          pageNumber: placeholder.pageNumber.toString(),
+        }));
+      }
+    });
 
     const signer1Tabs = docusign.Tabs.constructFromObject({
-      signHereTabs: signHereTabs
+      signHereTabs: signHereTabs,
+      initialHereTabs: initialHereTabs
     });
 
     signer1.tabs = signer1Tabs;
