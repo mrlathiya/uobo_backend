@@ -238,7 +238,7 @@ module.exports = {
                         
                         accountLink = await stripe.accountLinks.create({
                             account: account.id,
-                            // refresh_url: 'https://uobo.ca/dealer-dashboard',
+                            refresh_url: 'https://uobo.ca/dealer-dashboard',
                             return_url: 'https://uobo.ca/dealer-dashboard',
                             type: 'account_onboarding',
                         });
