@@ -238,7 +238,7 @@ module.exports = {
                         
                         accountLink = await stripe.accountLinks.create({
                             account: account.id,
-                            refresh_url: 'https://uobo.ca/',
+                            refresh_url: 'https://uobo.ca/dealer-dashboard',
                             return_url: 'https://uobo.ca/dealer-dashboard',
                             type: 'account_onboarding',
                         });
@@ -317,6 +317,20 @@ module.exports = {
             }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    },
+
+    checkToken: async (req, res, next) => {
+        try {
+            const dealer = req.user;
+
+            if (dealer) {
+                return res.status(200).json({ IsSuccess: true, Data: [dealer], Message: 'Dealer token valid' })
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer token not valid' })
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
         }
     },
 
