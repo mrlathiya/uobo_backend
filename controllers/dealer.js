@@ -708,7 +708,7 @@ module.exports = {
                     payouts_enabled: false,
                     account: {},
                 };
-                return res.status(400).json({ IsSuccess: false, Data: account_deatils, Message: 'Dealer stripe details not found' });
+                return res.status(200).json({ IsSuccess: false, Data: account_deatils, Message: 'Dealer stripe details not found' });
             }
         
         } catch (error) {
