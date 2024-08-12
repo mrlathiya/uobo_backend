@@ -33,7 +33,9 @@ router.get('/check-token', dealerAuthController, dealerController.checkToken);
 //Dealer Rating API
 router.post('/rating', authController, dealerController.addDealerRating);
 router.get('/rating', dealerAuthController, dealerController.getDealerRatings);
+router.post('/stripe-onboarding', dealerAuthController, dealerController.createDealerStripeConnectedAccount);
 router.get('/stripe-onboarding', dealerAuthController, dealerController.getDealerStripeDetails);
+router.get('/retrive-stripe-account', dealerAuthController, dealerController.retriveDealerStripeAccount);
 
 
 module.exports = router;

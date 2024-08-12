@@ -215,36 +215,36 @@ module.exports = {
 
                 const token = await userServices.createUserToken(registerDealerData._id);
 
-                let stripe = Stripe(process.env.STRIPE_SECRET);
+                // let stripe = Stripe(process.env.STRIPE_SECRET);
 
                 if (token) {
 
-                    const account = await stripe.accounts.create({
-                        country: 'CA',
-                        type: 'express',
-                        capabilities: {
-                          card_payments: {
-                            requested: true,
-                          },
-                          transfers: {
-                            requested: true,
-                          },
-                        },
-                    });
+                    // const account = await stripe.accounts.create({
+                    //     country: 'CA',
+                    //     type: 'express',
+                    //     capabilities: {
+                    //       card_payments: {
+                    //         requested: true,
+                    //       },
+                    //       transfers: {
+                    //         requested: true,
+                    //       },
+                    //     },
+                    // });
 
-                    let accountLink;
+                    // let accountLink;
 
-                    if (account != null) {
+                    // if (account != null) {
                         
-                        accountLink = await stripe.accountLinks.create({
-                            account: account.id,
-                            refresh_url: 'https://uobo.ca/dealer-dashboard',
-                            return_url: 'https://uobo.ca/dealer-dashboard',
-                            type: 'account_onboarding',
-                        });
+                    //     accountLink = await stripe.accountLinks.create({
+                    //         account: account.id,
+                    //         refresh_url: 'https://uobo.ca/dealer-dashboard',
+                    //         return_url: 'https://uobo.ca/dealer-dashboard',
+                    //         type: 'account_onboarding',
+                    //     });
                         
-                        await dealerServices.createDealerStripeAccount(account, accountLink, registerDealerData._id);
-                    }
+                    //     await dealerServices.createDealerStripeAccount(account, accountLink, registerDealerData._id);
+                    // }
 
                     if (csvFile) {
                         let dealerInventory = await convertCsvToJson(csvFile, registerDealerData._id);
@@ -255,7 +255,7 @@ module.exports = {
                                 Data: [registerDealerData], 
                                 Inventory: dealerInventory,
                                 token,
-                                StripeAccountOnBoardingLink: accountLink.url, 
+                                // StripeAccountOnBoardingLink: accountLink.url, 
                                 Message: 'Dealer registration successfully' 
                             });
                         } else {
@@ -267,7 +267,7 @@ module.exports = {
                             IsSuccess: true, 
                             Data: registerDealerData,
                             token,
-                            StripeAccountOnBoardingLink: accountLink.url, 
+                            // StripeAccountOnBoardingLink: accountLink.url, 
                             Message: 'Dealer Register Successfully' 
                         });
                     }
@@ -616,6 +616,46 @@ module.exports = {
         }
     },
 
+    createDealerStripeConnectedAccount: async(req, res, next) => {
+        try {
+
+            const dealer = req.user;
+
+            const stripe = Stripe(process.env.STRIPE_SECRET);
+
+            const account = await stripe.accounts.create({
+                country: 'CA',
+                type: 'express',
+                capabilities: {
+                  card_payments: {
+                    requested: true,
+                  },
+                  transfers: {
+                    requested: true,
+                  },
+                },
+            });
+
+            if (account != null) {
+                
+                const accountLink = await stripe.accountLinks.create({
+                    account: account.id,
+                    refresh_url: 'https://uobo.ca/retry-stripe-onboarding',
+                    return_url: 'https://uobo.ca/dealer-dashboard',
+                    type: 'account_onboarding',
+                });
+                
+                const stripeAccountLinks = await dealerServices.createDealerStripeAccount(account, accountLink, dealer._id);
+
+                return res.status(200).json({ IsSuccess: true, Data: [account, stripeAccountLinks], Message: 'Dealer Stripe Account Created' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer Stripe Account Not Created' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
+
     getDealerStripeDetails: async (req, res, next) => {
         try {
             const dealer = req.user;
@@ -633,6 +673,40 @@ module.exports = {
             }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
+
+    retriveDealerStripeAccount: async (req, res, next) => {
+        try {
+            // Retrieve the connected account details
+
+            const dealer = req.user;
+            const stripe = Stripe(process.env.STRIPE_SECRET);
+
+            let stripeDetails = await dealerServices.getDealerStripeOnBoardingLink(dealer._id);
+
+            if (stripeDetails) {
+
+                const account = await stripe.accounts.retrieve(stripeDetails.stripeAccountId);
+        
+                // Check if onboarding is complete
+                const isOnboardingComplete = account.details_submitted && account.charges_enabled && account.payouts_enabled;
+            
+                const account_deatils = {
+                    isOnboardingComplete: isOnboardingComplete,
+                    details_submitted: account.details_submitted,
+                    charges_enabled: account.charges_enabled,
+                    payouts_enabled: account.payouts_enabled,
+                    account: stripeDetails,
+                };
+                return res.status(200).json({ IsSuccess: true, Data: account_deatils, Message: 'Dealer stripe details found' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer stripe details not found' });
+            }
+        
+        } catch (error) {
+            console.error('Error retrieving account:', error);
+            throw error;
         }
     }
 }
