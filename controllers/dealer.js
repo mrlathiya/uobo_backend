@@ -701,7 +701,14 @@ module.exports = {
                 };
                 return res.status(200).json({ IsSuccess: true, Data: account_deatils, Message: 'Dealer stripe details found' });
             } else {
-                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer stripe details not found' });
+                const account_deatils = {
+                    isOnboardingComplete: false,
+                    details_submitted: false,
+                    charges_enabled: false,
+                    payouts_enabled: false,
+                    account: {},
+                };
+                return res.status(400).json({ IsSuccess: false, Data: account_deatils, Message: 'Dealer stripe details not found' });
             }
         
         } catch (error) {
