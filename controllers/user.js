@@ -412,9 +412,13 @@ module.exports = {
         try {
             const payload = req.body;
 
+            console.log('payload===============',payload);
+
             if (payload?.session?.user_account?.email) {
 
                 let userEmail = payload.session.user_account.email;
+
+                console.log('userEmail===============',userEmail);
 
                 if (userEmail) {
                     let user = await userServices.getUserByEmail(userEmail);
