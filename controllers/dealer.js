@@ -619,7 +619,7 @@ module.exports = {
     createDealerStripeConnectedAccount: async(req, res, next) => {
         try {
 
-            const dealer = req.user;
+            const dealerId = req.body.dealerId;
 
             const stripe = Stripe(process.env.STRIPE_SECRET);
 
@@ -645,7 +645,7 @@ module.exports = {
                     type: 'account_onboarding',
                 });
                 
-                const stripeAccountLinks = await dealerServices.createDealerStripeAccount(account, accountLink, dealer._id);
+                const stripeAccountLinks = await dealerServices.createDealerStripeAccount(account, accountLink, dealerId);
 
                 return res.status(200).json({ IsSuccess: true, Data: [account, stripeAccountLinks], Message: 'Dealer Stripe Account Created' });
             } else {
