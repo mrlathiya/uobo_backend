@@ -36,6 +36,12 @@ module.exports = {
         return existUser;
     },
 
+    getUserByContactNumber: async (number) => {
+        let existUser = await userSchema.findOne({ 'contact.number': number });
+
+        return existUser;
+    },
+
     getUserByEmail: async (email) => {
         let existUser = await userSchema.find({ email });
 

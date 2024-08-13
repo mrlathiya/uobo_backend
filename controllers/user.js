@@ -412,19 +412,20 @@ module.exports = {
         try {
             const payload = req.body;
 
-            console.log('payload===============',payload);
+            if (payload?.session?.options?.sms?.to) {
 
-            if (payload?.session?.user_account?.email) {
+                // let userEmail = payload.session.user_account.email;
+                let contactNumberIs = payload?.session?.options?.sms?.to;
 
-                let userEmail = payload.session.user_account.email;
+                let contactNumber = contactNumberIs.slice(2);
 
-                console.log('userEmail===============',userEmail);
+                if (contactNumber) {
+                    let user = await userServices.getUserByContactNumber(contactNumber);
 
-                if (userEmail) {
-                    let user = await userServices.getUserByEmail(userEmail);
+                    console.log(user);
 
-                    if (user.length) {
-                        let customerOrders = await financeServices.getAllCustomerOrdersByCustomerId(user[0]._id);
+                    if (user) {
+                        let customerOrders = await financeServices.getAllCustomerOrdersByCustomerId(user._id);
 
                         if (customerOrders.length) {
 
