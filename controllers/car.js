@@ -359,17 +359,17 @@ module.exports = {
 
     updateCar360ImageURL: async (req, res, next) => {
         try {
-            const {VIN, url} = req.body;
+            const {VIN, '360_iframe': iframe360} = req.body;
 
             if (!VIN) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'VIN is required' });
             }
 
-            if (!url) {
-                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'url is required' });
-            }
+            // if (!url) {
+            //     return res.status(401).json({ IsSuccess: false, Data: [], Message: 'url is required' });
+            // }
 
-            let editImageURL = await carServices.edit360ImageURL(url, VIN);
+            let editImageURL = await carServices.edit360ImageURL(iframe360, VIN);
             
             if (editImageURL) {
                 return res.status(200).json({ IsSuccess: true, Data: editImageURL, Message: 'Image 360 URL updated' });
