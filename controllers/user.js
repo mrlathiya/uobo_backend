@@ -300,10 +300,10 @@ module.exports = {
         try {
             const { amount, dealerId, customerId, requestType } = req.body;
 
-            let stripe = Stripe(process.env.STRIPE_SECRET_TEST);
+            let stripe = Stripe(process.env.STRIPE_SECRET);
 
             if (requestType === 'test') {
-                stripe = Stripe(process.env.STRIPE_SECRET_TEST);
+                stripe = Stripe(process.env.STRIPE_SECRET);
             }
 
             let getDealerStripeAccount = await dealerServices.getDealerStripeAccountByDealerId(dealerId);

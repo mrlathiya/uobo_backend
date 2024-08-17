@@ -38,5 +38,7 @@ router.post('/stripe-onboarding', dealerController.createDealerStripeConnectedAc
 router.get('/stripe-onboarding', dealerAuthController, dealerController.getDealerStripeDetails);
 router.get('/retrive-stripe-account', dealerAuthController, dealerController.retriveDealerStripeAccount);
 
+router.put('/update-inventory', uploadFile.single('inventory_csv'), dealerController.updateDealerInventory)
+
 
 module.exports = router;
