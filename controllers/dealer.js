@@ -101,6 +101,7 @@ const convertAutoTradeCsvToJson = async (csvFile, dealerId) => {
     const csvData = csvFile.buffer.toString('utf-8');
     const rows = csvData.trim().split('\n');
     const headers = rows[0].split(',').map(header => header.replace(/"/g, '').trim());
+    // await carServices.deleteCarByDealerId(dealerId);
 
     let jsonData = [];
 

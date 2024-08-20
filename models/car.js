@@ -2,101 +2,132 @@ const mongoose = require('mongoose');
 
 const carSchema = mongoose.Schema({
     VIN: {
-        type: String
+        type: String,
+        default: ''
     },
     Stock_Number: {
-        type: String
+        type: String,
+        default: ''
     },
     New_or_Used: {
-        type: String
+        type: String,
+        default: ''
     },
     MSRP: {
-        type: String
+        type: String,
+        default: ''
     },
     Year: {
-        type: String
+        type: String,
+        default: ''
     },
     Make: {
         type: String,
+        default: '',
         index: true
     },
     Model: {
         type: String,
+        default: '',
         index: true
     },
     Body_Style: {
         type: String,
+        default: '',
         index: true
     },
     Series: {
-        type: String
+        type: String,
+        default: ''
     },
     Exterior_Colour: {
         type: String,
+        default: '',
         index: true
     },
     Interior_Colour: {
-        type: String
+        type: String,
+        default: ''
     },
     Trim: {
-        type: String
+        type: String,
+        default: ''
     },
     Engine_Size: {
-        type: String
+        type: String,
+        default: ''
     },
     Cylinder_Count: {
-        type: String
+        type: String,
+        default: ''
     },
     Door_Count: {
-        type: String
+        type: String,
+        default: ''
     },
     Drive_configuration: {
-        type: String
+        type: String,
+        default: ''
     },
     Additional_Options: {
-        type: String
+        type: String,
+        default: ''
     },
     Current_Miles: {
-        type: String
+        type: String,
+        default: ''
     },
     Date_Added_to_Inventory: {
-        type: String
+        type: String,
+        default: ''
     },
     Status: {
-        type: String
+        type: String,
+        default: ''
     },
     Fuel_Type: {
-        type: String
+        type: String,
+        default: ''
     },
     Vehicle_Location: {
-        type: String
+        type: String,
+        default: ''
     },
     Certified_Pre_owned: {
-        type: String
+        type: String,
+        default: ''
     },
     Price: {
-        type: String
+        type: String,
+        default: ''
     },
     Transmission_Description: {
-        type: String
+        type: String,
+        default: ''
     },
     Internet_Description: {
-        type: String
+        type: String,
+        default: ''
     },
     Vehicle_Class: {
-        type: String
+        type: String,
+        default: ''
     },
     Main_Photo: {
-        type: String
+        type: String,
+        default: ''
     },
     Main_Photo_Last_Modified_Date: {
-        type: String
+        type: String,
+        default: ''
     },
     Extra_Photos: {
-        type: String
+        type: String,
+        default: ''
     },
     Extra_Photo_Last_Modified_Date: {
-        type: String
+        type: String,
+        default: ''
     },
     location: {
         lat: {
@@ -113,26 +144,32 @@ const carSchema = mongoose.Schema({
     feature: {
         interior: {
             icon: {
-                type: String
+                type: String,
+                default: ''
             },
             featureName: {
-                type: String
+                type: String,
+                default: ''
             }
         },
         vehicle: {
             icon: {
-                type: String
+                type: String,
+                default: ''
             },
             featureName: {
-                type: String
+                type: String,
+                default: ''
             }
         },
         technical: {
             icon: {
-                type: String
+                type: String,
+                default: ''
             },
             featureName: {
-                type: String
+                type: String,
+                default: ''
             }
         },
     },
@@ -141,7 +178,8 @@ const carSchema = mongoose.Schema({
         default: ''
     },
     image360URL: {
-        type: String
+        type: String,
+        default: ''
     }
 },
 {

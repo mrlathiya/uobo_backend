@@ -57,6 +57,12 @@ module.exports = {
         return car;
     },
 
+    getCarByVINId: async (VIN) => {
+        const car = await carSchema.findOne({ VIN });
+
+        return car;
+    },
+
     getCarByDealerId: async (dealerId) => {
         const car = await carSchema.find({ dealerId });
 
@@ -208,8 +214,12 @@ module.exports = {
         return services;
     },
 
-    edit360ImageURL: async (url, VINNumber) => {
-        let updateCar = await carSchema.findOneAndUpdate({ VIN: VINNumber }, { image360URL: url }, { new: true });
+    edit360ImageURL: async (url, extraPhotos, VINNumber) => {
+        const update = {
+            image360URL: url,
+            Extra_Photos: extraPhotos
+        }
+        let updateCar = await carSchema.findOneAndUpdate({ VIN: VINNumber }, update, { new: true });
 
         return updateCar;
     },
