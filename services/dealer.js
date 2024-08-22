@@ -168,7 +168,7 @@ module.exports = {
                     inventory_Cylinder_Count: "$inventory.Cylinder_Count", 
                     inventory_Door_Count: "$inventory.Door_Count", 
                     inventory_Drive_configuration: "$inventory.Drive_configuration", 
-                    // inventory_Additional_Options: "$inventory.Additional_Options", 
+                    // inventory_Additional_Options: "$inventory.Additional_Options",
                     inventory_Additional_Options: {
                         $split: ["$inventory.Additional_Options", ";"]
                     }, 
@@ -186,6 +186,7 @@ module.exports = {
                     inventory_Main_Photo_Last_Modified_Date: "$inventory.Main_Photo_Last_Modified_Date", 
                     inventory_Extra_Photo_Last_Modified_Date: "$inventory.Extra_Photo_Last_Modified_Date", 
                     inventory_dealerId: "$inventory.dealerId", 
+                    inventory_image360URL: "$inventory.image360URL", 
                     inventory_createdAt: "$inventory.createdAt", 
                     inventory_updatedAt: "$inventory.updatedAt", 
                     Extra_Photos : { 
@@ -249,6 +250,7 @@ module.exports = {
                             Main_Photo_Last_Modified_Date: "$inventory_Main_Photo_Last_Modified_Date", 
                             Extra_Photo_Last_Modified_Date: "$inventory_Extra_Photo_Last_Modified_Date", 
                             dealerId: "$inventory_dealerId", 
+                            image360URL: "$inventory_image360URL", 
                             createdAt: "$inventory_createdAt", 
                             updatedAt: "$inventory_updatedAt", 
                             Extra_Photos: "$Extra_Photos" 
