@@ -760,7 +760,7 @@ module.exports = {
         
         } catch (error) {
             console.error('Error retrieving account:', error);
-            throw error;
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
         }
     },
 
