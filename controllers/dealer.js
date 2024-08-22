@@ -104,15 +104,23 @@ const convertAutoTradeCsvToJson = async (csvFile, dealerId) => {
     // await carServices.deleteCarByDealerId(dealerId);
 
     let jsonData = [];
+    console.log(headers);
 
     for (let i = 1; i < rows.length; i++) {
         const row = rows[i].split(',');
-        const rowData = {};
+
+        console.log(row);
 
         // Skip empty rows
         if (row.every(field => field.trim() === '')) {
             continue;
         }
+
+        const fullRow = row.join('');
+
+        // Extract URLs using a regular expression
+        const urlPattern = /https?:\/\/[^\s"']+/g;
+        const photoUrls = fullRow.match(urlPattern);
 
         // Split the long string key in rowData
         const rawData = {};
@@ -123,8 +131,7 @@ const convertAutoTradeCsvToJson = async (csvFile, dealerId) => {
             rawData[key.trim()] = values[index] ? values[index].trim() : '';
         });
 
-        // Now map to carData
-        const carData = {
+        let carData = {
             VIN: rawData['Vin'],
             Stock_Number: rawData['StockNumber'],
             New_or_Used: rawData['Status'],
@@ -152,24 +159,20 @@ const convertAutoTradeCsvToJson = async (csvFile, dealerId) => {
             Transmission_Description: rawData['Transmission'],
             Internet_Description: rawData['AdDescription'],
             Vehicle_Class: rawData['Category'],
-            Main_Photo: rawData['MainPhoto'],
+            Main_Photo: rawData['MainPhoto'] ? rawData['MainPhoto'] : photoUrls ? photoUrls[0] : '',
             Main_Photo_Last_Modified_Date: rawData['ModifiedDate'],
-            Extra_Photos: rawData['OtherPhoto'],
+            Extra_Photos: rawData['OtherPhoto'] ? rawData['OtherPhoto'] : photoUrls ? photoUrls.slice(1).join(';') : '',
             Extra_Photo_Last_Modified_Date: rawData['ModifiedDate'],
             dealerId: dealerId,
         };
 
         jsonData.push(carData);
 
-        await addCSVRawToDB(carData, dealerId);
-
-        // Save the mapped carData to the MongoDB database
-        // const car = new carSchema(carData);
-        // await car.save();
+        // await addCSVRawToDB(carData, dealerId);
     }
 
     return jsonData;
-    // return 'CSV data successfully converted and saved to the database.';
+    // return headers;
 };
 
 const addCSVRawToDB = async (dataRow, dealerId) => {
@@ -289,36 +292,7 @@ module.exports = {
 
                 const token = await userServices.createUserToken(registerDealerData._id);
 
-                // let stripe = Stripe(process.env.STRIPE_SECRET);
-
                 if (token) {
-
-                    // const account = await stripe.accounts.create({
-                    //     country: 'CA',
-                    //     type: 'express',
-                    //     capabilities: {
-                    //       card_payments: {
-                    //         requested: true,
-                    //       },
-                    //       transfers: {
-                    //         requested: true,
-                    //       },
-                    //     },
-                    // });
-
-                    // let accountLink;
-
-                    // if (account != null) {
-                        
-                    //     accountLink = await stripe.accountLinks.create({
-                    //         account: account.id,
-                    //         refresh_url: 'https://uobo.ca/dealer-dashboard',
-                    //         return_url: 'https://uobo.ca/dealer-dashboard',
-                    //         type: 'account_onboarding',
-                    //     });
-                        
-                    //     await dealerServices.createDealerStripeAccount(account, accountLink, registerDealerData._id);
-                    // }
 
                     if (csvFile) {
                         let dealerInventory = await convertCsvToJson(csvFile, registerDealerData._id);
@@ -329,7 +303,6 @@ module.exports = {
                                 Data: [registerDealerData], 
                                 Inventory: dealerInventory,
                                 token,
-                                // StripeAccountOnBoardingLink: accountLink.url, 
                                 Message: 'Dealer registration successfully' 
                             });
                         } else {
@@ -341,7 +314,6 @@ module.exports = {
                             IsSuccess: true, 
                             Data: registerDealerData,
                             token,
-                            // StripeAccountOnBoardingLink: accountLink.url, 
                             Message: 'Dealer Register Successfully' 
                         });
                     }
@@ -798,11 +770,11 @@ module.exports = {
             const dealerId = req.body.dealerId;
 
             if (csvFile) {
-                let data = await convertAutoTradeCsvToJson(csvFile, dealerId);
+                let inventory_data = await convertCsvToJson(csvFile, dealerId);
 
-                return res.send(data);
+                return res.json(200).json({ IsSuccess: true, Data: inventory_data, Message: 'Inventory updated successfully' });
             } else {
-                return res.send('dcbjh');
+                return res.json(400).json({ IsSuccess: false, Data: [], Message: 'Inventory not updated' });
             }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
