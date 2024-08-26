@@ -102,6 +102,9 @@ const financeOrdersSchema = mongoose.Schema({
     email: {
         type: String
     },
+    customerTradeInDecision: {
+        type: Boolean
+    },
     contact: {
         countryCode: {
             type: String

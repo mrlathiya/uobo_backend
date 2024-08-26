@@ -387,6 +387,7 @@ module.exports = {
             customerSelectedEMIOption: params.selectedPlan ? params.selectedPlan : undefined,
             isTradeinCarAvilable: params.isTradeinCarAvilable,
             maxDownPayment: params.maxDownPayment ? params.maxDownPayment : undefined,
+            customerTradeInDecision: params.customerTradeInDecision ? params.customerTradeInDecision : undefined,
             desiredDownPayment: params.desiredDownPayment ? params.desiredDownPayment : undefined,
             selectedAdditionalService: params.selectedAdditionalService ? params.selectedAdditionalService : undefined,
             'tradeDetails.dealerEstimatedTradeValue': params.tradeInCarValue ? params.tradeInCarValue : params.dealerEstimatedTradeInValue
