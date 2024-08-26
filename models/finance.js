@@ -374,6 +374,9 @@ const financeOrdersSchema = mongoose.Schema({
     },
     desiredDownPayment: {
         type: Number
+    },
+    tradeInCarOfferedPrice: {
+        type: Number
     }
 },
 {
