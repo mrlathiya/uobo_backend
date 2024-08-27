@@ -377,7 +377,10 @@ const financeOrdersSchema = mongoose.Schema({
     },
     tradeInCarOfferedPrice: {
         type: Number
-    }
+    },
+    paveSessionKey: {
+        type: String
+    },
 },
 {
     timestamps: true

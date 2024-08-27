@@ -184,11 +184,12 @@ module.exports = {
                 province: params.address.province,
             },
             gender: params.gender,
+            paveSessionKey: params.paveSessionKey,
             DOB: params.DOB,
             documents: params.documents,
             status: '',
             isTradeinCarAvilable: params.isTradeinCarAvilable,
-            tradeDetails: tradeDetails
+            tradeDetails: tradeDetails,
         });
 
         if (customerFinance) {
@@ -250,6 +251,7 @@ module.exports = {
             maxDownPayment: params.maxDownPayment,
             desiredDownPayment: params.desiredDownPayment,
             EMIOptions: params.EMIOptions,
+            paveSessionKey: params.paveSessionKey,
         });
 
         if (customerFinance) {
