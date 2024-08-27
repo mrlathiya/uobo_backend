@@ -101,15 +101,11 @@ const convertAutoTradeCsvToJson = async (csvFile, dealerId) => {
     const csvData = csvFile.buffer.toString('utf-8');
     const rows = csvData.trim().split('\n');
     const headers = rows[0].split(',').map(header => header.replace(/"/g, '').trim());
-    // await carServices.deleteCarByDealerId(dealerId);
 
     let jsonData = [];
-    console.log(headers);
 
     for (let i = 1; i < rows.length; i++) {
         const row = rows[i].split(',');
-
-        console.log(row);
 
         // Skip empty rows
         if (row.every(field => field.trim() === '')) {
@@ -168,11 +164,10 @@ const convertAutoTradeCsvToJson = async (csvFile, dealerId) => {
 
         jsonData.push(carData);
 
-        // await addCSVRawToDB(carData, dealerId);
+        await addCSVRawToDB(carData, dealerId);
     }
 
     return jsonData;
-    // return headers;
 };
 
 const addCSVRawToDB = async (dataRow, dealerId) => {
@@ -772,9 +767,26 @@ module.exports = {
             if (csvFile) {
                 let inventory_data = await convertCsvToJson(csvFile, dealerId);
 
-                return res.json(200).json({ IsSuccess: true, Data: inventory_data, Message: 'Inventory updated successfully' });
+                return res.status(200).json({ IsSuccess: true, Data: inventory_data, Message: 'Inventory updated successfully' });
             } else {
-                return res.json(400).json({ IsSuccess: false, Data: [], Message: 'Inventory not updated' });
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Inventory not updated' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
+
+    updateAutoTradeInventory: async (req, res, next) => {
+        try {
+            const csvFile = req.file;
+            const dealerId = req.body.dealerId;
+
+            if (csvFile) {
+                let inventory_data = await convertAutoTradeCsvToJson(csvFile, dealerId);
+
+                return res.status(200).json({ IsSuccess: true, Data: inventory_data, Message: 'Inventory updated successfully' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Inventory not updated' });
             }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
