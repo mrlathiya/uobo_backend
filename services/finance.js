@@ -503,6 +503,17 @@ module.exports = {
         return orders;
     },
 
+    getCustomerOrderByPaveSessionKey: async (customerId, paveSessionKey) => {
+        const orders = await financeModel.find({ 
+            $and: [
+                { customerId },
+                { paveSessionKey }
+            ] 
+        });
+
+        return orders;
+    },
+
     editPaveReportURLToCustomerOrders: async (ordersList, paveReportURL) => {
 
         let orders = [];

@@ -400,7 +400,7 @@ module.exports = {
         try {
             let { token, title, body } = req.query;
 
-            let data = await sendNotification.sendFirebaseNotification(token, title, body);
+            let data = await sendNotification.sendFirebaseNotification(token, title, body, '', 'testing', undefined, '66c22d3fb25f629f8f050972', false);
 
             return res.send(data);
         } catch (error) {
@@ -425,7 +425,7 @@ module.exports = {
                     console.log(user);
 
                     if (user) {
-                        let customerOrders = await financeServices.getAllCustomerOrdersByCustomerId(user._id);
+                        let customerOrders = await financeServices.getCustomerOrderByPaveSessionKey(user._id, payload?.session?.session_key);
 
                         if (customerOrders.length) {
 
