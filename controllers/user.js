@@ -368,14 +368,18 @@ module.exports = {
 
     sendAlertForPaymentProcessCompletion: async (req, res, next) => {
         try {
-            let { customerId, dealerId, paymentStatus, amount } = req.body;
+            let { customerId, dealerId, paymentStatus, amount, orderId } = req.body;
 
             let customer = await userServices.getUserById(customerId);
             let dealer = await dealerServices.getDealerByDealerId(dealerId);
+            let order = await financeServices.getFinanceById(orderId);
 
             if (customer && dealer) {
                 if (customer) {
                     let title = `Stripe payment ${paymentStatus}`;
+                    if (order.category === 'Cash') {
+                        title = `Stripe payment ${paymentStatus} Cash`;
+                    }
                     let body = `Stripe payment of ${amount} is ${paymentStatus}`;
                     await sendNotification.sendFirebaseNotification(customer.fcmToken, title, body, 'Stripe Payment', 'stripePayment', dealer._id, customer._id, true);
                     return res.status(200).json({ IsSuccess: true, Data: true, Message: 'Payment alert send' });
@@ -383,6 +387,9 @@ module.exports = {
     
                 if (dealer) {
                     let title = `Payment from customer ${customer.firstName}`;
+                    if (order.category === 'Cash') {
+                        title = `Stripe payment ${paymentStatus} Cash`;
+                    }
                     let body = `Payment from customer ${customer.firstName} of ${amount} is ${paymentStatus}`;
                     await sendNotification.sendFirebaseNotification(dealer.fcmToken, title, body, 'Stripe Payment', 'stripePayment', customer._id, dealer._id, false);
                     return res.status(200).json({ IsSuccess: true, Data: true, Message: 'Payment alert send' });
