@@ -473,7 +473,8 @@ module.exports = {
         const orders = await financeModel.find({ 
             $and: [
                 { dealerId: dealer._id },
-                { status: '' }
+                { status: '' },
+                { paveReportURL: { $ne: '' } }
             ] 
         }).populate({ path: 'carId' }).populate({ path: 'customerId' });
 
