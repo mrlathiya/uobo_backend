@@ -472,14 +472,21 @@ module.exports = {
 
     getOrderByDealerId: async(dealer) => {
         const orders = await financeModel.find({ 
-            $and: [
-                { dealerId: dealer._id },
-                { status: '' },
-                { paveReportURL: { $ne: '' } }
-            ] 
+            dealerId: dealer._id,
+            status: ''
         }).populate({ path: 'carId' }).populate({ path: 'customerId' });
 
-        return orders;
+        let filterData = [];
+
+        for (let i in orders) {
+            if (orders[i].isTradeinCarAvilable === false) {
+                filterData.push(orders[i]);
+            } else if(orders[i].isTradeinCarAvilable === true && orders[i].paveReportURL !== '') {
+                filterData.push(orders[i]);
+            }
+        }
+
+        return filterData;
     },
 
     getAllCustomerRequestedOrders: async (dealer) => {

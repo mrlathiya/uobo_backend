@@ -16,7 +16,6 @@ const dealerController = require('../../controllers/dealer');
 const dealerAuthController = require('../../middleware/dealerAuth');
 const authController = require('../../middleware/auth');
 
-
 router.post('/', uploadFile.single('inventory_csv'), dealerController.dealerRegistration);
 router.post('/login', dealerController.dealerLogin);
 router.put('/fcmToken', dealerController.editDealerFcmToken);
