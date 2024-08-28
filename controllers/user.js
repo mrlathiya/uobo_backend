@@ -413,16 +413,13 @@ module.exports = {
             const payload = req.body;
 
             if (payload?.session?.options?.sms?.to) {
-
-                // let userEmail = payload.session.user_account.email;
+                
                 let contactNumberIs = payload?.session?.options?.sms?.to;
 
                 let contactNumber = contactNumberIs.slice(2);
 
                 if (contactNumber) {
                     let user = await userServices.getUserByContactNumber(contactNumber);
-
-                    console.log(user);
 
                     if (user) {
                         let customerOrders = await financeServices.getCustomerOrderByPaveSessionKey(user._id, payload?.session?.session_key);
