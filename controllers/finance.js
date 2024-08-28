@@ -264,7 +264,7 @@ module.exports = {
 
                             if (editStatus.status === 'CustomerSignedBillOfSale') {
                                 title = `${customerIs.firstName} ${customerIs.lastName} has signed bill of sale`;
-                                content = `Review it now and prepare for dispatch ${carIs.Make} ${carIs.Model}`;
+                                content = `Review it now and prepare for dispatch ${carIs?.Make} ${carIs?.Model}`;
                             }
 
                             await sendNotification.sendFirebaseNotification(dealerIs.fcmToken,title, content, '', 'CustomerCashFinanceUpdateByCustomerAlert', editStatus.customerId, dealerIs._id, false);
@@ -282,7 +282,7 @@ module.exports = {
 
                             if (editStatus.status === 'DealerSentAvailability') {
                                 title = `${dealerIs.firstName} has confirmed car availability`;
-                                content = `Make a payment and choose delivery date to secure your ${carIs.Make} ${carIs.Model}`;
+                                content = `Make a payment and choose delivery date to secure your ${carIs?.Make} ${carIs?.Model}`;
                             }
 
                             if (editStatus.status === 'DealerSentBillOfSale') {
@@ -291,7 +291,7 @@ module.exports = {
                                 
                             }
                             
-                            await sendNotification.sendFirebaseNotification(customerIs.fcmToken,title, content, dataContent, 'CustomerCashFinanceUpdateByDealerAlert', editStatus.dealerId, customerIs._id, true);
+                            await sendNotification.sendFirebaseNotification(customerIs.fcmToken,title, content, '', 'CustomerCashFinanceUpdateByDealerAlert', editStatus.dealerId, customerIs._id, true);
                         }
                     }  
                     
@@ -315,6 +315,7 @@ module.exports = {
                 return res.status(200).json({  IsSuccess: true, Data: [], Message: 'Customer order cancelled'});
             }
         } catch (error) {
+            console.log(error);
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
         }
     },
