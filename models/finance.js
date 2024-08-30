@@ -102,6 +102,9 @@ const financeOrdersSchema = mongoose.Schema({
     email: {
         type: String
     },
+    monthlyRentAmount: {
+        type: String
+    },
     customerTradeInDecision: {
         type: Boolean
     },

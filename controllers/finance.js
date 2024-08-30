@@ -709,13 +709,8 @@ module.exports = {
     getFinanceOrder: async (req, res, next) => {
         try {
             const orderId = req.query.orderId;
-            const amount = req.query.amount;
 
             if (orderId === undefined || orderId === null || orderId === '') {
-                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Something went wrong' });
-            }
-
-            if (amount === undefined || amount === null || amount === '') {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Something went wrong' });
             }
 

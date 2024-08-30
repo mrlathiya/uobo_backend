@@ -252,6 +252,7 @@ module.exports = {
             desiredDownPayment: params.desiredDownPayment,
             EMIOptions: params.EMIOptions,
             paveSessionKey: params.paveSessionKey,
+            monthlyRentAmount: params.monthlyRentAmount,
         });
 
         if (customerFinance) {
@@ -326,7 +327,13 @@ module.exports = {
 
     getFinanceById: async (financeId) => {
 
-        let finance = await financeModel.findById(financeId);
+        let finance = await financeModel.findById(financeId)
+        .populate({
+            path: 'customerId'
+        })
+        .populate({
+            path: 'carId'
+        });
 
         return finance;
     },
@@ -389,6 +396,7 @@ module.exports = {
             customerSelectedEMIOption: params.selectedPlan ? params.selectedPlan : undefined,
             isTradeinCarAvilable: params.isTradeinCarAvilable,
             maxDownPayment: params.maxDownPayment ? params.maxDownPayment : undefined,
+            monthlyRentAmount: params.monthlyRentAmount ? params.monthlyRentAmount : undefined,
             customerTradeInDecision: params.customerTradeInDecision ? params.customerTradeInDecision : undefined,
             desiredDownPayment: params.desiredDownPayment ? params.desiredDownPayment : undefined,
             tradeInCarOfferedPrice: params.tradeInCarOfferedPrice ? params.tradeInCarOfferedPrice : undefined,
