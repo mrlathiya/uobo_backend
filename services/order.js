@@ -48,7 +48,8 @@ module.exports = {
                                         .populate({ path: 'customerSelectedCar.carId' })
                                         .populate({ path: 'EMIOptions' })
                                         .populate({ path: 'customerSelectedEMIOption' })
-                                        .populate({ path: 'dealerProvidedOptions.carId' });
+                                        .populate({ path: 'dealerProvidedOptions.carId' })
+                                        .sort({ updatedAt: -1 });
         return orders;
     },
 
