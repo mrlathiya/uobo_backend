@@ -193,6 +193,7 @@ module.exports = {
             icon: params.icon,
             price: params.price ? Number(params.price) : undefined,
             dealerId: params.dealerId ? params.dealerId : undefined,
+            pricingType: params.pricingType ? params.pricingType : undefined,
         });
 
         if (addService) {

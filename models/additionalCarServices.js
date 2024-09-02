@@ -14,6 +14,9 @@ const additionalCarServices = mongoose.Schema({
         type: String,
         default: 'https://uobos3.s3.amazonaws.com/additional-services-icons/customer-support.png'
     },
+    pricingType: {
+        type: String
+    }
 },
 {
     timestamps: true
