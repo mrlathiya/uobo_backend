@@ -497,6 +497,24 @@ module.exports = {
         return filterData;
     },
 
+    getOrderByDealerIdV1: async(dealer) => {
+        const orders = await financeModel.find({ 
+            dealerId: dealer._id,
+        }).populate({ path: 'carId' }).populate({ path: 'customerId' });
+
+        let filterData = [];
+
+        for (let i in orders) {
+            if (orders[i].isTradeinCarAvilable === false) {
+                filterData.push(orders[i]);
+            } else if(orders[i].isTradeinCarAvilable === true && orders[i].paveReportURL !== '') {
+                filterData.push(orders[i]);
+            }
+        }
+
+        return filterData;
+    },
+
     getAllCustomerRequestedOrders: async (dealer) => {
         const orders = await financeModel.find({
             $and: [

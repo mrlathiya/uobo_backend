@@ -21,7 +21,7 @@ router.get('/order-event-stream', async (req, res) => {
 
     const intervalId = setInterval(async () => {
         try {
-            let orderData = await financeService.getOrderByDealerId(params);
+            let orderData = await financeService.getOrderByDealerIdV1(params);
             const message = { type: 'ORDER_NOTIFICATION', data: orderData, count: orderData.length };
             res.write(`data: ${JSON.stringify(message)}\n\n`);
         } catch (error) {
