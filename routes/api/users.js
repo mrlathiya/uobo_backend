@@ -7,31 +7,36 @@ const authController = require('../../middleware/auth');
 const financeController = require('../../controllers/finance');
 const financeService = require('../../services/finance');
 
-// router.get('/noti', async (req, res) => {
-//     res.setHeader('Content-Type', 'text/event-stream');
-//     res.setHeader('Cache-Control', 'no-cache');
-//     res.setHeader('Connection', 'keep-alive');
-//     res.flushHeaders();
+router.get('/order-event-stream', async (req, res) => {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders();
 
-//     const dealerId = req.body.dealerId;
-//     let params = {
-//         _id: dealerId
-//     }
-  
-//     // Send initial notification data
-//     res.write(`data: ${JSON.stringify({ message: 'Connected' })}\n\n`);
-  
-//     setInterval(async () => {
-//         let orderData = await financeService.getOrderByDealerId(params);
-//         const message = { type: 'ORDER_NOTIFICATION', data: orderData, count: orderData.length };
-//         res.write(`data: ${JSON.stringify(message)}\n\n`);
-//     }, 10000); // Send every 10 seconds
+    const dealerId = req.query.dealerId;
+    let params = { _id: dealerId };
 
-//     req.on('close', () => {
-//         console.log('Client closed the connection');
-//         res.end();
-//     });
-// });
+    // Send initial notification data
+    res.write(`data: ${JSON.stringify({ message: 'Connected' })}\n\n`);
+
+    const intervalId = setInterval(async () => {
+        try {
+            let orderData = await financeService.getOrderByDealerId(params);
+            const message = { type: 'ORDER_NOTIFICATION', data: orderData, count: orderData.length };
+            res.write(`data: ${JSON.stringify(message)}\n\n`);
+        } catch (error) {
+            console.error('Error fetching order data:', error);
+            res.write(`data: ${JSON.stringify({ type: 'ERROR', message: 'Failed to fetch order data' })}\n\n`);
+        }
+    }, 10000); // Send every 10 seconds
+
+    req.on('close', () => {
+        console.log('Client closed the connection');
+        clearInterval(intervalId); // Clear the interval when the connection closes
+        res.end();
+    });
+});
+
 
 // router.get('/noti', userController.sendNoti);
 router.post('/payment-alert', userController.sendAlertForPaymentProcessCompletion);
