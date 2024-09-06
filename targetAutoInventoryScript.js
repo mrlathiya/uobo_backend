@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 const FormData = require('form-data');
-const dealerId = '66c22d3fb25f629f8f050972';
+const dealerId = '66db783ba3f5dc72a6ed55c2';
 const carServices = require('./services/car');
 
 const fetchAndProcessCSV = async () => {
@@ -36,7 +36,7 @@ const fetchAndProcessCSV = async () => {
 
         // Send the API request
         try {
-            const response = await axios.put('https://api.uobo.ca/api/dealer/update-inventory', form, {
+            const response = await axios.put('https://api.uobo.ca/api/dealer/update-autotrade-inventory', form, {
                 headers: {
                     ...form.getHeaders()
                 }
