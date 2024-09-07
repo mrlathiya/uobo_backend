@@ -160,6 +160,7 @@ const convertAutoTradeCsvToJson = async (csvFile, dealerId) => {
             Extra_Photos: rawData['OtherPhoto'] ? rawData['OtherPhoto'] : photoUrls ? photoUrls.slice(1).join(';') : '',
             Extra_Photo_Last_Modified_Date: rawData['ModifiedDate'],
             dealerId: dealerId,
+            image360URL: rawData['MainPhoto'] ? rawData['MainPhoto'] : photoUrls ? photoUrls[0] : ''
         };
 
         jsonData.push(carData);
