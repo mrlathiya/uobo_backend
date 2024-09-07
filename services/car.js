@@ -122,6 +122,7 @@ module.exports = {
             mileage: params.mileage,
             pricing: params.pricing,
             decription: params.decription,
+            image360URL: params.image360URL,
             feature: params.feature
         }
 
