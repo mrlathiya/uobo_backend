@@ -138,6 +138,9 @@ const userSchema = mongoose.Schema(
             ownershipType: {
                 type: String
             },
+            monthlyRentAmount: {
+                type: String
+            },
             mortgageDetails: {
                 amount: {
                     type: String
