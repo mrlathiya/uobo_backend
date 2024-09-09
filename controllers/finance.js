@@ -152,6 +152,10 @@ module.exports = {
 
                 // console.log(uploadFiles);
             }
+
+            if (params.monthlyRentAmount) {
+                params.houseOwnership.monthlyRentAmount = params.monthlyRentAmount
+            }
             
             let dealerIs = await dealerServices.getDealerByDealerId(params.dealerId);
 
