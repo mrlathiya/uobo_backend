@@ -127,6 +127,11 @@ const convertAutoTradeCsvToJson = async (csvFile, dealerId) => {
             rawData[key.trim()] = values[index] ? values[index].trim() : '';
         });
 
+        let adDescription = '';
+        for (let j = 23; j < row.length && !row[j].includes('http'); j++) {
+            adDescription += row[j].trim() + ' ';
+        }
+
         let carData = {
             VIN: rawData['Vin'],
             Stock_Number: rawData['StockNumber'],
@@ -153,7 +158,7 @@ const convertAutoTradeCsvToJson = async (csvFile, dealerId) => {
             Certified_Pre_owned: rawData['Certified_Pre_owned'],
             Price: rawData['Price'],
             Transmission_Description: rawData['Transmission'],
-            Internet_Description: rawData['AdDescription'],
+            Internet_Description: adDescription,
             Vehicle_Class: rawData['Category'],
             Main_Photo: rawData['MainPhoto'] ? rawData['MainPhoto'] : photoUrls ? photoUrls[0] : '',
             Main_Photo_Last_Modified_Date: rawData['ModifiedDate'],
