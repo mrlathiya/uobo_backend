@@ -1,48 +1,57 @@
-var request = require('request');
+const { google } = require('googleapis');
+const request = require('request');
 const notificationSchema = require('../models/notificationStorage');
+const serviceAccount = require('../uobo-2e6e2-firebase-adminsdk-c3ubb-3691e4984b.json');  // Path to your service account key JSON
 
 const sendFirebaseNotification = async (token, title, body, data, category, senderId, receiverId, isSenderDealer) => {
-
   try {
+    const authClient = new google.auth.GoogleAuth({
+      credentials: serviceAccount,
+      scopes: ['https://www.googleapis.com/auth/firebase.messaging'],
+    });
+    
+    const accessToken = await authClient.getAccessToken();
     
     const payload = {
-      notification: {
-        title: title,
-        body: body,
-        sound: "surprise.mp3",
-      },
-      data: {
-        orderid: 'orderId',
-        distance: 'latlong',
-        click_action: "FLUTTER_NOTIFICATION_CLICK",
-        title,
-        body
-      },
-      to: token
+      message: {
+        notification: {
+          title: title,
+          body: body,
+          // sound: "surprise.mp3",
+        },
+        data: {
+          orderid: 'orderId',
+          distance: 'latlong',
+          click_action: "FLUTTER_NOTIFICATION_CLICK",
+          title,
+          body
+        },
+        token: token
+      }
     };
 
     const options = {
-        method: 'POST',
-        url: 'https://fcm.googleapis.com/fcm/send',
-        headers: {
-          authorization: 'key=AAAAP6439ec:APA91bHQzNnkXviOs0Ap3l0MvJrpLJEj2PMjBp9MZVBKgz2tsud85IVmTMRPN3uyGdyz_qNQTDFqrxCDshPuBueMtk20xAn-_ftqj-HhYk2PMLKN6YohlOjWk35X41rKM00vBsLgCWU-',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
+      method: 'POST',
+      url: `https://fcm.googleapis.com/v1/projects/uobo-2e6e2/messages:send`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
     };
 
     request(options, async function (error, response) {
-        if (error) {
-            console.log(error.message);
-        } else {
-            console.log("Sending Notification");
-            console.log(response.body);
-            await storeNotification(title, body, category, senderId, receiverId, isSenderDealer);
-        }
+      if (error) {
+        console.log(error.message);
+      } else {
+        console.log("Sending Notification");
+        console.log(response.body);
+        await storeNotification(title, body, category, senderId, receiverId, isSenderDealer);
+      }
     });
 
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 }
 
@@ -63,4 +72,4 @@ const storeNotification = async (title, body, category, senderId, receiverId, is
   }
 }
 
-module.exports = { sendFirebaseNotification }
+module.exports = { sendFirebaseNotification };

@@ -21,6 +21,7 @@
     "file-type": "^19.0.0",
     "fs": "^0.0.1-security",
     "fs-extra": "^11.2.0",
+    "googleapis": "^144.0.0",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.4.3",

@@ -1,4 +1,5 @@
 const orderServices = require('../services/order');
+const sendNotification = require('../config/send-notification')
 
 module.exports = {
     addNewOrder: async (req, res, next) => {
@@ -64,13 +65,18 @@ module.exports = {
                 return res.status(401).json({ IsSuccess: false, Message: 'No dealer found' });
             }
 
-            const orders = await orderServices.getOrderByDealerId(dealer._id);
+            const token = 'csUdj2_PQqOvDvp_SD3lGE:APA91bHjteq2p17oeSZ22zEtz5t7ewfCoa1sqd1Zk0gJ-i45K5B35Rqf2IBR_bCRJvFDWNFoaEtXBpivrbpq7NdfzsqLj3BQs9eRCdVX6qlnjAaY-xq2h3eKdEpLQjrjRZuGjWHcIytg';
+            const title = 'hello'
+            const content = 'oiii'
 
-            if (orders) {
-                return res.status(200).json({ IsSuccess: true, Count: orders.length, Data: orders, Message: 'Dealer orders found' });
-            } else {
-                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer orders not found' });
-            }
+            // const orders = await orderServices.getOrderByDealerId(dealer._id);
+            await sendNotification.sendFirebaseNotification(token, title, content, '', 'DealerSentEMIOptionAndAdditionalServices', dealer._id, dealer._id, true);
+
+            // if (orders) {
+            //     return res.status(200).json({ IsSuccess: true, Count: orders.length, Data: orders, Message: 'Dealer orders found' });
+            // } else {
+            //     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer orders not found' });
+            // }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
         }
