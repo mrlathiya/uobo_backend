@@ -18,12 +18,13 @@ router.post('/login', dealerController.dealerLogin);
 router.get('/', dealerAuthController, dealerController.getDealer);
 router.get('/all', dealerController.getAlldealerDetails);
 router.put('/', dealerAuthController, dealerController.updateDealer);
+
+router.delete('/stripe-account', dealerAuthController, dealerController.deleteDealerStripeAccount);
 router.delete('/:id', dealerAuthController, dealerController.deleteDealer);
 
 //Dealer Rating API
 router.post('/rating', authController, dealerController.addDealerRating);
 router.get('/rating', dealerAuthController, dealerController.getDealerRatings);
 
-router.delete('/stripe-account', dealerAuthController, dealerController.deleteDealerStripeAccount)
 
 module.exports = router;
