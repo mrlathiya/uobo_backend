@@ -325,6 +325,12 @@ module.exports = {
         }
     },
 
+    deleteDealerStripeInformation: async (dealerId) => {
+        await stripeAccountSchema.findOneAndDelete({ dealerId });
+
+        return true;
+    },
+
     getNearByDealer: async (dealer) => {
         let dealerInformation = await dealerSchema.aggregate([
             {

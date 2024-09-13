@@ -24,4 +24,6 @@ router.delete('/:id', dealerAuthController, dealerController.deleteDealer);
 router.post('/rating', authController, dealerController.addDealerRating);
 router.get('/rating', dealerAuthController, dealerController.getDealerRatings);
 
+router.delete('/stripe-account', dealerAuthController, dealerController.deleteDealerStripeAccount)
+
 module.exports = router;

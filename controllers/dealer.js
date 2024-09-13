@@ -508,4 +508,20 @@ module.exports = {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
         }
     },
+
+    deleteDealerStripeAccount: async (req, res, next) => {
+        try {
+            const dealer = req.user;
+
+            if (dealer) {
+                const removeAccount = await dealerServices.deleteDealerStripeInformation(dealer._id);
+
+                return res.status(200).json({ IsSuccess: true, Data: [], Message: 'Dealer stripe account remove' });
+            } else {
+                return res.status(200).json({ IsSuccess: false, Data: [], Message: 'Dealer not found' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    }
 }
