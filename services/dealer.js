@@ -576,5 +576,11 @@ module.exports = {
         let stripeDetails = await stripeAccountSchema.findOne({ dealerId });
 
         return stripeDetails;
-    }
+    },
+
+    deleteDealerStripeInformation: async (dealerId) => {
+        await stripeAccountSchema.findOneAndDelete({ dealerId });
+
+        return true;
+    },
 }

@@ -25,6 +25,7 @@ router.post('/docusign-webhooks', dealerController.getDocusignContent);
 router.get('/', dealerAuthController, dealerController.getDealer);
 router.get('/all', dealerController.getAlldealerDetails);
 router.put('/', dealerAuthController, dealerController.updateDealer);
+router.delete('/stripe-account', dealerAuthController, dealerController.deleteDealerStripeAccount);
 router.delete('/:id', dealerAuthController, dealerController.deleteDealer);
 router.get('/notification', dealerAuthController, dealerController.getDashboardDealerNotifications);
 router.get('/check-token', dealerAuthController, dealerController.checkToken);
