@@ -307,7 +307,7 @@ module.exports = {
                 let updateCancelledOrderStatus = await financeService.editOrderStatus(params.financeId, 'cancelled');
 
                 let title = 'Sorry! Your requested car is not available';
-                let content = `${carIs.make} ${carIs.model} ${carIs.year}`;
+                let content = `${carIs?.Make} ${carIs?.Model} ${carIs?.Year}`;
 
                 let dealerIs = await dealerServices.getDealerByDealerId(updateCancelledOrderStatus.dealerId);
                 let customerIs = await customerService.getUserById(updateCancelledOrderStatus.customerId);
