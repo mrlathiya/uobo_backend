@@ -473,9 +473,10 @@ module.exports = {
                     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Finance status not updated' });
                 }
             } else {
-                let deleteFinance = await financeService.deleteFinanceOrder(params.financeId);
+                // let deleteFinance = await financeService.deleteFinanceOrder(params.financeId);
+                let deleteFinance = await financeService.editOrderStatus(params.financeId, 'cancelled');
 
-                return res.status(200).json({  IsSuccess: true, Data: [], Message: 'Customer requested finance deleted'});
+                return res.status(200).json({  IsSuccess: true, Data: [], Message: 'Customer requested finance cancelled due to car not available'});
             }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
