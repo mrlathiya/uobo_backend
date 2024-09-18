@@ -384,6 +384,9 @@ const financeOrdersSchema = mongoose.Schema({
     paveSessionKey: {
         type: String
     },
+    cancellationReason: {
+        type: String
+    }
 },
 {
     timestamps: true

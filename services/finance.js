@@ -392,6 +392,7 @@ module.exports = {
             selectedEMIOptions: params.selectedEMIOptions ? params.selectedEMIOptions : undefined,
             financeApproval: params.financeApproval ? Boolean(params.financeApproval) : undefined,
             EMIOptions: params.EMIOptions ? params.EMIOptions : undefined,
+            cancellationReason: params.cancellationReason ? params.cancellationReason : undefined,
             selectedAppointment: params.selectedAppointment ? params.selectedAppointment : undefined,
             customerSelectedEMIOption: params.selectedPlan ? params.selectedPlan : undefined,
             isTradeinCarAvilable: params.isTradeinCarAvilable,
