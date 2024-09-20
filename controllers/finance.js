@@ -306,7 +306,7 @@ module.exports = {
             } else {
                 let updateCancelledOrderStatus = await financeService.editOrderStatus(params.financeId, 'cancelled');
 
-                let title = 'Sorry! Your requested car is not available';
+                let title = `${params?.cancellationReason ? params?.cancellationReason : 'Sorry! Your requested car is not available'}`;
                 let content = `${carIs?.Make} ${carIs?.Model} ${carIs?.Year}`;
 
                 let dealerIs = await dealerServices.getDealerByDealerId(updateCancelledOrderStatus.dealerId);
