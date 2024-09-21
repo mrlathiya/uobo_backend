@@ -67,6 +67,7 @@ module.exports = {
     getAdminDashboardOrders: async() => {
         const orders = await financeModel.find()
                                 .populate({ path: 'carId' })
+                                .populate({ path: 'customerId' })
                                 .populate({ path: 'dealerId' });
 
         return orders;
