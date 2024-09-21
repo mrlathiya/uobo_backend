@@ -102,6 +102,26 @@ module.exports = {
         }
     },
 
+    getAllOrders: async (req, res, next) => {
+        try {
+
+            const orders = await orderServices.getAdminDashboardOrders();
+
+            if (orders.length) {
+                return res.status(200).json({ 
+                    IsSuccess: true, 
+                    Count: orders.length, 
+                    Data: orders, 
+                    Message: 'Admin orders found' 
+                });
+            } else {
+                return res.status(200).json({ IsSuccess: false, Data: [], Message: 'No orders found' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
+
     editCustomerOrder: async (req, res, next) => {
         try {
             const orderId = req.params.id;

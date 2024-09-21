@@ -7,7 +7,7 @@ const authController = require('../../middleware/auth');
 const dealerAuthController = require('../../middleware/dealerAuth');
 
 router.post('/', authController, orderController.addNewOrder);
-router.get('/', authController, orderController.getCustomerOrders);
+router.get('/', orderController.getAllOrders);
 router.get('/dealer', dealerAuthController, orderController.getDealerOrders);
 router.get('/customer', authController, orderController.getCustomerOrders);
 router.put('/:id', authController, orderController.editCustomerOrder);

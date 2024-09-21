@@ -64,6 +64,14 @@ module.exports = {
         return orders;
     },
 
+    getAdminDashboardOrders: async() => {
+        const orders = await financeModel.find()
+                                .populate({ path: 'carId' })
+                                .populate({ path: 'dealerId' });
+
+        return orders;
+    },
+
     editOrderStatus: async (status, orderId) => {
         let update = {
             status
