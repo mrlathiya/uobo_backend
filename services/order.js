@@ -21,13 +21,13 @@ module.exports = {
     },
 
     getOrderByOrderId: async (orderId) => {
-        const order = await orderModel.findById(orderId);
+        const order = await financeModel.findById(orderId);
 
         return order;
     },
 
     getOrderByCustomerId: async (customerId) => {
-        const order = await orderModel.find({customerId})
+        const order = await financeModel.find({customerId})
                                       .populate({
                                         path: "carId"
                                       })

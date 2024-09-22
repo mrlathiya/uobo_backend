@@ -156,7 +156,7 @@ module.exports = {
 
     editOrderStatus: async (req, res, next) => {
         try {
-            const orderId = req.params.id;
+            const orderId = req.body.orderId;
             const status = req.body.status;
 
             // if (!user) {
