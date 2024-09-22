@@ -163,7 +163,7 @@ module.exports = {
             //     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please provide valid authrized token' });
             // }
 
-            if (!status) {
+            if (status === undefined && status === null) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide valid order status' });
             }
 
