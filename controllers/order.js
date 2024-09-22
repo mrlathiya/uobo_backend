@@ -154,6 +154,37 @@ module.exports = {
         }
     },
 
+    editOrderStatus: async (req, res, next) => {
+        try {
+            const orderId = req.params.id;
+            const status = req.body.status;
+
+            // if (!user) {
+            //     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please provide valid authrized token' });
+            // }
+
+            if (!status) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Please provide valid order status' });
+            }
+
+            const checkExistOrder = await orderServices.getOrderByOrderId(orderId);
+
+            if (checkExistOrder) {
+                let editOrder = await orderServices.editOrderStatus(status, orderId);
+
+                if (editOrder) {
+                    return res.status(200).json({ IsSuccess: true, Data: editOrder, Message: "Order status updated by admin" });
+                } else {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: "Order status not updated" });
+                }
+            } else {
+                return res.status(400).json({ IsSuccess: true, Data: [], Message: "No order found" });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
+
     deleteOrder: async (req, res, next) => {
         try {
             const orderId = req.params.id;

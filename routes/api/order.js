@@ -6,6 +6,8 @@ const orderController = require('../../controllers/order');
 const authController = require('../../middleware/auth');
 const dealerAuthController = require('../../middleware/dealerAuth');
 
+router.put('/admin', orderController.editOrderStatus)
+
 router.post('/', authController, orderController.addNewOrder);
 router.get('/', orderController.getAllOrders);
 router.get('/dealer', dealerAuthController, orderController.getDealerOrders);
