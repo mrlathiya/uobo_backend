@@ -78,7 +78,7 @@ module.exports = {
             status
         };
 
-        let updateOrder = await orderModel.findByIdAndUpdate(orderId, update, { new: true });
+        let updateOrder = await financeModel.findByIdAndUpdate(orderId, update, { new: true });
 
         return updateOrder;
     },
