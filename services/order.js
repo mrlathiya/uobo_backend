@@ -78,7 +78,16 @@ module.exports = {
             status
         };
 
-        let updateOrder = await financeModel.findByIdAndUpdate(orderId, update, { new: true });
+        let updateOrder = await financeModel.findByIdAndUpdate(orderId, update, { new: true })
+                                            .populate({
+                                                path: 'customerId'
+                                            })
+                                            .populate({
+                                                path: 'dealerId'
+                                            })
+                                            .populate({
+                                                path: 'carId'
+                                            });
 
         return updateOrder;
     },
