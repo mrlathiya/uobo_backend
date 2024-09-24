@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
 const userSchema = require('../models/user');
+const financeSchema = require('../models/finance');
+const deletedCustomerSchema = require('../models/deletedUser');
 const emailSchema = require('../models/emails');
 const dealerSchema = require('../models/dealer');
 const notificationSchema = require('../models/notificationStorage');
@@ -205,4 +207,56 @@ module.exports = {
 
         return updateCustomerLicenceVerificationStatus;
     },
+
+    deleteCustomerAndOrder: async (user, reason) => {
+
+        const addCustomerToDeletedCustomer = await new deletedCustomerSchema({
+            reason,
+            firstName: user?.firstName ? user?.firstName : undefined,
+            lastName: user?.lastName ? user?.lastName : undefined,
+            middleName: user?.middleName ? user?.middleName : undefined,
+            preferName: user?.preferName ? user?.preferName : undefined,
+            email: user?.email ? user?.email : undefined,
+            contact: user?.contact ? user?.contact : undefined,
+            gender: user?.gender ? user?.gender : undefined,
+            height: user?.height ? user?.height : undefined,
+            age: user?.age ? user?.age : undefined,
+            DOB: user?.DOB ? user?.DOB : undefined,
+            fcmToken: user?.fcmToken ? user?.fcmToken : undefined,
+            address: user?.address ? user?.address : undefined,
+            currentLocation: user?.currentLocation ? user?.currentLocation : undefined,
+            issued: user?.issued ? user?.issued : undefined,
+            licenceDetails: user?.licenceDetails ? user?.licenceDetails : undefined,
+            issuerOrg_region_full: user?.issuerOrg_region_full ? user?.issuerOrg_region_full : undefined,
+            issuerOrg_region_abbr: user?.issuerOrg_region_abbr ? user?.issuerOrg_region_abbr : undefined,
+            issuerOrg_full: user?.issuerOrg_full ? user?.issuerOrg_full : undefined,
+            issuerOrg_iso2: user?.issuerOrg_iso2 ? user?.issuerOrg_iso2 : undefined,
+            issuerOrg_iso3: user?.issuerOrg_iso3 ? user?.issuerOrg_iso3 : undefined,
+            nationality_full: user?.nationality_full ? user?.nationality_full : undefined,
+            nationality_iso2: user?.nationality_iso2 ? user?.nationality_iso2 : undefined,
+            nationality_iso3: user?.nationality_iso3 ? user?.nationality_iso3 : undefined,
+            eyeColor: user?.eyeColor ? user?.eyeColor : undefined,
+            internalId: user?.internalId ? user?.internalId : undefined,
+            vaultid: user?.vaultid ? user?.vaultid : undefined,
+            matchrate: user?.matchrate ? user?.matchrate : undefined,
+            executionTime: user?.executionTime ? user?.executionTime : undefined,
+            responseID: user?.responseID ? user?.responseID : undefined,
+            quota: user?.quota ? user?.quota : undefined,
+            credit: user?.credit ? user?.credit : undefined,
+            houseOwnership: user?.houseOwnership ? user?.houseOwnership : undefined,
+            currentEmployment: user?.currentEmployment ? user?.currentEmployment : undefined,
+            quota: user?.quota ? user?.quota : undefined,
+            otherIncomeSource: user?.otherIncomeSource ? user?.otherIncomeSource : undefined,
+            SIN: user?.SIN ? user?.SIN : undefined,
+            documents: user?.documents ? user?.documents : undefined,
+            preferredDeliveryMode: user?.preferredDeliveryMode ? user?.preferredDeliveryMode : undefined,
+            marriedStatus: user?.marriedStatus ? user?.marriedStatus : undefined
+        });
+
+        await userSchema.findByIdAndDelete(user._id);
+
+        const deleteOrder = await financeSchema.deleteMany({ customerId: user._id });
+
+        return addCustomerToDeletedCustomer.save();
+    }
 }

@@ -56,9 +56,7 @@ router.put('/', authController, userController.editUserProfile);
 router.post('/dlVerification', authController, userController.userVerification);
 router.patch('/location', authController, userController.updateUserLocation);
 router.post('/email', userController.collectUserEmail);
-
-
-
+router.delete('/', userController.deleteCustomer);
 
 
 module.exports = router;

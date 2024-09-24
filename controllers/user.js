@@ -527,5 +527,35 @@ module.exports = {
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
         }
+    },
+
+    deleteCustomer: async (req, res, next) => {
+        try {
+            const { customerNumber, deletionReason } = req.body;
+
+            if (!customerNumber) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Customer number is required' });
+            }
+
+            if (!deletionReason) {
+                return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Customer account deletion reason required' });
+            }
+
+            let checkExistUser = await userServices.getUserByContactNumber(customerNumber);
+
+            if (checkExistUser) {
+                const deleteCustomerIs = await userServices.deleteCustomerAndOrder(checkExistUser, deletionReason);
+
+                if (deleteCustomerIs) {
+                    return res.status(200).json({ IsSuccess: true, Data: deleteCustomerIs, Message: 'Customer and customer order deleted' });
+                } else {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer deletion operation failed' });
+                }
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'No customer found' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
     }
 }
