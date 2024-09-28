@@ -230,7 +230,7 @@ module.exports = {
             if (finance === undefined || finance === null) {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Requested cash finance not found' });
             }
-            let carIs = await carServices.getCarById(params.carId);
+            let carIs = await carServices.getCarById(finance.carId);
             
             if (params.confirmAvailabilty === true) {
                 if (!params.status) {
