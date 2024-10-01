@@ -21,6 +21,8 @@ router.post('/login', dealerController.dealerLogin);
 router.put('/fcmToken', dealerController.editDealerFcmToken);
 
 router.post('/docusign-webhooks', dealerController.getDocusignContent);
+router.delete('/clean-data', dealerController.deleteUnrelatedData);
+router.patch('/remove-inventory-image', dealerController.removeImageFromInventory)
 
 router.get('/', dealerAuthController, dealerController.getDealer);
 router.get('/all', dealerController.getAlldealerDetails);
@@ -40,6 +42,7 @@ router.get('/retrive-stripe-account', dealerAuthController, dealerController.ret
 
 router.put('/update-inventory', uploadFile.single('inventory_csv'), dealerController.updateDealerInventory);
 router.put('/update-autotrade-inventory', uploadFile.single('inventory_csv'), dealerController.updateAutoTradeInventory);
+
 
 
 module.exports = router;

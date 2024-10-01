@@ -3,6 +3,7 @@ const dealerSchema = require('../models/dealer');
 const dealerRating = require('../models/dealerRating');
 const stripeAccountSchema = require('../models/stripeAccount');
 const notificationStorageSchema = require('../models/notificationStorage');
+const inventorySchema = require('../models/car')
 
 module.exports = {
     addDealer: async (params) => {
@@ -583,4 +584,32 @@ module.exports = {
 
         return true;
     },
+
+    deleteUnrelatedInventories: async () => {
+        const dealerIdsToKeep = [ '66ba9195c715bfa0b88887f2', '66bb9502020b0780a8dff0de', '66c22d3fb25f629f8f050972', '66db783ba3f5dc72a6ed55c2', '66f6ff47664a073b6f0ac33b' ];
+
+        await inventorySchema.deleteMany({ dealerId: { $nin: dealerIdsToKeep } });
+
+    },
+
+    deleteImagesFromInventory: async (inventoryId, imageUrlToRemove) => {
+        const inventory = await inventorySchema.findById(inventoryId);
+
+        // Check if inventory exists
+        if (!inventory || !inventory.Extra_Photos) {
+           return false;
+        }
+
+        const photosArray = inventory.Extra_Photos.split(';');
+
+        const updatedPhotosArray = photosArray.filter(photoUrl => photoUrl !== imageUrlToRemove);
+
+        const updatedPhotosString = updatedPhotosArray.join(';');
+
+        await inventorySchema.findByIdAndUpdate(inventoryId, {
+            Extra_Photos: updatedPhotosString
+        });
+
+        return true;
+    }
 }

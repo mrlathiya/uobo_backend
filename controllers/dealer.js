@@ -813,5 +813,31 @@ module.exports = {
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
         }
+    },
+
+    deleteUnrelatedData: async (req, res) => {
+        try {
+            await dealerServices.deleteUnrelatedInventories();
+
+            return res.send(true);
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    },
+
+    removeImageFromInventory: async (req, res) => {
+        try {
+            const { inventoryId, imageURL } = req.body;
+
+            const updatedInventory = await dealerServices.deleteImagesFromInventory(inventoryId, imageURL);
+
+            if (updatedInventory) {
+                return res.status(200).json({ IsSuccess: true, Message: 'Image removed successfully' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Message: 'Inventory not found' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
     }
 }
