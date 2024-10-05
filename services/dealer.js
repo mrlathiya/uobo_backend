@@ -611,5 +611,45 @@ module.exports = {
         });
 
         return true;
+    },
+
+    editInventoryFields: async (params, currentValue) => {
+        let update = {
+            VIN: params?.VIN !== undefined && params?.VIN !== '' && params?.VIN !== null ? params?.VIN : currentValue?.VIN, 
+            Stock_Number: params?.Stock_Number !== undefined && params?.Stock_Number !== '' && params?.Stock_Number !== null ? params?.Stock_Number : currentValue?.Stock_Number, 
+            New_or_Used: params?.New_or_Used !== undefined && params?.New_or_Used !== '' && params?.New_or_Used !== null ? params?.New_or_Used : currentValue?.New_or_Used, 
+            MSRP: params?.MSRP !== undefined && params?.MSRP !== '' && params?.MSRP !== null ? params?.MSRP : currentValue?.MSRP, 
+            Year: params?.Year !== undefined && params?.Year !== '' && params?.Year !== null ? params?.Year : currentValue?.Year, 
+            Make: params?.Make !== undefined && params?.Make !== '' && params?.Make !== null ? params?.Make : currentValue?.Make, 
+            Model: params?.Model !== undefined && params?.Model !== '' && params?.Model !== null ? params?.Model : currentValue?.Model, 
+            carFAXLink: params?.carFAXLink !== undefined && params?.carFAXLink !== '' && params?.carFAXLink !== null ? params?.carFAXLink : currentValue?.carFAXLink, 
+            Body_Style: params?.Body_Style !== undefined && params?.Body_Style !== '' && params?.Body_Style !== null ? params?.Body_Style : currentValue?.Body_Style, 
+            Series: params?.Series !== undefined && params?.Series !== '' && params?.Series !== null ? params?.Series : currentValue?.Series, 
+            Exterior_Colour: params?.Exterior_Colour !== undefined && params?.Exterior_Colour !== '' && params?.Exterior_Colour !== null ? params?.Exterior_Colour : currentValue?.Exterior_Colour, 
+            Interior_Colour: params?.Interior_Colour !== undefined && params?.Interior_Colour !== '' && params?.Interior_Colour !== null ? params?.Interior_Colour : currentValue?.Interior_Colour, 
+            Trim:params?.Trim !== undefined && params?.Trim !== '' && params?.Trim !== null ? params?.Trim : currentValue?.Trim, 
+            Engine_Size: params?.Engine_Size !== undefined && params?.Engine_Size !== '' && params?.Engine_Size !== null ? params?.Engine_Size : currentValue?.Engine_Size, 
+            Cylinder_Count: params?.Cylinder_Count !== undefined && params?.Cylinder_Count !== '' && params?.Cylinder_Count !== null ? params?.Cylinder_Count : currentValue?.Cylinder_Count, 
+            Door_Count: params?.Door_Count !== undefined && params?.Door_Count !== '' && params?.Door_Count !== null ? params?.Door_Count : currentValue?.Door_Count,
+            Current_Miles: params?.Current_Miles !== undefined && params?.Current_Miles !== '' && params?.Current_Miles !== null ? params?.Current_Miles : currentValue?.Current_Miles, 
+            Date_Added_to_Inventory: params?.Date_Added_to_Inventory !== undefined && params?.Date_Added_to_Inventory !== '' && params?.Date_Added_to_Inventory !== null ? params?.Date_Added_to_Inventory : currentValue?.Date_Added_to_Inventory, 
+            Status: params?.Status !== undefined && params?.Status !== '' && params?.Status !== null ? params?.Status : currentValue?.Status, 
+            Fuel_Type: params?.Fuel_Type !== undefined && params?.Fuel_Type !== '' && params?.Fuel_Type !== null ? params?.Fuel_Type : currentValue?.Fuel_Type, 
+            Vehicle_Location: params?.Vehicle_Location !== undefined && params?.Vehicle_Location !== '' && params?.Vehicle_Location !== null ? params?.Vehicle_Location : currentValue?.Vehicle_Location, 
+            Certified_Pre_owned: params?.Certified_Pre_owned !== undefined && params?.Certified_Pre_owned !== '' && params?.Certified_Pre_owned !== null ? params?.Certified_Pre_owned : currentValue?.Certified_Pre_owned, 
+            Price: params?.Price !== undefined && params?.Price !== '' && params?.Price !== null ? params?.Price : currentValue?.Price, 
+            Transmission_Description: params?.Transmission_Description !== undefined && params?.Transmission_Description !== '' && params?.Transmission_Description !== null ? params?.Transmission_Description : currentValue?.Transmission_Description, 
+            Internet_Description: params?.Internet_Description !== undefined && params?.Internet_Description !== '' && params?.Internet_Description !== null ? params?.Internet_Description : currentValue?.Internet_Description, 
+            Vehicle_Class: params?.Vehicle_Class !== undefined && params?.Vehicle_Class !== '' && params?.Vehicle_Class !== null ? params?.Vehicle_Class : currentValue?.Vehicle_Class,
+            image360URL: params?.image360URL !== undefined && params?.image360URL !== '' && params?.image360URL !== null ? params?.image360URL : currentValue?.image360URL
+        }
+
+        const editInventoryCarDetails = await inventorySchema.findByIdAndUpdate(params.inventoryId, update, { new: true });
+
+        if (editInventoryCarDetails) {
+            return editInventoryCarDetails;
+        } else {
+            return false;
+        }
     }
 }

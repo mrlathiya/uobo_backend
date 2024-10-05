@@ -22,7 +22,8 @@ router.put('/fcmToken', dealerController.editDealerFcmToken);
 
 router.post('/docusign-webhooks', dealerController.getDocusignContent);
 router.delete('/clean-data', dealerController.deleteUnrelatedData);
-router.patch('/remove-inventory-image', dealerController.removeImageFromInventory)
+router.patch('/remove-inventory-image', dealerController.removeImageFromInventory);
+router.patch('/edit-inventory', dealerController.editInventory);
 
 router.get('/', dealerAuthController, dealerController.getDealer);
 router.get('/all', dealerController.getAlldealerDetails);

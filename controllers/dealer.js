@@ -839,5 +839,31 @@ module.exports = {
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
         }
-    }
+    },
+
+    editInventory: async (req, res) => {
+        try {
+            const params = req.body;
+
+            if (!params.inventoryId) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Missing inventoryId field' });
+            }
+
+            let getExistInventory = await carServices.getCarById(params.inventoryId);
+
+            if (getExistInventory) {
+                const updatedInventory = await dealerServices.editInventoryFields(params);
+
+                if (updatedInventory) {
+                    return res.status(200).json({ IsSuccess: true, data: updatedInventory, Message: 'Inventory car details edited successfully' });
+                } else {
+                    return res.status(400).json({ IsSuccess: false, Message: 'Inventory not found' });
+                }
+            } else {
+                return res.status(400).json({ IsSuccess: false, Message: 'Inventory not found' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    },
 }
