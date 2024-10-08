@@ -402,7 +402,10 @@ module.exports = {
             desiredDownPayment: params.desiredDownPayment ? params.desiredDownPayment : undefined,
             tradeInCarOfferedPrice: params.tradeInCarOfferedPrice ? params.tradeInCarOfferedPrice : undefined,
             selectedAdditionalService: params.selectedAdditionalService ? params.selectedAdditionalService : undefined,
-            'tradeDetails.dealerEstimatedTradeValue': params.tradeInCarValue ? params.tradeInCarValue : params.dealerEstimatedTradeInValue
+            'tradeDetails.dealerEstimatedTradeValue': params.tradeInCarValue ? params.tradeInCarValue : params.dealerEstimatedTradeInValue,
+            $push: {
+                additionalService: { $each: params.services }
+            },
         }
 
         let updateFinanceStatus = await financeModel.findByIdAndUpdate(params.financeId, update, { new: true });;
