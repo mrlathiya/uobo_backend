@@ -395,81 +395,72 @@ module.exports = {
 
                 if (editStatus) {
 
-                    let editStatus = await financeService.editFinanceStatus(params, 'cashFinance');
+                    if (req.userType === 'customer') {
+                        if (dealerIs.fcmToken) {
+                            let title = `Customer edited finance`;
+                            let content = `Without car Order edit by ${user.firstName} ${user.lastName}`;
+                            let dataContent = '';
 
-                    if (editStatus) {
-
-                        if (req.userType === 'customer') {
-                            if (dealerIs.fcmToken) {
-                                let title = `Customer edited finance`;
-                                let content = `Without car Order edit by ${user.firstName} ${user.lastName}`;
-                                let dataContent = '';
-
-                                if (editStatus.status === 'CustomerSentAdditionalDocs') {
-                                    title = `${user.firstName} ${user.lastName} has sent additional documents`;
-                                    content = `Review them now and take action`;
-                                }
-
-                                if (editStatus.status === 'DepositPaidByCustomer') {
-                                    title = `${user.firstName} ${user.lastName} has paid downpayment for the car ${carIs.Make} ${carIs.Model}`;
-                                    content = `Send ${user.firstName} EMI options and delivery date`;
-                                }
-
-                                if (editStatus.status === 'CustomerSelectEMIOptionAndChooseTime') {
-                                    title = `${user.firstName} ${user.lastName} has selected EMI option and chose delivery date`;
-                                    content = `Confirm it now and send bill of sale to ${user.firstName} `;
-                                }
-
-                                if (editStatus.status === 'CustomerSignedBillOfSale') {
-                                    title = `${user.firstName} ${user.lastName} has signed bill of sale`;
-                                    content = `Review it now and prepare for dispatch ${carIs.Make} ${carIs.Model}`;
-                                }
-
-                                await sendNotification.sendFirebaseNotification(dealerIs.fcmToken,title, content, dataContent, 'CustomerFixFinanceUpdateByCustomerAlert', editStatus.customerId, dealerIs._id, false);
+                            if (editStatus.status === 'CustomerSentAdditionalDocs') {
+                                title = `${user.firstName} ${user.lastName} has sent additional documents`;
+                                content = `Review them now and take action`;
                             }
-                        } else {
-                            let customerIs = await customerService.getUserById(editStatus.customerId);
-                            if (customerIs.fcmToken) {
 
-                                let title = `${user.firstName} has confirmed car availability`;
-                                let content = `Pay downpayment and secure your ${carIs.Make} ${carIs.Model}`;
-                                let dataContent = '';
-
-                                if (editStatus.status === 'AdditionalDocumentAskedFromDealer') {
-                                    title = `${user.firstName} has asked for few additional documents`;
-                                    content = `Send them now to speed up your order`;
-                                    
-                                }
-
-                                if (editStatus.status === 'DealerSentAvailability') {
-                                    title = `${user.firstName} has confirmed car availability`;
-                                    content = `Pay downpayment and secure your ${carIs.Make} ${carIs.Model}`;
-                                    
-                                }
-
-                                if (editStatus.status === 'DealerSentEMIOptions') {
-                                    title = `${user.firstName} has sent EMI Options and appointment availability`;
-                                    content = `Choose EMI option and confirm delivery date now`;
-                                    
-                                }
-
-                                if (editStatus.status === 'DealerSentBillOfSale') {
-                                    title = `${user.firstName} has sent bill of sale`;
-                                    content = `Let's close the deal`;
-                                    
-                                }
-                                
-                                await sendNotification.sendFirebaseNotification(customerIs.fcmToken,title, content, dataContent, 'CustomerFixFinanceUpdateByDealerAlert', editStatus.dealerId, customerIs._id, true);
+                            if (editStatus.status === 'DepositPaidByCustomer') {
+                                title = `${user.firstName} ${user.lastName} has paid downpayment for the car ${carIs.Make} ${carIs.Model}`;
+                                content = `Send ${user.firstName} EMI options and delivery date`;
                             }
-                        }  
-                        
-                        return res.status(200).json({ IsSuccess: true, Data: editStatus, Message: `Finance status updated ${params.status}` });
+
+                            if (editStatus.status === 'CustomerSelectEMIOptionAndChooseTime') {
+                                title = `${user.firstName} ${user.lastName} has selected EMI option and chose delivery date`;
+                                content = `Confirm it now and send bill of sale to ${user.firstName} `;
+                            }
+
+                            if (editStatus.status === 'CustomerSignedBillOfSale') {
+                                title = `${user.firstName} ${user.lastName} has signed bill of sale`;
+                                content = `Review it now and prepare for dispatch ${carIs.Make} ${carIs.Model}`;
+                            }
+
+                            await sendNotification.sendFirebaseNotification(dealerIs.fcmToken,title, content, dataContent, 'CustomerFixFinanceUpdateByCustomerAlert', editStatus.customerId, dealerIs._id, false);
+                        }
                     } else {
-                        return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Finance status not updated' });
-                    }
+                        let customerIs = await customerService.getUserById(editStatus.customerId);
+                        if (customerIs.fcmToken) {
 
+                            let title = `${user.firstName} has confirmed car availability`;
+                            let content = `Pay downpayment and secure your ${carIs.Make} ${carIs.Model}`;
+                            let dataContent = '';
+
+                            if (editStatus.status === 'AdditionalDocumentAskedFromDealer') {
+                                title = `${user.firstName} has asked for few additional documents`;
+                                content = `Send them now to speed up your order`;
+                                
+                            }
+
+                            if (editStatus.status === 'DealerSentAvailability') {
+                                title = `${user.firstName} has confirmed car availability`;
+                                content = `Pay downpayment and secure your ${carIs.Make} ${carIs.Model}`;
+                                
+                            }
+
+                            if (editStatus.status === 'DealerSentEMIOptions') {
+                                title = `${user.firstName} has sent EMI Options and appointment availability`;
+                                content = `Choose EMI option and confirm delivery date now`;
+                                
+                            }
+
+                            if (editStatus.status === 'DealerSentBillOfSale') {
+                                title = `${user.firstName} has sent bill of sale`;
+                                content = `Let's close the deal`;
+                                
+                            }
+                            
+                            await sendNotification.sendFirebaseNotification(customerIs.fcmToken,title, content, dataContent, 'CustomerFixFinanceUpdateByDealerAlert', editStatus.dealerId, customerIs._id, true);
+                        }
+                    }  
+                    
+                    return res.status(200).json({ IsSuccess: true, Data: editStatus, Message: `Finance status updated ${params.status}` });
                 } else {
-                    // await financeService.deleteEMIOptions(EMIsIds);
                     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Finance status not updated' });
                 }
             } else {
