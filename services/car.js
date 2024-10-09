@@ -123,7 +123,8 @@ module.exports = {
             pricing: params.pricing,
             decription: params.decription,
             image360URL: params.image360URL,
-            feature: params.feature
+            feature: params.feature,
+            carFAXLink: params.carFAXLink
         }
 
         let updateCar = await carSchema.findByIdAndUpdate(carIdIs, update, { new: true });
