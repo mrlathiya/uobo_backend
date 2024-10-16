@@ -378,34 +378,65 @@ module.exports = {
     },
 
     editFinanceStatus: async (params, type) => {
-        let update = {
-            status: params.status,
-            appointments: params.appointments,
-            customerDepositAmount: params?.customerDepositAmount ? params.customerDepositAmount : undefined,
-            billOfSale: params.billOfSale,
-            $push: { documents: params.documents },
-            additionalDocuments: params.additionalDocuments,
-            customerSelectedCar: params.customerSelectedCar ? params.customerSelectedCar : undefined,
-            dealerId: params.dealerId ? params.dealerId : undefined,
-            dealerProvidedOptions: params.dealerProvidedOptions ? params.dealerProvidedOptions : undefined,
-            deliveryDate: params.deliveryDate ? params.deliveryDate : undefined,
-            selectedEMIOptions: params.selectedEMIOptions ? params.selectedEMIOptions : undefined,
-            financeApproval: params.financeApproval ? Boolean(params.financeApproval) : undefined,
-            EMIOptions: params.EMIOptions ? params.EMIOptions : undefined,
-            cancellationReason: params.cancellationReason ? params.cancellationReason : undefined,
-            selectedAppointment: params.selectedAppointment ? params.selectedAppointment : undefined,
-            customerSelectedEMIOption: params.selectedPlan ? params.selectedPlan : undefined,
-            isTradeinCarAvilable: params.isTradeinCarAvilable,
-            maxDownPayment: params.maxDownPayment ? params.maxDownPayment : undefined,
-            monthlyRentAmount: params.monthlyRentAmount ? params.monthlyRentAmount : undefined,
-            customerTradeInDecision: params.customerTradeInDecision ? params.customerTradeInDecision : undefined,
-            desiredDownPayment: params.desiredDownPayment ? params.desiredDownPayment : undefined,
-            tradeInCarOfferedPrice: params.tradeInCarOfferedPrice ? params.tradeInCarOfferedPrice : undefined,
-            selectedAdditionalService: params.selectedAdditionalService ? params.selectedAdditionalService : undefined,
-            'tradeDetails.dealerEstimatedTradeValue': params.tradeInCarValue ? params.tradeInCarValue : params.dealerEstimatedTradeInValue,
-            $push: {
-                additionalService: { $each: params.services }
-            },
+        let update;
+
+        if (params.services) {
+            update = {
+                status: params.status,
+                appointments: params.appointments,
+                customerDepositAmount: params?.customerDepositAmount ? params.customerDepositAmount : undefined,
+                billOfSale: params.billOfSale,
+                $push: { documents: params.documents },
+                additionalDocuments: params.additionalDocuments,
+                customerSelectedCar: params.customerSelectedCar ? params.customerSelectedCar : undefined,
+                dealerId: params.dealerId ? params.dealerId : undefined,
+                dealerProvidedOptions: params.dealerProvidedOptions ? params.dealerProvidedOptions : undefined,
+                deliveryDate: params.deliveryDate ? params.deliveryDate : undefined,
+                selectedEMIOptions: params.selectedEMIOptions ? params.selectedEMIOptions : undefined,
+                financeApproval: params.financeApproval ? Boolean(params.financeApproval) : undefined,
+                EMIOptions: params.EMIOptions ? params.EMIOptions : undefined,
+                cancellationReason: params.cancellationReason ? params.cancellationReason : undefined,
+                selectedAppointment: params.selectedAppointment ? params.selectedAppointment : undefined,
+                customerSelectedEMIOption: params.selectedPlan ? params.selectedPlan : undefined,
+                isTradeinCarAvilable: params.isTradeinCarAvilable,
+                maxDownPayment: params.maxDownPayment ? params.maxDownPayment : undefined,
+                monthlyRentAmount: params.monthlyRentAmount ? params.monthlyRentAmount : undefined,
+                customerTradeInDecision: params.customerTradeInDecision ? params.customerTradeInDecision : undefined,
+                desiredDownPayment: params.desiredDownPayment ? params.desiredDownPayment : undefined,
+                tradeInCarOfferedPrice: params.tradeInCarOfferedPrice ? params.tradeInCarOfferedPrice : undefined,
+                selectedAdditionalService: params.selectedAdditionalService ? params.selectedAdditionalService : undefined,
+                'tradeDetails.dealerEstimatedTradeValue': params.tradeInCarValue ? params.tradeInCarValue : params.dealerEstimatedTradeInValue,
+                $push: {
+                    additionalService: { $each: params.services }
+                },
+            }
+        } else {
+            update = {
+                status: params.status,
+                appointments: params.appointments,
+                customerDepositAmount: params?.customerDepositAmount ? params.customerDepositAmount : undefined,
+                billOfSale: params.billOfSale,
+                $push: { documents: params.documents },
+                additionalDocuments: params.additionalDocuments,
+                customerSelectedCar: params.customerSelectedCar ? params.customerSelectedCar : undefined,
+                dealerId: params.dealerId ? params.dealerId : undefined,
+                dealerProvidedOptions: params.dealerProvidedOptions ? params.dealerProvidedOptions : undefined,
+                deliveryDate: params.deliveryDate ? params.deliveryDate : undefined,
+                selectedEMIOptions: params.selectedEMIOptions ? params.selectedEMIOptions : undefined,
+                financeApproval: params.financeApproval ? Boolean(params.financeApproval) : undefined,
+                EMIOptions: params.EMIOptions ? params.EMIOptions : undefined,
+                cancellationReason: params.cancellationReason ? params.cancellationReason : undefined,
+                selectedAppointment: params.selectedAppointment ? params.selectedAppointment : undefined,
+                customerSelectedEMIOption: params.selectedPlan ? params.selectedPlan : undefined,
+                isTradeinCarAvilable: params.isTradeinCarAvilable,
+                maxDownPayment: params.maxDownPayment ? params.maxDownPayment : undefined,
+                monthlyRentAmount: params.monthlyRentAmount ? params.monthlyRentAmount : undefined,
+                customerTradeInDecision: params.customerTradeInDecision ? params.customerTradeInDecision : undefined,
+                desiredDownPayment: params.desiredDownPayment ? params.desiredDownPayment : undefined,
+                tradeInCarOfferedPrice: params.tradeInCarOfferedPrice ? params.tradeInCarOfferedPrice : undefined,
+                selectedAdditionalService: params.selectedAdditionalService ? params.selectedAdditionalService : undefined,
+                'tradeDetails.dealerEstimatedTradeValue': params.tradeInCarValue ? params.tradeInCarValue : params.dealerEstimatedTradeInValue
+            }
         }
 
         let updateFinanceStatus = await financeModel.findByIdAndUpdate(params.financeId, update, { new: true });;
