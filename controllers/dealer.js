@@ -389,9 +389,9 @@ module.exports = {
                 return res.status(400).json({ IsSuccess: false, Message: 'Please pass dealerId for the FCM Token' });
             }
 
-            if (params.fcmToken === '' || params.fcmToken === undefined || params.fcmToken === null) {
-                return res.status(400).json({ IsSuccess: false, Message: 'Please pass FCM Token' });
-            }
+            // if (params.fcmToken === '' || params.fcmToken === undefined || params.fcmToken === null) {
+            //     return res.status(400).json({ IsSuccess: false, Message: 'Please pass FCM Token' });
+            // }
 
             let updateDealerFcmToken = await dealerServices.updateDealerFCMToken(params.dealerId, params.fcmToken);
 
