@@ -651,5 +651,15 @@ module.exports = {
         } else {
             return false;
         }
+    },
+
+    getEntireInventory: async () => {
+        let inventoryList = await inventorySchema.find()
+                                                 .populate({
+                                                    path: 'dealerId',
+                                                    select: 'dealerShipName firstName lastName phoneNumber'
+                                                 });
+
+        return inventoryList;
     }
 }

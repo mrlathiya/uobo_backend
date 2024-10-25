@@ -866,4 +866,22 @@ module.exports = {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
         }
     },
+
+    getAllDealerInventory: async (req, res) => {
+        try {
+            let inventoriesData = await dealerServices.getEntireInventory();
+
+            if (inventoriesData.length) {
+                return res.status(200).json({ 
+                    IsSuccess: true, 
+                    Count: inventoriesData.length, 
+                    Data: inventoriesData, 
+                    Message: 'Inventory Data found' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Inventory Data not found' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    }
 }
