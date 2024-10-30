@@ -44,6 +44,7 @@ router.get('/retrive-stripe-account', dealerAuthController, dealerController.ret
 
 router.put('/update-inventory', uploadFile.single('inventory_csv'), dealerController.updateDealerInventory);
 router.put('/update-autotrade-inventory', uploadFile.single('inventory_csv'), dealerController.updateAutoTradeInventory);
+router.put('/update-londonAutoValley-inventory', uploadFile.single('inventory_csv'), dealerController.updateLondonAutoValleyInventory);
 
 
 

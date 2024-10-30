@@ -4,6 +4,7 @@ const userServices = require('../services/user');
 const awsServices = require('../config/aws-services');
 const sendNotification = require('../config/send-notification');
 const financeService = require('../services/finance');
+const { parse } = require('csv-parse');
 const fs = require('fs');
 const path = require('path');
 const dealer = require('../models/dealer');
@@ -97,84 +98,80 @@ const convertCsvToJson = async (csvFile, dealerId) => {
     return jsonData;
 };
 
-const convertAutoTradeCsvToJson = async (csvFile, dealerId) => {
+const convertLondonAutoValleyCsvToJson = async (csvFile, dealerId) => {
+    // Convert the CSV buffer to a string
     const csvData = csvFile.buffer.toString('utf-8');
-    const rows = csvData.trim().split('\n');
-    const headers = rows[0].split(',').map(header => header.replace(/"/g, '').trim());
 
-    let jsonData = [];
-
-    for (let i = 1; i < rows.length; i++) {
-        const row = rows[i].split(',');
-
-        // Skip empty rows
-        if (row.every(field => field.trim() === '')) {
-            continue;
-        }
-
-        const fullRow = row.join('');
-
-        // Extract URLs using a regular expression
-        const urlPattern = /https?:\/\/[^\s"']+/g;
-        const photoUrls = fullRow.match(urlPattern);
-
-        // Split the long string key in rowData
-        const rawData = {};
-        const keys = headers[0].split('|');
-        const values = row[0].split('|');
-        
-        keys.forEach((key, index) => {
-            rawData[key.trim()] = values[index] ? values[index].trim() : '';
+    // Parse CSV data
+    const records = await new Promise((resolve, reject) => {
+        parse(csvData, {
+            columns: true,            // Automatically map columns to headers
+            skip_empty_lines: true,    // Skip any empty rows
+            trim: true                 // Trim spaces around values
+        }, (err, output) => {
+            if (err) reject(err);
+            else resolve(output);
         });
+    });
 
-        let adDescription = '';
-        for (let j = 23; j < row.length && !row[j].includes('http'); j++) {
-            adDescription += row[j].trim() + ' ';
-        }
+    // Function to clean HTML tags
+    const cleanHTML = (text) => text.replace(/<\/?(p|div|br|span)>/gi, '').trim();
 
-        let carData = {
-            VIN: rawData['Vin'],
-            Stock_Number: rawData['StockNumber'],
-            New_or_Used: rawData['Status'],
-            MSRP: rawData['Price'],
-            Year: rawData['Year'],
-            Make: rawData['Make'],
-            Model: rawData['Model'],
-            Body_Style: rawData['Body'],
-            Series: rawData['Trim'],
-            Exterior_Colour: rawData['Exterior Color'],
-            Interior_Colour: rawData['Interior Color'],
-            Trim: rawData['Trim'],
-            Engine_Size: rawData['Engine Size'],
-            Cylinder_Count: rawData['Cylinder'],
-            Door_Count: rawData['Doors'],
-            Drive_configuration: rawData['Drive'],
-            Additional_Options: rawData['Options'],
-            Current_Miles: rawData['KMS'],
-            Date_Added_to_Inventory: rawData['CreatedDate'],
-            Status: rawData['Status'],
-            Fuel_Type: rawData['FuelType'],
-            Vehicle_Location: rawData['CompanyName'],
-            Certified_Pre_owned: rawData['Certified_Pre_owned'],
-            Price: rawData['Price'],
-            Transmission_Description: rawData['Transmission'],
-            Internet_Description: adDescription,
-            Vehicle_Class: rawData['Category'],
-            Main_Photo: rawData['MainPhoto'] ? rawData['MainPhoto'] : photoUrls ? photoUrls[0] : '',
-            Main_Photo_Last_Modified_Date: rawData['ModifiedDate'],
-            Extra_Photos: rawData['OtherPhoto'] ? rawData['OtherPhoto'] : photoUrls ? photoUrls.slice(1).join(';') : '',
-            Extra_Photo_Last_Modified_Date: rawData['ModifiedDate'],
+    // Array to hold promises for adding records to the database
+    const dbPromises = records.map(async row => {
+        // Extract URLs using a regular expression
+        const fullRow = Object.values(row).join('');
+        const urlPattern = /https?:\/\/[^\s"']+/g;
+        const photoUrls = fullRow.match(urlPattern) || [];
+
+        // Map fields to the desired JSON structure
+        const rowData = {
+            VIN: row['VIN'] || '',
+            Stock_Number: row['STOCKNUMBER'] || '',
+            New_or_Used: row['INVENTORYTYPE'] || '',
+            MSRP: row['MSRP'] || '',
+            Year: row['YEAR'] || '',
+            Make: row['MAKE'] || '',
+            Model: row['MODEL'] || '',
+            Body_Style: row['BODYSTYLE'] || '',
+            Series: row['TRIM'] || '',
+            Exterior_Colour: row['EXTCOLOUR'] || '',
+            Interior_Colour: row['INTCOLOUR'] || '',
+            Trim: row['TRIM'] || '',
+            Engine_Size: row['ENGINE'] || '',
+            Cylinder_Count: row['CYLINDERS'] || '',
+            Door_Count: row['DOORS'] || '',
+            Drive_configuration: row['DRIVETYPE'] || '',
+            Additional_Options: cleanHTML(row['OPTIONS'] || ''), // Cleaned HTML tags
+            Current_Miles: row['ODOMETER'] || '',
+            Date_Added_to_Inventory: row['INSTOCKDATE'] || '',
+            Status: row['STATUS'] || '',
+            Fuel_Type: row['FUELTYPE'] || '',
+            Vehicle_Location: row['LOCATION'] || '',
+            Certified_Pre_owned: row['ISCERTIFIED'] === 'True',
+            Price: row['PURCHASEPRICE'] || row['SALEPRICE'] || '',
+            Transmission_Description: row['TRANSMISSIONTYPE'] || '',
+            Internet_Description: cleanHTML(row['DESCRIPTION'] || ''), // Cleaned HTML tags
+            Vehicle_Class: row['CATEGORY'] || '',
+            Main_Photo: photoUrls[0] || '', // Main photo URL
+            Main_Photo_Last_Modified_Date: '', // Optional
+            Extra_Photos: photoUrls.slice(1).join(';'), // Additional photos, separated by ';'
+            Extra_Photo_Last_Modified_Date: '', // Optional
             dealerId: dealerId,
-            image360URL: rawData['MainPhoto'] ? rawData['MainPhoto'] : photoUrls ? photoUrls[0] : ''
+            image360URL: photoUrls[0] || '' // Default to main photo if present
         };
 
-        jsonData.push(carData);
+        // Call the addCSVRawToDB function for the current record
+        await addCSVRawToDB(rowData, dealerId);
+        return rowData; // Optionally return the rowData for further processing
+    });
 
-        await addCSVRawToDB(carData, dealerId);
-    }
+    // Wait for all database operations to complete
+    const jsonData = await Promise.all(dbPromises);
 
     return jsonData;
 };
+
 
 const addCSVRawToDB = async (dataRow, dealerId) => {
     try {
@@ -789,6 +786,23 @@ module.exports = {
 
             if (csvFile) {
                 let inventory_data = await convertAutoTradeCsvToJson(csvFile, dealerId);
+
+                return res.status(200).json({ IsSuccess: true, Data: inventory_data, Message: 'Inventory updated successfully' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Inventory not updated' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
+
+    updateLondonAutoValleyInventory: async (req, res, next) => {
+        try {
+            const csvFile = req.file;
+            const dealerId = req.body.dealerId;
+
+            if (csvFile) {
+                let inventory_data = await convertLondonAutoValleyCsvToJson(csvFile, dealerId);
 
                 return res.status(200).json({ IsSuccess: true, Data: inventory_data, Message: 'Inventory updated successfully' });
             } else {
