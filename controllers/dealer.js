@@ -99,32 +99,46 @@ const convertCsvToJson = async (csvFile, dealerId) => {
 };
 
 const convertLondonAutoValleyCsvToJson = async (csvFile, dealerId) => {
-    // Convert the CSV buffer to a string
     const csvData = csvFile.buffer.toString('utf-8');
 
-    // Parse CSV data
     const records = await new Promise((resolve, reject) => {
         parse(csvData, {
-            columns: true,            // Automatically map columns to headers
-            skip_empty_lines: true,    // Skip any empty rows
-            trim: true                 // Trim spaces around values
+            columns: true,
+            skip_empty_lines: true,
+            trim: true,
         }, (err, output) => {
             if (err) reject(err);
             else resolve(output);
         });
     });
 
-    // Function to clean HTML tags
-    const cleanHTML = (text) => text.replace(/<\/?(p|div|br|span)>/gi, '').trim();
+    const cleanHTML = (text) => text.replace(/<\/?(p|div|br|span|a)>/gi, '').trim();
+    const cleanURL = (url) => url.replace(/<\/?[^>]+(>|$)/g, '').trim();
 
-    // Array to hold promises for adding records to the database
     const dbPromises = records.map(async row => {
-        // Extract URLs using a regular expression
-        const fullRow = Object.values(row).join('');
+        const fullRow = Object.values(row).join(' ');
         const urlPattern = /https?:\/\/[^\s"']+/g;
-        const photoUrls = fullRow.match(urlPattern) || [];
+        const allUrls = fullRow.match(urlPattern) || [];
+        const cleanedUrls = allUrls.map(cleanURL);
 
-        // Map fields to the desired JSON structure
+        let carFAXLink = '';
+        let mainPhoto = '';
+        let extraPhotos = [];
+
+        cleanedUrls.forEach(url => {
+            if (url.includes('https://vhr.carfax.ca/?')) {
+                carFAXLink = url;
+            } else {
+                extraPhotos.push(url);
+            }
+        });
+
+        if (extraPhotos.length > 0) {
+            const firstUrlSet = extraPhotos[0].split(',');
+            mainPhoto = firstUrlSet[0];
+            extraPhotos = [...firstUrlSet.slice(1), ...extraPhotos.slice(1)];
+        }
+
         const rowData = {
             VIN: row['VIN'] || '',
             Stock_Number: row['STOCKNUMBER'] || '',
@@ -142,7 +156,7 @@ const convertLondonAutoValleyCsvToJson = async (csvFile, dealerId) => {
             Cylinder_Count: row['CYLINDERS'] || '',
             Door_Count: row['DOORS'] || '',
             Drive_configuration: row['DRIVETYPE'] || '',
-            Additional_Options: cleanHTML(row['OPTIONS'] || ''), // Cleaned HTML tags
+            Additional_Options: cleanHTML(row['OPTIONS'] || ''),
             Current_Miles: row['ODOMETER'] || '',
             Date_Added_to_Inventory: row['INSTOCKDATE'] || '',
             Status: row['STATUS'] || '',
@@ -151,26 +165,25 @@ const convertLondonAutoValleyCsvToJson = async (csvFile, dealerId) => {
             Certified_Pre_owned: row['ISCERTIFIED'] === 'True',
             Price: row['PURCHASEPRICE'] || row['SALEPRICE'] || '',
             Transmission_Description: row['TRANSMISSIONTYPE'] || '',
-            Internet_Description: cleanHTML(row['DESCRIPTION'] || ''), // Cleaned HTML tags
+            Internet_Description: cleanHTML(row['DESCRIPTION'] || ''),
             Vehicle_Class: row['CATEGORY'] || '',
-            Main_Photo: photoUrls[0] || '', // Main photo URL
-            Main_Photo_Last_Modified_Date: '', // Optional
-            Extra_Photos: photoUrls.slice(1).join(';'), // Additional photos, separated by ';'
-            Extra_Photo_Last_Modified_Date: '', // Optional
+            Main_Photo: mainPhoto,
+            Main_Photo_Last_Modified_Date: '',
+            Extra_Photos: extraPhotos.join(';'),
+            Extra_Photo_Last_Modified_Date: '',
+            carFAXLink: carFAXLink,
             dealerId: dealerId,
-            image360URL: photoUrls[0] || '' // Default to main photo if present
+            image360URL: mainPhoto
         };
 
-        // Call the addCSVRawToDB function for the current record
         await addCSVRawToDB(rowData, dealerId);
-        return rowData; // Optionally return the rowData for further processing
+        return rowData;
     });
 
-    // Wait for all database operations to complete
     const jsonData = await Promise.all(dbPromises);
-
     return jsonData;
 };
+
 
 
 const addCSVRawToDB = async (dataRow, dealerId) => {
