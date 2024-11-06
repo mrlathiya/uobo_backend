@@ -115,6 +115,20 @@ const convertLondonAutoValleyCsvToJson = async (csvFile, dealerId) => {
     const cleanHTML = (text) => text.replace(/<\/?(p|div|br|span|a)>/gi, '').trim();
     const cleanURL = (url) => url.replace(/<\/?[^>]+(>|$)/g, '').trim();
 
+    const dealer = await dealerServices.getDealerByDealerId(dealerId);
+
+    let address;
+
+    if (dealer) {
+        if (dealer?.address?.address1) {
+            address = dealer?.address?.address1;
+
+            if (dealer?.address?.address1?.address2) {
+                address = dealer?.address?.address1?.address2;
+            }
+        }
+    }
+
     const dbPromises = records.map(async row => {
         const fullRow = Object.values(row).join(' ');
         const urlPattern = /https?:\/\/[^\s"']+/g;
@@ -143,7 +157,7 @@ const convertLondonAutoValleyCsvToJson = async (csvFile, dealerId) => {
             VIN: row['VIN'] || '',
             Stock_Number: row['STOCKNUMBER'] || '',
             New_or_Used: row['INVENTORYTYPE'] || '',
-            MSRP: row['MSRP'] || '',
+            MSRP: row['MSRP'] ? row['MSRP'] : row['PURCHASEPRICE'] || row['SALEPRICE'] || '',
             Year: row['YEAR'] || '',
             Make: row['MAKE'] || '',
             Model: row['MODEL'] || '',
@@ -161,7 +175,7 @@ const convertLondonAutoValleyCsvToJson = async (csvFile, dealerId) => {
             Date_Added_to_Inventory: row['INSTOCKDATE'] || '',
             Status: row['STATUS'] || '',
             Fuel_Type: row['FUELTYPE'] || '',
-            Vehicle_Location: row['LOCATION'] || '',
+            Vehicle_Location: row['LOCATION'] ? row['LOCATION'] : address,
             Certified_Pre_owned: row['ISCERTIFIED'] === 'True',
             Price: row['PURCHASEPRICE'] || row['SALEPRICE'] || '',
             Transmission_Description: row['TRANSMISSIONTYPE'] || '',
@@ -173,7 +187,7 @@ const convertLondonAutoValleyCsvToJson = async (csvFile, dealerId) => {
             Extra_Photo_Last_Modified_Date: '',
             carFAXLink: carFAXLink,
             dealerId: dealerId,
-            image360URL: mainPhoto
+            image360URL: mainPhoto,
         };
 
         await addCSVRawToDB(rowData, dealerId);

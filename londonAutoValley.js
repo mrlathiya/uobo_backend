@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 const FormData = require('form-data');
-const dealerId = '6716f2d60cb331fcd6996c2f';
+const dealerId = '672a5bb453e291958a149599';
 
 const fetchAndProcessCSV = async () => {
     const client = new ftp.Client();
