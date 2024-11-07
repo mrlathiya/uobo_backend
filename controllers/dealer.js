@@ -177,7 +177,7 @@ const convertLondonAutoValleyCsvToJson = async (csvFile, dealerId) => {
             Fuel_Type: row['FUELTYPE'] || '',
             Vehicle_Location: row['LOCATION'] ? row['LOCATION'] : address,
             Certified_Pre_owned: row['ISCERTIFIED'] === 'True',
-            Price: row['PURCHASEPRICE'] || row['SALEPRICE'] || '',
+            Price: row['SALEPRICE'] || '',
             Transmission_Description: row['TRANSMISSIONTYPE'] || '',
             Internet_Description: cleanHTML(row['DESCRIPTION'] || ''),
             Vehicle_Class: row['CATEGORY'] || '',
