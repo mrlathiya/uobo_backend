@@ -65,7 +65,7 @@ const addCSVRawToDB = async (dataRow, dealerId) => {
 }
 
 module.exports = {
-    addNewCar: async (req, res, next) => {
+    addNewCar: async (req, res) => {
         try {
             let params = req.body;
             
@@ -102,7 +102,7 @@ module.exports = {
         }
     },
 
-    getAllCars: async (req, res, next) => {
+    getAllCars: async (req, res) => {
         try {
             let cars = await carServices.getAllCars();
 
@@ -116,7 +116,7 @@ module.exports = {
         }
     },
 
-    getDealerCars: async (req, res, next) => {
+    getDealerCars: async (req, res) => {
         try {
             const dealerId = req.params.dealerId;
 
@@ -136,7 +136,7 @@ module.exports = {
         }
     },
 
-    getCar: async (req, res, next) => {
+    getCar: async (req, res) => {
         try {
             const carId = req.params.id
             let carDetails = await carServices.getCarById(carId);
@@ -151,7 +151,7 @@ module.exports = {
         }
     },
 
-    editCarDetails: async (req, res, next) => {
+    editCarDetails: async (req, res) => {
         try {
             const params = req.body;
 
@@ -171,7 +171,7 @@ module.exports = {
         }
     },
 
-    deleteCar: async (req, res, next) => {
+    deleteCar: async (req, res) => {
         try {
             const dealerId = req.params.dealerId;
 
@@ -184,7 +184,7 @@ module.exports = {
         }
     },
 
-    addCarType: async (req, res, next) => {
+    addCarType: async (req, res) => {
         try {
             const params = req.body;
 
@@ -208,7 +208,7 @@ module.exports = {
         }
     },
 
-    getVehicleCategories: async (req, res, next) => {
+    getVehicleCategories: async (req, res) => {
         try {
 
             let vehicleCategories = await carServices.getVehicleType();
@@ -223,7 +223,7 @@ module.exports = {
         }
     },
 
-    searchCarInventory: async (req, res, next) => {
+    searchCarInventory: async (req, res) => {
         try {
             const { keyword } = req.query;
 
@@ -255,7 +255,7 @@ module.exports = {
         }
     },
 
-    additionalCarServices: async (req, res, next) => {
+    additionalCarServices: async (req, res) => {
         try {
             const params = req.body;
 
@@ -275,7 +275,7 @@ module.exports = {
         }
     },
 
-    getAdditionalCarServices: async (req, res, next) => {
+    getAdditionalCarServices: async (req, res) => {
         try {
             const dealerId = req.params.dealerId;
 
@@ -296,7 +296,7 @@ module.exports = {
         }
     },
 
-    addCarServicesToOrder: async (req, res, next) => {
+    addCarServicesToOrder: async (req, res) => {
         try {
             const params = req.body;
 
@@ -337,7 +337,7 @@ module.exports = {
         }
     },
 
-    deleteAdditionalCarServices: async (req, res, next) => {
+    deleteAdditionalCarServices: async (req, res) => {
         try {
             const params = req.body;
 
@@ -357,7 +357,7 @@ module.exports = {
         }
     },
 
-    updateCar360ImageURL: async (req, res, next) => {
+    updateCar360ImageURL: async (req, res) => {
         try {
             const {VIN, '360_iframe': iframe360, image_data} = req.body;
 
@@ -396,4 +396,20 @@ module.exports = {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
         }
     },
+
+    getFilteredDealerInventory: async (req, res) => {
+        try {
+            const params = req.body;
+
+            const resultIs = await carServices.filteredInventory(params);
+
+            if (resultIs.length) {
+                return res.status(200).json({ IsSuccess: true, Count: resultIs.length, Data: resultIs, Message: 'Filter inventory found' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Filter inventory not found' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    }
 }

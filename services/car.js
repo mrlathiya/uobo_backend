@@ -227,6 +227,95 @@ module.exports = {
         return updateCar;
     },
 
+    filteredInventory: async (params) => {
+
+        const matchConditions = {
+            ...(params.Make && { Make: params.Make }),
+            ...(params.Model && { Model: params.Model }),
+            ...(params.transmission && { Transmission_Description: params.transmission }),
+            ...(params.fuelType && { Fuel_Type: params.fuelType }),
+            ...(params.color && {
+                Exterior_Colour: Array.isArray(params.color) ? { $in: params.color } : params.color
+            })
+        };
+        
+        const priceConditions = (
+            params.priceMin !== undefined &&
+            params.priceMax !== undefined &&
+            params.priceMin !== null &&
+            params.priceMax !== null
+        ) ? {
+            PriceNum: {
+                $gte: Number(params.priceMin),
+                $lte: Number(params.priceMax)
+            }
+        } : {};
+        
+        const yearConditions = (
+            params.yearMin !== undefined &&
+            params.yearMax !== undefined &&
+            params.yearMin !== null &&
+            params.yearMax !== null
+        ) ? {
+            Year: {
+                $gte: Number(params.yearMin),
+                $lte: Number(params.yearMax)
+            }
+        } : {};
+        
+        const kmsConditions = (
+            params.kmsMin !== undefined &&
+            params.kmsMax !== undefined &&
+            params.kmsMin !== null &&
+            params.kmsMax !== null
+        ) ? {
+            Current_Miles: {
+                $gte: Number(params.kmsMin),
+                $lte: Number(params.kmsMax)
+            }
+        } : {};
+        
+        const filterCar = await carSchema.aggregate([
+            {
+                $match: {
+                    ...matchConditions,
+                }
+            },
+            {
+                $addFields: {
+                    PriceNum: {
+                        $convert: {
+                            input: "$Price",
+                            to: "double",
+                            onError: null,
+                            onNull: null
+                        }
+                    }
+                }
+            },
+            {
+                $match: {
+                    ...priceConditions,
+                    ...yearConditions,
+                    ...kmsConditions,
+                }
+            },
+            {
+                $lookup: {
+                    from: 'dealers',
+                    localField: 'dealerId',
+                    foreignField: '_id',
+                    as: 'dealerId'
+                }
+            },
+            {
+                $unwind: "$dealerId"
+            }
+        ]);
+        
+        return filterCar;
+    },
+
     testcheck: async () => {
         await carSchema.updateMany({ carFAXLink: 'https://vhr.carfax.ca/?id=8IksBDs/7pZGv6Y67AWUY9lcao3Z06+8' });
     }

@@ -8,6 +8,7 @@ const commonAuthController = require('../../middleware/commonAuth');
 const dealerAuthController = require('../../middleware/dealerAuth');
 
 router.get('/test', carController.searchCarInventory);
+router.get('/dealer', carController.getFilteredDealerInventory);
 
 router.get('/search', commonAuthController, carController.searchCarInventory);
 
