@@ -711,8 +711,8 @@ module.exports = {
                 
                 const accountLink = await stripe.accountLinks.create({
                     account: account.id,
-                    refresh_url: 'https://uobo.ca/retry-stripe-onboarding',
-                    return_url: 'https://uobo.ca/dealer-dashboard',
+                    refresh_url: 'https://app.uobo.ca/retry-stripe-onboarding',
+                    return_url: 'https://app.uobo.ca/dealer-dashboard',
                     type: 'account_onboarding',
                 });
                 
