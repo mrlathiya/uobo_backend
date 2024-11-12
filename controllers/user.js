@@ -557,5 +557,53 @@ module.exports = {
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
         }
+    },
+
+    addUserPreferences: async (req, res) => {
+        try {
+            const params = req.body;
+            const customer = req.user;
+
+            if (!customer) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'No customer found' });
+            }
+
+            params.customerId = customer._id;
+
+            const addPreferences = await userServices.addCustomerPreferenceInformation(params);
+
+            if (addPreferences) {
+                return res.status(200).json({ IsSuccess: true, Data: [addPreferences], Message: 'Customer Preference added' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer Preference not added' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
+
+    getUserPreference: async (req, res) => {
+        try {
+            const customer = req.user;
+
+            if (!customer) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'No customer found' });
+            }
+
+            const preferences = await userServices.getCustomerPreferenceByCustomerId(customer._id);
+
+            if (preferences.length) {
+                return res.status(200).json({ 
+                    IsSuccess: true, 
+                    Count: preferences.length, 
+                    Data: preferences, 
+                    Message: 'Customer preferences found' 
+                });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer preferences not found' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error });
+        }
     }
 }

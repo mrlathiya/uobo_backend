@@ -5,6 +5,7 @@ const deletedCustomerSchema = require('../models/deletedUser');
 const emailSchema = require('../models/emails');
 const dealerSchema = require('../models/dealer');
 const notificationSchema = require('../models/notificationStorage');
+const customerPreferenceSchema = require('../models/userPreference');
 
 module.exports = {
     registerUser: async (params) => {
@@ -258,5 +259,35 @@ module.exports = {
         const deleteOrder = await financeSchema.deleteMany({ customerId: user._id });
 
         return addCustomerToDeletedCustomer.save();
+    },
+
+    addCustomerPreferenceInformation: async (params) => {
+        const addPreference = await new customerPreferenceSchema({
+            customerId: params.customerId,
+            bodyStyle: params.bodyStyle,
+            MakeModel: params.MakeModel,
+            color: params.color,
+            minPrice: params.minPrice,
+            maxPrice: params.maxPrice,
+            minYear: params.minYear,
+            maxYear: params.maxYear,
+            minKMs: params.minKMs,
+            maxKMs: params.maxKMs,
+            drivetrain: params.drivetrain,
+            transmission: params.transmission,
+        });
+
+        if (addPreference !== null || addPreference !== undefined) {
+            return addPreference.save();
+        } else {
+            return false;
+        }
+    },
+
+    getCustomerPreferenceByCustomerId: async (customerId) => {
+        console.log(customerId)
+        const preference = await customerPreferenceSchema.find({ customerId });
+
+        return preference;
     }
 }

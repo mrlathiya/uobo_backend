@@ -46,11 +46,14 @@ router.put('/licenceVerification', userController.editCustomerLicenceVerificatio
 router.post('/', userController.userRegistration);
 router.get('/all', userController.getAllUsers);
 router.get('/', userController.signInUser);
-router.get('/:id', userController.getUser);
+// router.get('/:id', userController.getUser);
 router.post('/pave', userController.listenToPaveEvent);
 
 router.post('/stripe-payment', userController.createStripePayment);
 router.post('/transfer-stripe-payment', userController.transferStripePayment);
+
+router.post('/preference', authController, userController.addUserPreferences);
+router.get('/preference', authController, userController.getUserPreference);
 
 router.put('/', authController, userController.editUserProfile);
 router.post('/dlVerification', authController, userController.userVerification);
