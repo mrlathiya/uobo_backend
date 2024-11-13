@@ -245,7 +245,11 @@ const userSchema = mongoose.Schema(
         },
         marriedStatus: {
             type: String
-        }
+        },
+        paveReportURL: {
+            type: String,
+            default: ''
+        },
     },
     {
         timestamps: true

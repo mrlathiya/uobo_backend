@@ -81,6 +81,12 @@ module.exports = {
         return editCustomerToken;
     },
 
+    updatePaveURLInCustomer: async (customerId, paveReportURL) => {
+        const updateURL = await userSchema.findByIdAndUpdate(customerId, { paveReportURL }, { new: true }); 
+
+        return updateURL;
+    },
+
     updateUserProfileInformation: async (params, user) => {
         let update = {
             firstName: params.firstName !== '' && params.firstName !== undefined ? params.firstName : undefined,
@@ -285,7 +291,6 @@ module.exports = {
     },
 
     getCustomerPreferenceByCustomerId: async (customerId) => {
-        console.log(customerId)
         const preference = await customerPreferenceSchema.find({ customerId });
 
         return preference;

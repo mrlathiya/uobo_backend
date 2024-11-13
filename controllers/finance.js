@@ -272,6 +272,10 @@ module.exports = {
                             }
 
                             await sendNotification.sendFirebaseNotification(dealerIs.fcmToken,title, content, '', 'CustomerCashFinanceUpdateByCustomerAlert', editStatus.customerId, dealerIs._id, false);
+
+                            if (params.paveReportURL) {
+                                await customerService.updatePaveURLInCustomer(customerIs._id, params.paveReportURL)
+                            }
                         }
                     } else {
                         if (customerIs.fcmToken) {
@@ -422,6 +426,9 @@ module.exports = {
                             }
 
                             await sendNotification.sendFirebaseNotification(dealerIs.fcmToken,title, content, dataContent, 'CustomerFixFinanceUpdateByCustomerAlert', editStatus.customerId, dealerIs._id, false);
+                            if (params.paveReportURL) {
+                                await customerService.updatePaveURLInCustomer(editStatus.customerId, params.paveReportURL)
+                            }
                         }
                     } else {
                         let customerIs = await customerService.getUserById(editStatus.customerId);

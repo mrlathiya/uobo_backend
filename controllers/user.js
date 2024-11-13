@@ -429,6 +429,7 @@ module.exports = {
                     let user = await userServices.getUserByContactNumber(contactNumber);
 
                     if (user) {
+                        const editPaveReportToCustomer = await userServices.updatePaveURLInCustomer(user._id, payload.landing_page);
                         let customerOrders = await financeServices.getCustomerOrderByPaveSessionKey(user._id, payload?.session?.session_key);
 
                         if (customerOrders.length) {
