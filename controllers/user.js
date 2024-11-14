@@ -570,6 +570,20 @@ module.exports = {
             }
 
             params.customerId = customer._id;
+            params.email = customer.email;
+            params.contact = customer.contact;
+
+            let checkExistPreference = await userServices.getCustomerPreferenceByCustomerId(customer._id);
+
+            if (checkExistPreference.length === 1) {
+                let editedPreference = await userServices.updateCustomerExistPreferene(params, checkExistPreference[0]._id);
+
+                if (editedPreference) {
+                    return res.status(200).json({ IsSuccess: true, Data: [editedPreference], Message: 'Customer Preference updated' });
+                } else {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer Preference not updated' });
+                }
+            }
 
             const addPreferences = await userServices.addCustomerPreferenceInformation(params);
 

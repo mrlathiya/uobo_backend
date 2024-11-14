@@ -38,6 +38,17 @@ const customerPreferenceSchema = mongoose.Schema({
     transmission: {
         type: String
     },
+    email: {
+        type: String
+    },
+    contact: {
+        countryCode: {
+            type: Number
+        },
+        number: {
+            type: Number
+        }
+    },
 },
 {
     timestamps: true

@@ -281,6 +281,8 @@ module.exports = {
             maxKMs: params.maxKMs,
             drivetrain: params.drivetrain,
             transmission: params.transmission,
+            email: params.email,
+            contact: params.contact
         });
 
         if (addPreference !== null || addPreference !== undefined) {
@@ -290,9 +292,37 @@ module.exports = {
         }
     },
 
+    getCustomerPreferenceByPreferenceId: async (preferenceId) => {
+        const customerPreferenceIs = await customerPreferenceSchema.findById(preferenceId);
+
+        return customerPreferenceIs;
+    },
+
     getCustomerPreferenceByCustomerId: async (customerId) => {
         const preference = await customerPreferenceSchema.find({ customerId });
 
         return preference;
+    },
+
+    updateCustomerExistPreferene: async (params, preferenceId) => {
+        const update = {
+            bodyStyle: params.bodyStyle ? params.bodyStyle : undefined,
+            MakeModel: params.MakeModel ? params.MakeModel : undefined,
+            color: params.color ? params.color : undefined,
+            minPrice: params.minPrice ? params.minPrice : undefined,
+            maxPrice: params.maxPrice ? params.maxPrice : undefined,
+            minYear: params.minYear ? params.minYear : undefined,
+            maxYear: params.maxYear ? params.maxYear : undefined,
+            minKMs: params.minKMs ? params.minKMs : undefined,
+            maxKMs: params.maxKMs ? params.maxKMs : undefined,
+            drivetrain: params.drivetrain ? params.drivetrain : undefined,
+            transmission: params.transmission ? params.transmission : undefined,
+            email: params.email ? params.email : undefined,
+            contact: params.contact ? params.contact : undefined
+        }
+
+        const editPreference = await customerPreferenceSchema.findByIdAndUpdate(preferenceId, update, { new: true });
+
+        return editPreference;
     }
 }
