@@ -661,5 +661,25 @@ module.exports = {
                                                  });
 
         return inventoryList;
+    },
+
+    editNotificationStatusAsRead: async (notificationId) => {
+        const editNoti = await notificationStorageSchema.findByIdAndUpdate(notificationId, { isRead: true }, { new: true });
+
+        return editNoti;
+    },
+
+    editBunchNotificationStatusAsRead: async (notificationIdsList) => {
+        const filter = { _id: { $in: notificationIdsList.map(id => new ObjectId(id)) } };
+        const update = { $set: { isRead: true } };
+        const editNoti = await notificationStorageSchema.updateMany(filter, update);
+
+        return editNoti;
+    },
+
+    editDealerAllNotificationAsRead: async (dealerId) => {
+        const editNotification = await notificationStorageSchema.updateMany({ receiverId: String(dealerId) }, { isRead: true }, { new: true });
+
+        return editNotification;
     }
 }

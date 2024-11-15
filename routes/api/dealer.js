@@ -32,6 +32,7 @@ router.put('/', dealerAuthController, dealerController.updateDealer);
 router.delete('/stripe-account', dealerAuthController, dealerController.deleteDealerStripeAccount);
 router.delete('/:id', dealerAuthController, dealerController.deleteDealer);
 router.get('/notification', dealerAuthController, dealerController.getDashboardDealerNotifications);
+router.put('/notification', dealerAuthController, dealerController.markAsReadNotification);
 router.get('/check-token', dealerAuthController, dealerController.checkToken);
 
 //Dealer Rating API

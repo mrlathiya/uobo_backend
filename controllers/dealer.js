@@ -640,6 +640,35 @@ module.exports = {
         }
     },
 
+    markAsReadNotification: async (req, res) => {
+        try {
+            const params = req.body;
+            const dealer = req.user;
+
+            if (params.markAsReadAll) {
+                const editNoti = await dealerServices.editDealerAllNotificationAsRead(dealer._id);
+
+                if (editNoti) {
+                    return res.status(200).json({ IsSuccess: true, Data: editNoti, Message: 'All notifications mark as read' });
+                } else {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Notifications are not mark as read' });
+                }
+            } else if (params.notificationId) {
+                const editNoti = await dealerServices.editNotificationStatusAsRead(params.notificationId);
+
+                if (editNoti) {
+                    return res.status(200).json({ IsSuccess: true, Data: editNoti, Message: 'Notification mark as read' });
+                } else {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Notification not mark as read' });
+                }
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please provide valid parameters notificationId or markAsReadAll' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
+
     getDocusignContent: async (req, res, next) => {
         try {
             const envelopeData = req.body;
