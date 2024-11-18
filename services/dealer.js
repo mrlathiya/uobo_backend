@@ -565,7 +565,11 @@ module.exports = {
 
     getDealerDashboardNotification: async (dealerId) => {
 
-        let getNotifications = await notificationStorageSchema.find({ receiverId: String(dealerId) })
+        let getNotifications = await notificationStorageSchema.find({ 
+                                                                    receiverId: String(dealerId),
+                                                                    title: { $ne: '' }, 
+                                                                    body: { $ne: '' } 
+                                                                })
                                                                 .sort({ 
                                                                     createdAt: -1 
                                                                 });
