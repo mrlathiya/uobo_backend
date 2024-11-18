@@ -631,7 +631,14 @@ module.exports = {
             let notifications = await dealerServices.getDealerDashboardNotification(user._id);
 
             if (notifications.length) {
-                return res.status(200).json({ IsSuccess: true, Data: notifications, Message: 'Dealer notifications found' });
+                const unreadNotificationCount = notifications.filter(noti => !noti.isRead).length;
+                return res.status(200).json({ 
+                    IsSuccess: true,
+                    Count: notifications.length,
+                    UnReadCount: unreadNotificationCount,
+                    Data: notifications, 
+                    Message: 'Dealer notifications found' 
+                });
             } else {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'No dealer notifications found' });
             }
