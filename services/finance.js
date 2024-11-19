@@ -398,6 +398,7 @@ module.exports = {
                 cancellationReason: params.cancellationReason ? params.cancellationReason : undefined,
                 selectedAppointment: params.selectedAppointment ? params.selectedAppointment : undefined,
                 customerSelectedEMIOption: params.selectedPlan ? params.selectedPlan : undefined,
+                selectedBreakdown: params.selectedBreakdown ? params.selectedBreakdown : undefined,
                 isTradeinCarAvilable: params.isTradeinCarAvilable,
                 maxDownPayment: params.maxDownPayment ? params.maxDownPayment : undefined,
                 monthlyRentAmount: params.monthlyRentAmount ? params.monthlyRentAmount : undefined,

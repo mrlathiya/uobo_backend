@@ -386,6 +386,9 @@ const financeOrdersSchema = mongoose.Schema({
     },
     cancellationReason: {
         type: String
+    },
+    selectedBreakdown: {
+        type: String
     }
 },
 {
