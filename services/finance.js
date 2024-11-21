@@ -190,6 +190,7 @@ module.exports = {
             status: '',
             isTradeinCarAvilable: params.isTradeinCarAvilable,
             tradeDetails: tradeDetails,
+            referralCode: params.referralCode ? params.referralCode : undefined,
         });
 
         if (customerFinance) {
@@ -252,6 +253,7 @@ module.exports = {
             desiredDownPayment: params.desiredDownPayment,
             EMIOptions: params.EMIOptions,
             paveSessionKey: params.paveSessionKey,
+            referralCode: params.referralCode,
             monthlyRentAmount: params.monthlyRentAmount,
         });
 

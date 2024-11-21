@@ -389,7 +389,10 @@ const financeOrdersSchema = mongoose.Schema({
     },
     selectedBreakdown: {
         type: String
-    }
+    },
+    referralCode: {
+        type: String
+    }    
 },
 {
     timestamps: true
