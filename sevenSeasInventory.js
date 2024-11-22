@@ -14,7 +14,7 @@ const fetchAndProcessCSV = async () => {
         await client.access({
             host: '54.156.195.154',
             user: 'SevenSeas',
-            password: 'sevenseas',
+            password: 'uobo7seas',
             secure: false
         });
 
