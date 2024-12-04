@@ -57,6 +57,10 @@ const carSchema = mongoose.Schema({
         type: String,
         default: ''
     },
+    Engine_Name: {
+        type: String,
+        default: ''
+    },
     Cylinder_Count: {
         type: String,
         default: ''
@@ -66,6 +70,10 @@ const carSchema = mongoose.Schema({
         default: ''
     },
     Drive_configuration: {
+        type: String,
+        default: ''
+    },
+    brake_system: {
         type: String,
         default: ''
     },
@@ -105,9 +113,37 @@ const carSchema = mongoose.Schema({
         type: String,
         default: ''
     },
+    Transmission: {
+        name: {
+            type: String,
+            default: ''
+        },
+        detail_type: {
+            type: String,
+            default: ''
+        },
+        detail_gears: {
+            type: String,
+            default: ''
+        },
+    },
     Internet_Description: {
         type: String,
         default: ''
+    },
+    Fuel_efficienecy: {
+        city: {
+            type: String,
+            default: ''
+        },
+        highway: {
+            type: String,
+            default: ''
+        },
+        combined: {
+            type: String,
+            default: ''
+        },
     },
     Vehicle_Class: {
         type: String,
@@ -173,11 +209,31 @@ const carSchema = mongoose.Schema({
             }
         },
     },
+    standard_generic_equipment: [{
+        title: {
+            type: String
+        },
+        features: [{
+            type: String
+        }]
+    }],
+    standard_specifications: [{
+        title: {
+            type: String
+        },
+        features: [{
+            type: String
+        }]
+    }],
     carFAXLink: {
         type: String,
         default: ''
     },
     image360URL: {
+        type: String,
+        default: ''
+    },
+    carSpecification: {
         type: String,
         default: ''
     }

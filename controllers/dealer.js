@@ -9,6 +9,8 @@ const fs = require('fs');
 const path = require('path');
 const dealer = require('../models/dealer');
 const Stripe = require('stripe');
+const https = require('https')
+const querystring = require('querystring');
 
 const uploadedImage = async (base64Image, fileNameConst) => {
     const matches = base64Image.match(/^data:image\/(\w+);base64,(.+)$/);
@@ -56,46 +58,110 @@ const deleteImage = async (fileName) => {
 }
 
 const convertCsvToJson = async (csvFile, dealerId) => {
-    const jsonData = [];
-    const csvData = csvFile.buffer.toString('utf-8');
+    try {
+        const jsonData = [];
+        const csvData = csvFile.buffer.toString('utf-8');
 
-    const rows = csvData.trim().split('\n');
-    const headers = rows[0].split(',').map(header => header.replace(/"/g, '').trim());
+        const rows = csvData.trim().split('\n');
+        const headers = rows[0].split(',').map(header => header.replace(/"/g, '').trim());
 
-    for (let i = 1; i < rows.length; i++) {
-        const row = rows[i].split(',');
-        const rowData = {};
+        for (let i = 1; i < rows.length; i++) {
+            const row = rows[i].split(',');
+            const rowData = {};
 
-        // Skip empty rows
-        if (row.every(field => field.trim() === '')) {
-            continue;
-        }
-
-        for (let j = 0; j < headers.length; j++) {
-            // Replace spaces with underscores and trim any extra underscores from the keys
-            let cleanedKey = headers[j].replace(/\s+/g, '_').replace(/_+$/, '');
-
-            // Remove double quotes from values and trim whitespace/newlines
-            const cleanedValue = row[j].replace(/"/g, '').trim();
-
-            // Handle special cases for key names
-            if (cleanedKey === 'New/Used') {
-                cleanedKey = 'New_or_Used';
+            // Skip empty rows
+            if (row.every(field => field.trim() === '')) {
+                continue;
             }
 
-            if (cleanedKey === 'Certified_Pre-owned') {
-                cleanedKey = 'Certified_Pre_owned';
+            for (let j = 0; j < headers.length; j++) {
+                // Replace spaces with underscores and trim any extra underscores from the keys
+                let cleanedKey = headers[j].replace(/\s+/g, '_').replace(/_+$/, '');
+
+                // Remove double quotes from values and trim whitespace/newlines
+                const cleanedValue = row[j].replace(/"/g, '').trim();
+
+                // Handle special cases for key names
+                if (cleanedKey === 'New/Used') {
+                    cleanedKey = 'New_or_Used';
+                }
+
+                if (cleanedKey === 'Certified_Pre-owned') {
+                    cleanedKey = 'Certified_Pre_owned';
+                }
+
+                rowData[cleanedKey] = cleanedValue;
+                
             }
 
-            rowData[cleanedKey] = cleanedValue;
+            const additionalDetails = await addCSVRawToDBWithDataCheck(rowData.VIN);
+            const additional_information = additionalDetails?.query_responses?.NodeJS_Sample?.us_market_data?.us_styles[0];
+
+            const fuel_type = additional_information?.engines[0]?.fuel_type;
+            const drive_type = additional_information?.basic_data?.drive_type;
+            const brake_system = additional_information?.basic_data?.brake_system;
+            const body_type = additional_information?.basic_data?.body_type;
+            const doors = additional_information?.basic_data?.doors;
+            const engine_name = additional_information?.engines[0]?.name;
+            const engine_cylinder_count = additional_information?.engines[0]?.ice_cylinders;
+            const transmission_name = additional_information?.transmissions[0]?.name;
+            const transmission_detail_type = additional_information?.transmissions[0]?.detail_type;
+            const transmission_detail_gears = additional_information?.transmissions[0]?.gears;
+            const epa_fuel_efficiency_city = additional_information?.epa_fuel_efficiency?.city;
+            const epa_fuel_efficiency_highway = additional_information?.epa_fuel_efficiency?.highway;
+            const epa_fuel_efficiency_combined = additional_information?.epa_fuel_efficiency?.combined;
+            const exterior_color = additional_information?.colors?.exterior_colors[0]?.generic_color_name;
+            const interior_colors = additional_information?.colors?.interior_colors[0]?.generic_color_name;
+            const carSpecification = additional_information?.name
+
+            rowData['Fuel_Type'] = fuel_type;
+            rowData['Drive_configuration'] = drive_type;
+            rowData['brake_system'] = brake_system;
+            rowData['Body_Style'] = body_type;
+            rowData['Door_Count'] = doors;
+            rowData['Engine_Name'] = engine_name;
+            rowData['Cylinder_Count'] = engine_cylinder_count;
+            rowData['Transmission.name'] = transmission_name;
+            rowData['Transmission.detail_type'] = transmission_detail_type;
+            rowData['Transmission.detail_gears'] = transmission_detail_gears;
+            rowData['Fuel_efficienecy.city'] = epa_fuel_efficiency_city;
+            rowData['Fuel_efficienecy.highway'] = epa_fuel_efficiency_highway;
+            rowData['Fuel_efficienecy.combined'] = epa_fuel_efficiency_combined;
+            rowData['Exterior_Colour'] = exterior_color;
+            rowData['Interior_Colour'] = interior_colors;
+            rowData['carSpecification'] = carSpecification;
+
+            let standard_generic_equipment = [];
+            let standard_specifications = [];
+
+            if (additional_information?.standard_generic_equipment) {
+                standard_generic_equipment = additional_information?.standard_generic_equipment.map((group) => ({
+                    title: group.generic_equipment_category_group,
+                    features: group.generic_equipment_categories
+                        .flatMap(category => category.generic_equipment)
+                        .map(equipment => equipment.generic_equipment_name)
+                }));
+            }
+
+            if (additional_information?.standard_specifications) {
+                standard_specifications = additional_information?.standard_specifications.map((category) => ({
+                    title: category.specification_category,
+                    features: category.specification_values.map(value => value.specification_name)
+                }));
+            }
+
+            rowData['standard_generic_equipment'] = standard_generic_equipment;
+            rowData['standard_specifications'] = standard_specifications;
+            
+            jsonData.push(rowData);
+
+            await addCSVRawToDB(rowData, dealerId);
         }
 
-        jsonData.push(rowData);
-
-        await addCSVRawToDB(rowData, dealerId);
+        return jsonData;    
+    } catch (error) {
+        console.log(error)
     }
-
-    return jsonData;
 };
 
 const convertLondonAutoValleyCsvToJson = async (csvFile, dealerId) => {
@@ -198,7 +264,123 @@ const convertLondonAutoValleyCsvToJson = async (csvFile, dealerId) => {
     return jsonData;
 };
 
-
+const addCSVRawToDBWithDataCheck = async (VIN) => {
+    return new Promise((resolve, reject) => {
+      const decoder_query = {
+        "decoder_settings": {
+          "display": "full",
+          "styles": "on",
+          "style_data_packs": {
+            "basic_data": "on",
+            "pricing": "on",
+            "engines": "on",
+            "transmissions": "on",
+            "standard_specifications": "on",
+            "standard_generic_equipment": "on",
+            "oem_options": "on",
+            "optional_generic_equipment": "on",
+            "colors": "on",
+            "warranties": "on",
+            "fuel_efficiency": "on",
+            "green_scores": "on",
+            "crash_test": "on"
+          },
+          "common_data": "on",
+          "common_data_packs": {
+            "basic_data": "on",
+            "pricing": "on",
+            "engines": "on",
+            "transmissions": "on",
+            "standard_specifications": "on",
+            "oem_options": "on",
+            "optional_generic_equipment": "on"
+          }
+        },
+        "query_requests": {
+          "NodeJS_Sample": {
+            "vin": VIN,
+            "year": "",
+            "make": "",
+            "model": "",
+            "trim": "",
+            "model_number": "",
+            "package_code": "",
+            "drive_type": "",
+            "vehicle_type": "",
+            "body_type": "",
+            "body_subtype": "",
+            "doors": "",
+            "bedlength": "",
+            "wheelbase": "",
+            "msrp": "",
+            "invoice_price": "",
+            "engine": {
+              "description": "",
+              "block_type": "",
+              "cylinders": "",
+              "displacement": "",
+              "fuel_type": ""
+            },
+            "transmission": {
+              "description": "",
+              "trans_type": "",
+              "trans_speeds": ""
+            },
+            "optional_equipment_codes": "",
+            "interior_color": {
+              "description": "",
+              "color_code": ""
+            },
+            "exterior_color": {
+              "description": "",
+              "color_code": ""
+            }
+          }
+        }
+      };
+  
+      const post_data = querystring.stringify({
+        'access_key_id': '1ypbCnoEMS',
+        'secret_access_key': 'xDPXzOsG3J4irLv647IPLLWNNK4xnTGhlm7zNB3b',
+        'decoder_query': JSON.stringify(decoder_query)
+      });
+  
+      const options = {
+        hostname: 'api.dataonesoftware.com',
+        port: 443,
+        path: '/webservices/vindecoder/decode',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Length': Buffer.byteLength(post_data)
+        }
+      };
+  
+      let response_string = '';
+      const req = https.request(options, res => {
+        res.on('data', d => {
+          response_string += d;
+        });
+  
+        res.on('end', () => {
+          try {
+            const response_json = JSON.parse(response_string);
+            resolve(response_json); // Return the response JSON
+          } catch (error) {
+            reject(error); // Handle JSON parsing errors
+          }
+        });
+      });
+  
+      req.on('error', error => {
+        reject(error); // Handle request errors
+      });
+  
+      req.write(post_data);
+      req.end();
+    });
+  };
+  
 
 const addCSVRawToDB = async (dataRow, dealerId) => {
     try {
