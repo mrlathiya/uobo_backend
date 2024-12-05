@@ -41,7 +41,22 @@ module.exports = {
             mileage: params.mileage,
             pricing: params.pricing,
             decription: params.decription,
-            feature: params.feature
+            feature: params.feature,
+            brake_system: params.brake_system,
+            Engine_Name: params.Engine_Name,
+            carSpecification: params.carSpecification,
+            standard_generic_equipment: params.standard_generic_equipment,
+            standard_specifications: params.standard_specifications,
+            Transmission: {
+                name: params.Transmission_name,
+                detail_type: params.Transmission_detail_type,
+                detail_gears: params.Transmission_detail_gears,
+            },
+            Fuel_efficienecy: {
+                city: params.Fuel_efficienecy_city,
+                highway: params.Fuel_efficienecy_highway,
+                combined: params.Fuel_efficienecy_combined,
+            }
         });
 
         if (addCar) {
@@ -82,7 +97,6 @@ module.exports = {
     },
 
     editCarDetails: async (params, dealerId, carId) => {
-
         let carIdIs = params._id !== undefined && params._id !== null && params._id !== '' ? params._id : carId;
 
         let update = {
@@ -124,12 +138,26 @@ module.exports = {
             decription: params.decription,
             image360URL: params.image360URL,
             feature: params.feature,
-            carFAXLink: params.carFAXLink
+            brake_system: params.brake_system,
+            Engine_Name: params.Engine_Name,
+            carSpecification: params.carSpecification,
+            standard_generic_equipment: params.standard_generic_equipment,
+            standard_specifications: params.standard_specifications,
+            Transmission: {
+                name: params.Transmission_name,
+                detail_type: params.Transmission_detail_type,
+                detail_gears: params.Transmission_detail_gears,
+            },
+            Fuel_efficienecy: {
+                city: params.Fuel_efficienecy_city,
+                highway: params.Fuel_efficienecy_highway,
+                combined: params.Fuel_efficienecy_combined,
+            }
         }
 
         let updateCar = await carSchema.findByIdAndUpdate(carIdIs, update, { new: true });
         
-        return updateCar;
+        return updateCar; 
     },
 
     deleteAllCars: async () => {

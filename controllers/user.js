@@ -620,5 +620,75 @@ module.exports = {
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error });
         }
+    },
+
+    addCustomerPromocode: async (req, res) => {
+        try {
+            const params = req.body;
+
+            if (!params.mobileNumber) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please provide customer mobile number' });
+            }
+
+            if (!params.promocode) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please provide promocode' });
+            }
+
+            let addPromocode = await userServices.addNewPromocode(params);
+
+            if (addPromocode) {
+                return res.status(200).json({ IsSuccess: true, Data: [addPromocode], Message: 'Customer promocode added' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer promocode not added' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
+
+    getCustomerPromocode: async (req, res) => {
+        try {
+            const mobileNumber = req.query.mobileNumber;
+
+            if (!mobileNumber) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please provide customer mobile number' });
+            }
+
+            let promocodeIs = await userServices.getCustomerPromocodeByMobileNumer(mobileNumber);
+
+            if (promocodeIs) {
+                return res.status(200).json({ IsSuccess: true, Data: promocodeIs, Message: 'Customer promocode found' })
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer promocode not found' })
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
+
+    editCustomerPromocode: async (req, res) => {
+        try {
+            const params = req.body;
+
+            if (!params.promocodeId) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please provide promocodeId' });
+            }
+
+            let existPromocode = await userServices.getPromocodeById(params.promocodeId); 
+
+            if (existPromocode) {
+                const editPromocode = await userServices.updatePromocodeStatus(params);
+
+                if (editPromocode) {
+                    return res.status(200).json({ IsSuccess: true, Data: editPromocode, Message: 'Promocode is updated' });
+                } else {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Promocode is not updated' });
+                }
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer promocode not found' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
     }
 }

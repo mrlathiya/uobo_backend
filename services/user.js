@@ -6,6 +6,7 @@ const emailSchema = require('../models/emails');
 const dealerSchema = require('../models/dealer');
 const notificationSchema = require('../models/notificationStorage');
 const customerPreferenceSchema = require('../models/userPreference');
+const customerPromocodeSchema = require('../models/customerPromoCode');
 
 module.exports = {
     registerUser: async (params) => {
@@ -324,5 +325,43 @@ module.exports = {
         const editPreference = await customerPreferenceSchema.findByIdAndUpdate(preferenceId, update, { new: true });
 
         return editPreference;
+    },
+
+    addNewPromocode: async (params) => {
+        const addPromocode = await new customerPromocodeSchema({
+            mobileNumber: params.mobileNumber,
+            promocode: params.promocode,
+            promoAmount: params.promoAmount ? Number(params.promoAmount) : 0
+        });
+
+        if (addPromocode) {
+            return addPromocode.save();
+        } else {
+            return undefined;
+        }
+    },
+
+    getCustomerPromocodeByMobileNumer: async (mobileNumber) => {
+        const customerPromocode = await customerPromocodeSchema.find({ mobileNumber });
+
+        return customerPromocode;
+    },
+
+    getPromocodeById: async (promocodeId) => {
+        const customerPromocode = await customerPromocodeSchema.findById(promocodeId);
+
+        return customerPromocode;
+    },
+
+    updatePromocodeStatus: async (params) => {
+        const update = {
+            claimStatus: params.claimStatus ? params.claimStatus : undefined,
+            activationStatus: params.activationStatus ? params.activationStatus : undefined,
+            customerId: params.customerId ? params.customerId : undefined
+        }
+
+        const updatePromocodeIs = await customerPromocodeSchema.findByIdAndUpdate(params.promocodeId, update, { new: true });
+
+        return updatePromocodeIs;
     }
 }

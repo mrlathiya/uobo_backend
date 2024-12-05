@@ -61,5 +61,9 @@ router.patch('/location', authController, userController.updateUserLocation);
 router.post('/email', userController.collectUserEmail);
 router.delete('/', userController.deleteCustomer);
 
+router.post('/promocode', authController, userController.addCustomerPromocode);
+router.get('/promocode', authController, userController.getCustomerPromocode);
+router.put('/promocode', authController, userController.getCustomerPromocode);
+
 
 module.exports = router;

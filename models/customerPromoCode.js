@@ -8,14 +8,23 @@ const customerProcodeSchema = mongoose.Schema({
         type: String
     },
     promoAmount: {
-        type: String
+        type: Number
     },
     claimStatus: {
-        type: String
+        type: Boolean,
+        default: false
     },
     activationStatus: {
-        type: String
-    }
+        type: Boolean,
+        default: false
+    },
+    customerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users',
+    },
+},
+{
+    timestamps: true
 });
 
 module.exports = mongoose.model('CustomerPromocode', customerProcodeSchema)

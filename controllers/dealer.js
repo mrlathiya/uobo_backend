@@ -121,12 +121,12 @@ const convertCsvToJson = async (csvFile, dealerId) => {
             rowData['Door_Count'] = doors;
             rowData['Engine_Name'] = engine_name;
             rowData['Cylinder_Count'] = engine_cylinder_count;
-            rowData['Transmission.name'] = transmission_name;
-            rowData['Transmission.detail_type'] = transmission_detail_type;
-            rowData['Transmission.detail_gears'] = transmission_detail_gears;
-            rowData['Fuel_efficienecy.city'] = epa_fuel_efficiency_city;
-            rowData['Fuel_efficienecy.highway'] = epa_fuel_efficiency_highway;
-            rowData['Fuel_efficienecy.combined'] = epa_fuel_efficiency_combined;
+            rowData['Transmission_name'] = transmission_name;
+            rowData['Transmission_detail_type'] = transmission_detail_type;
+            rowData['Transmission_detail_gears'] = transmission_detail_gears;
+            rowData['Fuel_efficienecy_city'] = epa_fuel_efficiency_city;
+            rowData['Fuel_efficienecy_highway'] = epa_fuel_efficiency_highway;
+            rowData['Fuel_efficienecy_combined'] = epa_fuel_efficiency_combined;
             rowData['Exterior_Colour'] = exterior_color;
             rowData['Interior_Colour'] = interior_colors;
             rowData['carSpecification'] = carSpecification;
@@ -162,6 +162,145 @@ const convertCsvToJson = async (csvFile, dealerId) => {
     } catch (error) {
         console.log(error)
     }
+};
+
+const convertAutoTradeCsvToJson = async (csvFile, dealerId) => {
+
+    const csvData = csvFile.buffer.toString('utf-8');
+    const rows = csvData.trim().split('\n');
+    const headers = rows[0].split(',').map(header => header.replace(/"/g, '').trim());
+
+    let jsonData = [];
+
+    for (let i = 1; i < rows.length; i++) {
+        const row = rows[i].split(',');
+
+        // Skip empty rows
+        if (row.every(field => field.trim() === '')) {
+            continue;
+        }
+
+        const fullRow = row.join('');
+
+        // Extract URLs using a regular expression
+        const urlPattern = /https?:\/\/[^\s"']+/g;
+        const photoUrls = fullRow.match(urlPattern);
+
+        // Split the long string key in rowData
+        const rawData = {};
+        const keys = headers[0].split('|');
+        const values = row[0].split('|');
+        
+        keys.forEach((key, index) => {
+            rawData[key.trim()] = values[index] ? values[index].trim() : '';
+        });
+
+        let adDescription = '';
+        for (let j = 23; j < row.length && !row[j].includes('http'); j++) {
+            adDescription += row[j].trim() + ' ';
+        }
+
+        let rowData = {
+            VIN: rawData['Vin'],
+            Stock_Number: rawData['StockNumber'],
+            New_or_Used: rawData['Status'],
+            MSRP: rawData['Price'],
+            Year: rawData['Year'],
+            Make: rawData['Make'],
+            Model: rawData['Model'],
+            Body_Style: rawData['Body'],
+            Series: rawData['Trim'],
+            Exterior_Colour: rawData['Exterior Color'],
+            Interior_Colour: rawData['Interior Color'],
+            Trim: rawData['Trim'],
+            Engine_Size: rawData['Engine Size'],
+            Cylinder_Count: rawData['Cylinder'],
+            Door_Count: rawData['Doors'],
+            Drive_configuration: rawData['Drive'],
+            Additional_Options: rawData['Options'],
+            Current_Miles: rawData['KMS'],
+            Date_Added_to_Inventory: rawData['CreatedDate'],
+            Status: rawData['Status'],
+            Fuel_Type: rawData['FuelType'],
+            Vehicle_Location: rawData['CompanyName'],
+            Certified_Pre_owned: rawData['Certified_Pre_owned'],
+            Price: rawData['Price'],
+            Transmission_Description: rawData['Transmission'],
+            Internet_Description: adDescription,
+            Vehicle_Class: rawData['Category'],
+            Main_Photo: rawData['MainPhoto'] ? rawData['MainPhoto'] : photoUrls ? photoUrls[0] : '',
+            Main_Photo_Last_Modified_Date: rawData['ModifiedDate'],
+            Extra_Photos: rawData['OtherPhoto'] ? rawData['OtherPhoto'] : photoUrls ? photoUrls.slice(1).join(';') : '',
+            Extra_Photo_Last_Modified_Date: rawData['ModifiedDate'],
+            dealerId: dealerId,
+            image360URL: rawData['MainPhoto'] ? rawData['MainPhoto'] : photoUrls ? photoUrls[0] : ''
+        };
+
+        const additionalDetails = await addCSVRawToDBWithDataCheck(rowData.VIN);
+        const additional_information = additionalDetails?.query_responses?.NodeJS_Sample?.us_market_data?.us_styles[0];
+
+        const fuel_type = additional_information?.engines[0]?.fuel_type;
+        const drive_type = additional_information?.basic_data?.drive_type;
+        const brake_system = additional_information?.basic_data?.brake_system;
+        const body_type = additional_information?.basic_data?.body_type;
+        const doors = additional_information?.basic_data?.doors;
+        const engine_name = additional_information?.engines[0]?.name;
+        const engine_cylinder_count = additional_information?.engines[0]?.ice_cylinders;
+        const transmission_name = additional_information?.transmissions[0]?.name;
+        const transmission_detail_type = additional_information?.transmissions[0]?.detail_type;
+        const transmission_detail_gears = additional_information?.transmissions[0]?.gears;
+        const epa_fuel_efficiency_city = additional_information?.epa_fuel_efficiency?.city;
+        const epa_fuel_efficiency_highway = additional_information?.epa_fuel_efficiency?.highway;
+        const epa_fuel_efficiency_combined = additional_information?.epa_fuel_efficiency?.combined;
+        const exterior_color = additional_information?.colors?.exterior_colors[0]?.generic_color_name;
+        const interior_colors = additional_information?.colors?.interior_colors[0]?.generic_color_name;
+        const carSpecification = additional_information?.name
+
+        rowData['Fuel_Type'] = fuel_type;
+        rowData['Drive_configuration'] = drive_type;
+        rowData['brake_system'] = brake_system;
+        rowData['Body_Style'] = body_type;
+        rowData['Door_Count'] = doors;
+        rowData['Engine_Name'] = engine_name;
+        rowData['Cylinder_Count'] = engine_cylinder_count;
+        rowData['Transmission_name'] = transmission_name;
+        rowData['Transmission_detail_type'] = transmission_detail_type;
+        rowData['Transmission_detail_gears'] = transmission_detail_gears;
+        rowData['Fuel_efficienecy_city'] = epa_fuel_efficiency_city;
+        rowData['Fuel_efficienecy_highway'] = epa_fuel_efficiency_highway;
+        rowData['Fuel_efficienecy_combined'] = epa_fuel_efficiency_combined;
+        rowData['Exterior_Colour'] = exterior_color;
+        rowData['Interior_Colour'] = interior_colors;
+        rowData['carSpecification'] = carSpecification;
+
+        let standard_generic_equipment = [];
+        let standard_specifications = [];
+
+        if (additional_information?.standard_generic_equipment) {
+            standard_generic_equipment = additional_information?.standard_generic_equipment.map((group) => ({
+                title: group.generic_equipment_category_group,
+                features: group.generic_equipment_categories
+                    .flatMap(category => category.generic_equipment)
+                    .map(equipment => equipment.generic_equipment_name)
+            }));
+        }
+
+        if (additional_information?.standard_specifications) {
+            standard_specifications = additional_information?.standard_specifications.map((category) => ({
+                title: category.specification_category,
+                features: category.specification_values.map(value => value.specification_name)
+            }));
+        }
+
+        rowData['standard_generic_equipment'] = standard_generic_equipment;
+        rowData['standard_specifications'] = standard_specifications;
+
+        jsonData.push(rowData);
+
+        await addCSVRawToDB(rowData, dealerId);
+    }
+
+    return jsonData;
 };
 
 const convertLondonAutoValleyCsvToJson = async (csvFile, dealerId) => {
@@ -255,6 +394,65 @@ const convertLondonAutoValleyCsvToJson = async (csvFile, dealerId) => {
             dealerId: dealerId,
             image360URL: mainPhoto,
         };
+
+        const additionalDetails = await addCSVRawToDBWithDataCheck(rowData.VIN);
+        const additional_information = additionalDetails?.query_responses?.NodeJS_Sample?.us_market_data?.us_styles[0];
+
+        const fuel_type = additional_information?.engines[0]?.fuel_type;
+        const drive_type = additional_information?.basic_data?.drive_type;
+        const brake_system = additional_information?.basic_data?.brake_system;
+        const body_type = additional_information?.basic_data?.body_type;
+        const doors = additional_information?.basic_data?.doors;
+        const engine_name = additional_information?.engines[0]?.name;
+        const engine_cylinder_count = additional_information?.engines[0]?.ice_cylinders;
+        const transmission_name = additional_information?.transmissions[0]?.name;
+        const transmission_detail_type = additional_information?.transmissions[0]?.detail_type;
+        const transmission_detail_gears = additional_information?.transmissions[0]?.gears;
+        const epa_fuel_efficiency_city = additional_information?.epa_fuel_efficiency?.city;
+        const epa_fuel_efficiency_highway = additional_information?.epa_fuel_efficiency?.highway;
+        const epa_fuel_efficiency_combined = additional_information?.epa_fuel_efficiency?.combined;
+        const exterior_color = additional_information?.colors?.exterior_colors[0]?.generic_color_name;
+        const interior_colors = additional_information?.colors?.interior_colors[0]?.generic_color_name;
+        const carSpecification = additional_information?.name
+
+        rowData['Fuel_Type'] = fuel_type;
+        rowData['Drive_configuration'] = drive_type;
+        rowData['brake_system'] = brake_system;
+        rowData['Body_Style'] = body_type;
+        rowData['Door_Count'] = doors;
+        rowData['Engine_Name'] = engine_name;
+        rowData['Cylinder_Count'] = engine_cylinder_count;
+        rowData['Transmission_name'] = transmission_name;
+        rowData['Transmission_detail_type'] = transmission_detail_type;
+        rowData['Transmission_detail_gears'] = transmission_detail_gears;
+        rowData['Fuel_efficienecy_city'] = epa_fuel_efficiency_city;
+        rowData['Fuel_efficienecy_highway'] = epa_fuel_efficiency_highway;
+        rowData['Fuel_efficienecy_combined'] = epa_fuel_efficiency_combined;
+        rowData['Exterior_Colour'] = exterior_color;
+        rowData['Interior_Colour'] = interior_colors;
+        rowData['carSpecification'] = carSpecification;
+
+        let standard_generic_equipment = [];
+        let standard_specifications = [];
+
+        if (additional_information?.standard_generic_equipment) {
+            standard_generic_equipment = additional_information?.standard_generic_equipment.map((group) => ({
+                title: group.generic_equipment_category_group,
+                features: group.generic_equipment_categories
+                    .flatMap(category => category.generic_equipment)
+                    .map(equipment => equipment.generic_equipment_name)
+            }));
+        }
+
+        if (additional_information?.standard_specifications) {
+            standard_specifications = additional_information?.standard_specifications.map((category) => ({
+                title: category.specification_category,
+                features: category.specification_values.map(value => value.specification_name)
+            }));
+        }
+
+        rowData['standard_generic_equipment'] = standard_generic_equipment;
+        rowData['standard_specifications'] = standard_specifications;
 
         await addCSVRawToDB(rowData, dealerId);
         return rowData;
