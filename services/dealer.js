@@ -187,6 +187,14 @@ module.exports = {
                     inventory_Main_Photo_Last_Modified_Date: "$inventory.Main_Photo_Last_Modified_Date", 
                     inventory_Extra_Photo_Last_Modified_Date: "$inventory.Extra_Photo_Last_Modified_Date", 
                     inventory_dealerId: "$inventory.dealerId", 
+                    inventory_brake_system: "$inventory.brake_system", 
+                    inventory_Engine_Name: "$inventory.Engine_Name", 
+                    inventory_Transmission_name: "$inventory.Transmission_name", 
+                    inventory_Transmission_detail_type: "$inventory.Transmission_detail_type", 
+                    inventory_Transmission_detail_gears: "$inventory.Transmission_detail_gears", 
+                    inventory_carSpecification: "$inventory.carSpecification", 
+                    inventory_standard_generic_equipment: "$inventory.standard_generic_equipment", 
+                    inventory_standard_specifications: "$inventory.standard_specifications", 
                     inventory_image360URL: "$inventory.image360URL", 
                     inventory_createdAt: "$inventory.createdAt", 
                     inventory_updatedAt: "$inventory.updatedAt", 
@@ -254,7 +262,15 @@ module.exports = {
                             image360URL: "$inventory_image360URL", 
                             createdAt: "$inventory_createdAt", 
                             updatedAt: "$inventory_updatedAt", 
-                            Extra_Photos: "$Extra_Photos" 
+                            brake_system: "$inventory_brake_system", 
+                            Extra_Photos: "$inventory_Extra_Photos", 
+                            Engine_Name: "$inventory_Engine_Name", 
+                            Transmission_name: "$inventory_Transmission_name", 
+                            Transmission_detail_type: "$inventory_Transmission_detail_type", 
+                            Transmission_detail_gears: "$inventory_Transmission_detail_gears", 
+                            carSpecification: "$inventory_carSpecification", 
+                            standard_generic_equipment: "$inventory_standard_generic_equipment", 
+                            standard_specifications: "$inventory_standard_specifications", 
                         } 
                     } 
                 } 
@@ -282,7 +298,58 @@ module.exports = {
                     updatedAt: "$_id.updatedAt", 
                     // "product_name": "$_id.product_name", 
                     // "Extra_Photos" : "$_id.Extra_Photos", 
-                    inventory: "$inventory" 
+                    inventory: {
+                        $map: {
+                            input: "$inventory",
+                            as: "item",
+                            in: {
+                                VIN: "$$item.VIN",
+                                Inventory_Id: "$$item.inventory_id",
+                                Stock_Number: "$$item.Stock_Number",
+                                New_or_Used: "$$item.New_or_Used",
+                                MSRP: "$$item.MSRP",
+                                Year: "$$item.Year",
+                                Make: "$$item.Make",
+                                Model: "$$item.Model",
+                                Body_Style: "$$item.Body_Style",
+                                Series: "$$item.Series",
+                                Exterior_Colour: "$$item.Exterior_Colour",
+                                Interior_Colour: "$$item.Interior_Colour",
+                                carFAXLink: "$$item.carFAXLink",
+                                Trim: "$$item.Trim",
+                                Engine_Size: "$$item.Engine_Size",
+                                Cylinder_Count: "$$item.Cylinder_Count",
+                                Door_Count: "$$item.Door_Count",
+                                Drive_configuration: "$$item.Drive_configuration",
+                                Additional_Options: "$$item.Additional_Options",
+                                Current_Miles: "$$item.Current_Miles",
+                                Date_Added_to_Inventory: "$$item.Date_Added_to_Inventory",
+                                Status: "$$item.Status",
+                                Fuel_Type: "$$item.Fuel_Type",
+                                Vehicle_Location: "$$item.Vehicle_Location",
+                                Certified_Pre_owned: "$$item.Certified_Pre_owned",
+                                Price: "$$item.Price",
+                                Transmission_Description: "$$item.Transmission_Description",
+                                Internet_Description: "$$item.Internet_Description",
+                                Vehicle_Class: "$$item.Status",
+                                Main_Photo: "$$item.Main_Photo",
+                                Main_Photo_Last_Modified_Date: "$$item.Main_Photo_Last_Modified_Date",
+                                Extra_Photo_Last_Modified_Date: "$$item.Extra_Photo_Last_Modified_Date",
+                                dealerId: "$$item.dealerId",
+                                image360URL: "$$item.image360URL",
+                                createdAt: "$$item.createdAt",
+                                updatedAt: "$$item.updatedAt",
+                                brake_system: { $ifNull: ["$$item.brake_system", ""] },
+                                Engine_Name: { $ifNull: ["$$item.Engine_Name", ""] },
+                                Transmission_name: { $ifNull: ["$$item.Transmission_name", ""] },
+                                Transmission_detail_type: { $ifNull: ["$$item.Transmission_detail_type", ""] },
+                                Transmission_detail_gears: { $ifNull: ["$$item.Transmission_detail_gears", 0] },
+                                carSpecification: { $ifNull: ["$$item.carSpecification", ""] },
+                                standard_generic_equipment: { $ifNull: ["$$item.standard_generic_equipment", []] },
+                                standard_specifications: { $ifNull: ["$$item.standard_specifications", []] }
+                            }
+                        }
+                    } 
                 } 
             }
         ]);
