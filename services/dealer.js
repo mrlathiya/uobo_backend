@@ -198,7 +198,7 @@ module.exports = {
                     inventory_image360URL: "$inventory.image360URL", 
                     inventory_createdAt: "$inventory.createdAt", 
                     inventory_updatedAt: "$inventory.updatedAt", 
-                    Extra_Photos : { 
+                    inventory_Extra_Photos : { 
                         $split: ["$inventory.Extra_Photos", ";"] 
                     } 
                 } 
@@ -221,7 +221,7 @@ module.exports = {
                         createdAt: "$createdAt", 
                         updatedAt: "$updatedAt", 
                         // "product_name": "$product_name", 
-                        // "Extra_Photos" : "$Extra_Photos" 
+                        // Extra_Photos : "$Extra_Photos" 
                     }, 
                     inventory: { 
                         $push: { 
@@ -304,7 +304,7 @@ module.exports = {
                             as: "item",
                             in: {
                                 VIN: "$$item.VIN",
-                                Inventory_Id: "$$item.inventory_id",
+                                Inventory_Id: "$$item.Inventory_Id",
                                 Stock_Number: "$$item.Stock_Number",
                                 New_or_Used: "$$item.New_or_Used",
                                 MSRP: "$$item.MSRP",
@@ -333,6 +333,7 @@ module.exports = {
                                 Internet_Description: "$$item.Internet_Description",
                                 Vehicle_Class: "$$item.Status",
                                 Main_Photo: "$$item.Main_Photo",
+                                Extra_Photos: "$$item.Extra_Photos",
                                 Main_Photo_Last_Modified_Date: "$$item.Main_Photo_Last_Modified_Date",
                                 Extra_Photo_Last_Modified_Date: "$$item.Extra_Photo_Last_Modified_Date",
                                 dealerId: "$$item.dealerId",
