@@ -331,6 +331,7 @@ module.exports = {
         const addPromocode = await new customerPromocodeSchema({
             mobileNumber: params.mobileNumber,
             promocode: params.promocode,
+            customerId: params.customerId,
             promoAmount: params.promoAmount ? Number(params.promoAmount) : 0
         });
 
@@ -353,14 +354,25 @@ module.exports = {
         return customerPromocode;
     },
 
-    updatePromocodeStatus: async (params) => {
+    getPromocodeByCustomerId: async (customerId) => {
+        const customerPromocode = await customerPromocodeSchema.findOne({ customerId });
+
+        return customerPromocode;
+    },
+
+    getCustomerExistPromocode: async (customerId) => {
+        const customerPromocode = await customerPromocodeSchema.findOne({ customerId, claimStatus: false });
+
+        return customerPromocode;
+    },
+
+    updatePromocodeStatus: async (params, promocodeId) => {
         const update = {
             claimStatus: params.claimStatus ? params.claimStatus : undefined,
-            activationStatus: params.activationStatus ? params.activationStatus : undefined,
-            customerId: params.customerId ? params.customerId : undefined
+            activationStatus: params.activationStatus ? params.activationStatus : undefined
         }
 
-        const updatePromocodeIs = await customerPromocodeSchema.findByIdAndUpdate(params.promocodeId, update, { new: true });
+        const updatePromocodeIs = await customerPromocodeSchema.findByIdAndUpdate(promocodeId, update, { new: true });
 
         return updatePromocodeIs;
     }

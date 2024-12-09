@@ -630,16 +630,26 @@ module.exports = {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please provide customer mobile number' });
             }
 
-            if (!params.promocode) {
-                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please provide promocode' });
-            }
+            const userIs = await userServices.getUserByContactNumber(params.mobileNumber);
 
-            let addPromocode = await userServices.addNewPromocode(params);
+            const existPromocode = await userServices.getCustomerExistPromocode(userIs._id);
 
-            if (addPromocode) {
-                return res.status(200).json({ IsSuccess: true, Data: [addPromocode], Message: 'Customer promocode added' });
+            if (existPromocode) {
+                return res.status(200).json({ IsSuccess: true, Data: [existPromocode], Message: 'User already have unclaimed promocode' });
             } else {
-                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer promocode not added' });
+                params.customerId = userIs._id;
+
+                if (!params.promocode) {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please provide promocode' });
+                }
+
+                let addPromocode = await userServices.addNewPromocode(params);
+
+                if (addPromocode) {
+                    return res.status(200).json({ IsSuccess: true, Data: [addPromocode], Message: 'Customer promocode added' });
+                } else {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Customer promocode not added' });
+                }
             }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Message: error.message });
@@ -669,15 +679,14 @@ module.exports = {
     editCustomerPromocode: async (req, res) => {
         try {
             const params = req.body;
+            const user = req.user;
 
-            if (!params.promocodeId) {
-                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please provide promocodeId' });
-            }
+            console.log(user._id);
 
-            let existPromocode = await userServices.getPromocodeById(params.promocodeId); 
+            let existPromocode = await userServices.getPromocodeByCustomerId(user._id); 
 
             if (existPromocode) {
-                const editPromocode = await userServices.updatePromocodeStatus(params);
+                const editPromocode = await userServices.updatePromocodeStatus(params, existPromocode._id);
 
                 if (editPromocode) {
                     return res.status(200).json({ IsSuccess: true, Data: editPromocode, Message: 'Promocode is updated' });

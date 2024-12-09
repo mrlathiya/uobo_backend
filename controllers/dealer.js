@@ -131,6 +131,10 @@ const convertCsvToJson = async (csvFile, dealerId) => {
             rowData['Interior_Colour'] = interior_colors;
             rowData['carSpecification'] = carSpecification;
 
+            if (Number(epa_fuel_efficiency_city) && Number(epa_fuel_efficiency_highway)) {
+                rowData['Fuel_efficienecy_avg'] = Number(epa_fuel_efficiency_city / epa_fuel_efficiency_highway);
+            }
+            
             let standard_generic_equipment = [];
             let standard_specifications = [];
 

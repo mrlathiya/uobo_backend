@@ -52,6 +52,9 @@ router.post('/pave', userController.listenToPaveEvent);
 router.post('/stripe-payment', userController.createStripePayment);
 router.post('/transfer-stripe-payment', userController.transferStripePayment);
 
+router.post('/promocode', userController.addCustomerPromocode);
+router.get('/promocode', userController.getCustomerPromocode);
+
 router.post('/preference', authController, userController.addUserPreferences);
 router.get('/preference', authController, userController.getUserPreference);
 
@@ -61,9 +64,7 @@ router.patch('/location', authController, userController.updateUserLocation);
 router.post('/email', userController.collectUserEmail);
 router.delete('/', userController.deleteCustomer);
 
-router.post('/promocode', authController, userController.addCustomerPromocode);
-router.get('/promocode', authController, userController.getCustomerPromocode);
-router.put('/promocode', authController, userController.getCustomerPromocode);
+router.put('/promocode', authController, userController.editCustomerPromocode);
 
 
 module.exports = router;
