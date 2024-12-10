@@ -347,7 +347,6 @@ const convertLondonAutoValleyCsvToJson = async (csvFile, dealerId) => {
     }
 
     const dbPromises = records.map(async row => {
-        console.log(i);
         const fullRow = Object.values(row).join(' ');
         const urlPattern = /https?:\/\/[^\s"']+/g;
         const allUrls = fullRow.match(urlPattern) || [];
@@ -607,7 +606,7 @@ const addCSVRawToDB = async (dataRow, dealerId) => {
             const checkExist = await carServices.getCarByVIN(VINNumber);
             if (checkExist.length) {
                 let inventoryId = checkExist[0]._id;
-                const updateCarDetails = await carServices.editCarDetails(dataRow, dealerId, inventoryId);
+                const updateCarDetails = await carServices.editCarDetails(dataRow, dealerId, inventoryId, checkExist[0]);
             } else {
                 const addCarDetails = await carServices.addNewCar(dataRow, dealerId);
             }
