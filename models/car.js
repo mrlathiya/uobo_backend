@@ -209,21 +209,47 @@ const carSchema = mongoose.Schema({
             }
         },
     },
-    standard_generic_equipment: [{
+    equipments: [{
         title: {
             type: String
         },
         features: [{
-            type: String
+            type: {
+                type: String
+            },
+            value: {
+                type: String
+            },
+            availability: {
+                type: String
+            },
         }]
     }],
-    standard_specifications: [{
-        title: {
+    recalls: [{
+        source: {
             type: String
         },
-        features: [{
+        campaign: {
             type: String
-        }]
+        },
+        date: {
+            type: String
+        },
+        components: {
+            type: String
+        },
+        summary: {
+            type: String
+        },
+        consequence: {
+            type: String
+        },
+        remedy: {
+            type: String
+        },
+        notes: {
+            type: String
+        },
     }],
     carFAXLink: {
         type: String,

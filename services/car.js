@@ -140,9 +140,8 @@ module.exports = {
             feature: params.feature !== undefined ? params.feature : prev.feature,
             brake_system: params.brake_system !== undefined ? params.brake_system : prev.brake_system,
             Engine_Name: params.Engine_Name !== undefined ? params.Engine_Name : prev.Engine_Name,
-            carSpecification: params.carSpecification !== undefined ? params.carSpecification : prev.carSpecification,
-            standard_generic_equipment: params.standard_generic_equipment !== undefined ? params.standard_generic_equipment : prev.standard_generic_equipment,
-            standard_specifications: params.standard_specifications !== undefined ? params.standard_specifications : prev.standard_specifications,
+            recalls: params.recalls !== undefined ? params.recalls : prev.recalls,
+            equipments: params.equipments !== undefined ? params.equipments : prev.equipments,
             Transmission: {
                 name: params.Transmission_name !== undefined ? params.Transmission_name : prev.Transmission_name,
                 detail_type: params.Transmission_detail_type ? params.Transmission_detail_type : prev.Transmission_detail_type,
