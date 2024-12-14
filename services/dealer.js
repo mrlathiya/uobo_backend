@@ -202,7 +202,9 @@ module.exports = {
                         $split: ["$inventory.Extra_Photos", ";"] 
                     },
                     inventory_equipments : "$inventory.equipments",
-                    inventory_recalls : "$inventory.recalls"
+                    inventory_recalls : "$inventory.recalls",
+                    inventory_Fuel_efficienecy : "$inventory.Fuel_efficienecy",
+                    inventory_Engine_Name : "$inventory.Engine_Name",
                 } 
             },
             { 
@@ -274,7 +276,9 @@ module.exports = {
                             standard_generic_equipment: "$inventory_standard_generic_equipment", 
                             standard_specifications: "$inventory_standard_specifications", 
                             equipments: "$inventory_equipments",
-                            recalls: "$inventory_recalls"
+                            recalls: "$inventory_recalls",
+                            Fuel_efficienecy: "$inventory_Fuel_efficienecy",
+                            Engine_Name: "$inventory_Engine_Name",
                         } 
                     } 
                 } 
@@ -354,6 +358,11 @@ module.exports = {
                                 standard_specifications: { $ifNull: ["$$item.standard_specifications", []] },
                                 recalls : { $ifNull: ["$$item.recalls", []] },
                                 equipments : { $ifNull: ["$$item.equipments", []] },
+                                Fuel_efficienecy : { $ifNull: ["$$item.Fuel_efficienecy", {
+                                    "city": "",
+                                    "highway": "",
+                                }] },
+                                Engine_Name : { $ifNull: ["$$item.Engine_Name", ""] }
                             }
                         }
                     } 
