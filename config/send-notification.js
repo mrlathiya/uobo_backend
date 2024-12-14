@@ -2,6 +2,7 @@ const { google } = require('googleapis');
 const request = require('request');
 const notificationSchema = require('../models/notificationStorage');
 const serviceAccount = require('../uobo-2e6e2-firebase-adminsdk-c3ubb-b2ddfb4630.json');
+//todo: change the service account file to your own service account file
 
 const sendFirebaseNotification = async (token, title, body, data, category, senderId, receiverId, isSenderDealer) => {
   try {
