@@ -200,7 +200,9 @@ module.exports = {
                     inventory_updatedAt: "$inventory.updatedAt", 
                     inventory_Extra_Photos : { 
                         $split: ["$inventory.Extra_Photos", ";"] 
-                    } 
+                    },
+                    inventory_equipments : "$inventory.equipments",
+                    inventory_recalls : "$inventory.recalls"
                 } 
             },
             { 
@@ -271,6 +273,8 @@ module.exports = {
                             carSpecification: "$inventory_carSpecification", 
                             standard_generic_equipment: "$inventory_standard_generic_equipment", 
                             standard_specifications: "$inventory_standard_specifications", 
+                            equipments: "$inventory_equipments",
+                            recalls: "$inventory_recalls"
                         } 
                     } 
                 } 
@@ -347,7 +351,9 @@ module.exports = {
                                 Transmission_detail_gears: { $ifNull: ["$$item.Transmission_detail_gears", 0] },
                                 carSpecification: { $ifNull: ["$$item.carSpecification", ""] },
                                 standard_generic_equipment: { $ifNull: ["$$item.standard_generic_equipment", []] },
-                                standard_specifications: { $ifNull: ["$$item.standard_specifications", []] }
+                                standard_specifications: { $ifNull: ["$$item.standard_specifications", []] },
+                                recalls : { $ifNull: ["$$item.recalls", []] },
+                                equipments : { $ifNull: ["$$item.equipments", []] },
                             }
                         }
                     } 
@@ -514,7 +520,9 @@ module.exports = {
                     inventory_updatedAt: "$inventory.updatedAt", 
                     Extra_Photos : { 
                         $split: ["$inventory.Extra_Photos", ";"] 
-                    } 
+                    },
+                    equipments: "$inventory.equipments",
+                    recalls: "$inventory.recalls"
                 } 
             },
             { 
@@ -573,7 +581,9 @@ module.exports = {
                             dealerId: "$inventory_dealerId", 
                             createdAt: "$inventory_createdAt", 
                             updatedAt: "$inventory_updatedAt", 
-                            Extra_Photos: "$Extra_Photos" 
+                            Extra_Photos: "$Extra_Photos",
+                            recalls: "$inventory_recalls",
+                            equipments: "$inventory_equipments"
                         } 
                     } 
                 } 
