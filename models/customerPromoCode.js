@@ -1,27 +1,23 @@
 const mongoose = require('mongoose');
 
 const customerProcodeSchema = mongoose.Schema({
-    mobileNumber: {
+    promoCode: {
         type: String
     },
-    promocode: {
+    businessOwner: {
         type: String
     },
     promoAmount: {
         type: Number
     },
-    claimStatus: {
-        type: Boolean,
-        default: false
-    },
     activationStatus: {
         type: Boolean,
         default: false
     },
-    customerId: {
+    claimedBy: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
-    },
+    }],
 },
 {
     timestamps: true

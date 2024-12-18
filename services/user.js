@@ -329,9 +329,9 @@ module.exports = {
 
     addNewPromocode: async (params) => {
         const addPromocode = await new customerPromocodeSchema({
-            mobileNumber: params.mobileNumber,
-            promocode: params.promocode,
-            customerId: params.customerId,
+            businessOwner: params.businessOwner,
+            promoCode: params.promoCode,
+            activationStatus: params.activationStatus !== undefined && params.activationStatus !== '' ? params.activationStatus : false,
             promoAmount: params.promoAmount ? Number(params.promoAmount) : 0
         });
 
@@ -348,6 +348,14 @@ module.exports = {
         return customerPromocode;
     },
 
+    getAllPromocode: async () => {
+        const customerPromocode = await customerPromocodeSchema.find().populate({
+            path: 'claimedBy'
+        });
+
+        return customerPromocode;
+    },
+
     getPromocodeById: async (promocodeId) => {
         const customerPromocode = await customerPromocodeSchema.findById(promocodeId);
 
@@ -360,20 +368,53 @@ module.exports = {
         return customerPromocode;
     },
 
+    getCustomerRedeemedPromocode: async (customerId, promoCode) => {
+        const customerPromocode = await customerPromocodeSchema.findOne({ 
+            $and: [
+                {
+                    promoCode
+                },
+                {
+                    claimedBy: customerId
+                }
+            ] 
+        });
+
+        return customerPromocode;
+    },
+
     getCustomerExistPromocode: async (customerId) => {
         const customerPromocode = await customerPromocodeSchema.findOne({ customerId, claimStatus: false });
 
         return customerPromocode;
     },
 
-    updatePromocodeStatus: async (params, promocodeId) => {
+    getExistPromocode: async (promoCode) => {
+        const promocodeIs = await customerPromocodeSchema.findOne({ promoCode, activationStatus: true });
+
+        return promocodeIs;
+    },
+
+    editPromocodeActivationStatus: async (promocodeId) => {
+        const updatePromocode = await customerPromocodeSchema.findByIdAndUpdate(promocodeId, { activationStatus: true }, { new: true });
+
+        return updatePromocode;
+    },
+
+    updatePromocodeStatus: async (customerId, promoCode) => {
         const update = {
-            claimStatus: params.claimStatus ? params.claimStatus : undefined,
-            activationStatus: params.activationStatus ? params.activationStatus : undefined
-        }
+            $addToSet: { claimedBy: customerId }
+        };
 
-        const updatePromocodeIs = await customerPromocodeSchema.findByIdAndUpdate(promocodeId, update, { new: true });
+        const updatedPromocode = await customerPromocodeSchema.findOneAndUpdate(
+            { 
+                promoCode, 
+                activationStatus: true 
+            },
+            update,                   
+            { new: true }
+        );
 
-        return updatePromocodeIs;
+        return updatedPromocode;
     }
 }

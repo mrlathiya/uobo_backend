@@ -38,7 +38,7 @@ router.get('/order-event-stream', async (req, res) => {
 });
 
 
-// router.get('/noti', userController.sendNoti);
+router.get('/noti', userController.sendNoti);
 router.post('/payment-alert', userController.sendAlertForPaymentProcessCompletion);
 router.get('/notification', userController.getUserNotifications);
 router.put('/licenceVerification', userController.editCustomerLicenceVerification);
@@ -54,6 +54,7 @@ router.post('/transfer-stripe-payment', userController.transferStripePayment);
 
 router.post('/promocode', userController.addCustomerPromocode);
 router.get('/promocode', userController.getCustomerPromocode);
+router.put('/active/promocode', userController.activePromocode);
 
 router.post('/preference', authController, userController.addUserPreferences);
 router.get('/preference', authController, userController.getUserPreference);
