@@ -83,7 +83,7 @@ const userSchema = mongoose.Schema(
             },
             isVerify: {
                 type: Boolean,
-                default: false
+                default: true
             }
         },
         issuerOrg_region_full: {
