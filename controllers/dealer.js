@@ -57,16 +57,206 @@ const deleteImage = async (fileName) => {
     });
 }
 
+// const convertCsvToJson = async (csvFile, dealerId) => {
+//     try {
+//         const jsonData = [];
+//         const csvData = csvFile.buffer.toString('utf-8');
+
+//         const rows = csvData.trim().split('\n');
+//         const headers = rows[0].split(',').map(header => header.replace(/"/g, '').trim());
+
+//         for (let i = 1; i < rows.length; i++) {
+//             const row = rows[i].split(',');
+//             const rowData = {};
+
+//             // Skip empty rows
+//             if (row.every(field => field.trim() === '')) {
+//                 continue;
+//             }
+
+//             for (let j = 0; j < headers.length; j++) {
+//                 // Replace spaces with underscores and trim any extra underscores from the keys
+//                 let cleanedKey = headers[j].replace(/\s+/g, '_').replace(/_+$/, '');
+
+//                 // Remove double quotes from values and trim whitespace/newlines
+//                 const cleanedValue = row[j].replace(/"/g, '').trim();
+
+//                 // Handle special cases for key names
+//                 if (cleanedKey === 'New/Used') {
+//                     cleanedKey = 'New_or_Used';
+//                 }
+
+//                 if (cleanedKey === 'Certified_Pre-owned') {
+//                     cleanedKey = 'Certified_Pre_owned';
+//                 }
+
+//                 rowData[cleanedKey] = cleanedValue;
+                
+//             }
+
+//             const additionalDetails = await addCSVRawToDBWithDataCheck(rowData.VIN);
+            
+//             if (additionalDetails) {
+//                 const fuel_type = additionalDetails?.attributes?.fuel_type;
+//                 const drive_type = additionalDetails?.attributes?.drivetrain;
+//                 const brake_system = additionalDetails?.attributes?.anti_brake_system;
+//                 const body_type = additionalDetails?.attributes?.type;
+//                 const doors = additionalDetails?.attributes?.doors;
+//                 const engine_name = additionalDetails?.attributes?.engine;
+//                 const engine_cylinder_count = additionalDetails?.attributes?.engine_cylinders;
+//                 const transmission_name = additionalDetails?.attributes?.transmission;
+//                 const transmission_detail_type = additionalDetails?.attributes?.transmission_type;
+//                 const transmission_detail_gears = additionalDetails?.attributes?.transmission_speeds;
+//                 const epa_fuel_efficiency_city = additionalDetails?.attributes?.city_mileage;
+//                 const epa_fuel_efficiency_highway = additionalDetails?.attributes?.highway_mileage;
+//                 const recalls = additionalDetails?.recalls
+
+//                 const mpgToKmPerLiter = 0.425144;
+
+//                 rowData['recalls'] = recalls;
+//                 rowData['Fuel_Type'] = fuel_type;
+//                 rowData['Drive_configuration'] = drive_type;
+//                 rowData['brake_system'] = brake_system;
+//                 rowData['Body_Style'] = body_type;
+//                 rowData['Door_Count'] = doors;
+//                 rowData['Engine_Name'] = engine_name;
+//                 rowData['Cylinder_Count'] = engine_cylinder_count;
+//                 rowData['Transmission_name'] = transmission_name;
+//                 rowData['Transmission_detail_type'] = transmission_detail_type;
+//                 rowData['Transmission_detail_gears'] = transmission_detail_gears;
+                
+                
+//                 if (epa_fuel_efficiency_city) {
+//                     const cityEfficiencyMpg = parseFloat(epa_fuel_efficiency_city.split(" ")[0]);
+//                     const cityEfficiencyKmL = (cityEfficiencyMpg * mpgToKmPerLiter).toFixed(2);
+//                     rowData['Fuel_efficienecy_city'] = `${cityEfficiencyKmL} km/L`;
+//                 }
+
+//                 if (epa_fuel_efficiency_highway) {
+//                     const highwayEfficiencyMpg = parseFloat(epa_fuel_efficiency_highway.split(" ")[0]);
+//                     const highwayEfficiencyKmL = (highwayEfficiencyMpg * mpgToKmPerLiter).toFixed(2);
+//                     rowData['Fuel_efficienecy_highway'] = `${highwayEfficiencyKmL} km/L`;
+//                 }
+//                 const transformedEquipments = [];
+
+//                 if (additionalDetails?.equipments && additionalDetails.equipments.length > 0) {
+//                     const grouped = additionalDetails.equipments.reduce((acc, item) => {
+//                         if (!acc[item.group]) {
+//                             acc[item.group] = [];
+//                         }
+//                         acc[item.group].push({
+//                             type: item.name,
+//                             value: item.value,
+//                             availability: item.availability
+//                         });
+//                         return acc;
+//                     }, {});
+                
+//                     for (const [group, features] of Object.entries(grouped)) {
+//                         transformedEquipments.push({
+//                             title: group,
+//                             features: features
+//                         });
+//                     }
+
+//                     rowData['equipments'] = transformedEquipments;
+//                 } else {
+//                     console.warn("No equipment data found in additionalDetails.equipments");
+//                 }
+//             }
+            
+//             jsonData.push(rowData);
+
+//             await addCSVRawToDB(rowData, dealerId);
+//         }
+
+//         return jsonData;    
+//     } catch (error) {
+//         console.log(error)
+//     }
+// };
+
+
 const convertCsvToJson = async (csvFile, dealerId) => {
     try {
         const jsonData = [];
-        const csvData = csvFile.buffer.toString('utf-8');
+        const csvContent = csvFile.buffer.toString('utf-8');
 
-        const rows = csvData.trim().split('\n');
-        const headers = rows[0].split(',').map(header => header.replace(/"/g, '').trim());
+        // Detect delimiter
+        const delimiter = detectDelimiter(csvContent);
 
+        // Split CSV into rows
+        const rows = csvContent.trim().split('\n');
+        const headers = standardizeColumnNames(rows[0].split(delimiter));
+        
+        // Column mapping
+        const columnMapping = {
+            vin: "VIN",
+            stocknumber: "Stock_Number",
+            neworused: "New_or_Used",
+            inventorytype: "New_or_Used",
+            status: "New_or_Used",
+            msrp: "MSRP",
+            year: "Year",
+            make: "Make",
+            model: "Model",
+            bodystyle: "Body_Style",
+            body: "Body_Style",
+            series: "Series",
+            exteriorcolour: "Exterior_Colour",
+            exteriorcolor: "Exterior_Colour",
+            extcolour: "Exterior_Colour",
+            interiorcolour: "Interior_Colour",
+            interiorcolor: "Interior_Colour",
+            intcolour: "Interior_Colour",
+            trim: "Trim",
+            enginesize: "Engine_Size",
+            cylindercount: "Cylinder_Count",
+            cylinder: "Cylinder_Count",
+            cylinders: "Cylinder_Count",
+            doorcount: "Door_Count",
+            doors: "Door_Count",
+            driveconfiguration: "Drive_configuration",
+            drive: "Drive_configuration",
+            additionaloptions: "Additional_Options",
+            currentmiles: "Current_Miles",
+            dateaddedtoinventory: "Date_Added_to_Inventory",
+            createddate: "createdAt",
+            modifieddate: "updatedAt",
+            fueltype: "Fuel_Type",
+            vehiclelocation: "Vehicle_Location",
+            location: "Vehicle_Location",
+            certifiedpreowned: "Certified_Pre_owned",
+            iscertified: "Certified_Pre_owned",
+            price: "Price",
+            transmissiondescription: "Transmission_Description",
+            transmission: "Transmission_Description",
+            internetdescription: "Internet_Description",
+            vehicleclass: "Vehicle_Class",
+            mainphoto: "Main_Photo",
+            photos: "Main_Photo",
+            mainphotolastmodifieddate: "Main_Photo_Last_Modified_Date",
+            extraphotos: "Extra_Photos",
+            otherphoto: "Extra_Photos",
+            extraphotolastmodifieddate: "Extra_Photo_Last_Modified_Date",
+            locationlat: "location.lat",
+            locationlong: "location.long",
+            dealerid: "dealerId",
+            dealershipid: "dealerId",
+            adid: "dealerId",
+            featureinterioricon: "feature.interior.icon",
+            featureinteriorfeaturename: "feature.interior.featureName",
+            featurevehicleicon: "feature.vehicle.icon",
+            featurevehiclefeaturename: "feature.vehicle.featureName",
+            featuretechnicalicon: "feature.technical.icon",
+            featuretechnicalfeaturename: "feature.technical.featureName",
+            carfaxlink: "carFAXLink",
+            image360url: "image360URL",
+        };
+
+        // Process each row
         for (let i = 1; i < rows.length; i++) {
-            const row = rows[i].split(',');
+            const row = rows[i].split(delimiter);
             const rowData = {};
 
             // Skip empty rows
@@ -74,433 +264,104 @@ const convertCsvToJson = async (csvFile, dealerId) => {
                 continue;
             }
 
+            // Map headers to row data using column mapping
             for (let j = 0; j < headers.length; j++) {
-                // Replace spaces with underscores and trim any extra underscores from the keys
-                let cleanedKey = headers[j].replace(/\s+/g, '_').replace(/_+$/, '');
-
-                // Remove double quotes from values and trim whitespace/newlines
-                const cleanedValue = row[j].replace(/"/g, '').trim();
-
-                // Handle special cases for key names
-                if (cleanedKey === 'New/Used') {
-                    cleanedKey = 'New_or_Used';
-                }
-
-                if (cleanedKey === 'Certified_Pre-owned') {
-                    cleanedKey = 'Certified_Pre_owned';
-                }
-
-                rowData[cleanedKey] = cleanedValue;
-                
+                const key = headers[j];
+                const value = row[j]?.trim();
+                rowData[columnMapping[key] || key] = value;
             }
 
+            // Fetch and add additional details
             const additionalDetails = await addCSVRawToDBWithDataCheck(rowData.VIN);
-            
+
             if (additionalDetails) {
-                const fuel_type = additionalDetails?.attributes?.fuel_type;
-                const drive_type = additionalDetails?.attributes?.drivetrain;
-                const brake_system = additionalDetails?.attributes?.anti_brake_system;
-                const body_type = additionalDetails?.attributes?.type;
-                const doors = additionalDetails?.attributes?.doors;
-                const engine_name = additionalDetails?.attributes?.engine;
-                const engine_cylinder_count = additionalDetails?.attributes?.engine_cylinders;
-                const transmission_name = additionalDetails?.attributes?.transmission;
-                const transmission_detail_type = additionalDetails?.attributes?.transmission_type;
-                const transmission_detail_gears = additionalDetails?.attributes?.transmission_speeds;
-                const epa_fuel_efficiency_city = additionalDetails?.attributes?.city_mileage;
-                const epa_fuel_efficiency_highway = additionalDetails?.attributes?.highway_mileage;
-                const recalls = additionalDetails?.recalls
-
-                const mpgToKmPerLiter = 0.425144;
-
-                rowData['recalls'] = recalls;
-                rowData['Fuel_Type'] = fuel_type;
-                rowData['Drive_configuration'] = drive_type;
-                rowData['brake_system'] = brake_system;
-                rowData['Body_Style'] = body_type;
-                rowData['Door_Count'] = doors;
-                rowData['Engine_Name'] = engine_name;
-                rowData['Cylinder_Count'] = engine_cylinder_count;
-                rowData['Transmission_name'] = transmission_name;
-                rowData['Transmission_detail_type'] = transmission_detail_type;
-                rowData['Transmission_detail_gears'] = transmission_detail_gears;
-                
-                
-                if (epa_fuel_efficiency_city) {
-                    const cityEfficiencyMpg = parseFloat(epa_fuel_efficiency_city.split(" ")[0]);
-                    const cityEfficiencyKmL = (cityEfficiencyMpg * mpgToKmPerLiter).toFixed(2);
-                    rowData['Fuel_efficienecy_city'] = `${cityEfficiencyKmL} km/L`;
-                }
-
-                if (epa_fuel_efficiency_highway) {
-                    const highwayEfficiencyMpg = parseFloat(epa_fuel_efficiency_highway.split(" ")[0]);
-                    const highwayEfficiencyKmL = (highwayEfficiencyMpg * mpgToKmPerLiter).toFixed(2);
-                    rowData['Fuel_efficienecy_highway'] = `${highwayEfficiencyKmL} km/L`;
-                }
-                const transformedEquipments = [];
-
-                if (additionalDetails?.equipments && additionalDetails.equipments.length > 0) {
-                    const grouped = additionalDetails.equipments.reduce((acc, item) => {
-                        if (!acc[item.group]) {
-                            acc[item.group] = [];
-                        }
-                        acc[item.group].push({
-                            type: item.name,
-                            value: item.value,
-                            availability: item.availability
-                        });
-                        return acc;
-                    }, {});
-                
-                    for (const [group, features] of Object.entries(grouped)) {
-                        transformedEquipments.push({
-                            title: group,
-                            features: features
-                        });
-                    }
-
-                    rowData['equipments'] = transformedEquipments;
-                } else {
-                    console.warn("No equipment data found in additionalDetails.equipments");
-                }
+                addAdditionalDetailsToRow(rowData, additionalDetails);
             }
-            
+
+            // Add processed row to JSON data
             jsonData.push(rowData);
 
-            await addCSVRawToDB(rowData, dealerId);
-        }
-
-        return jsonData;    
-    } catch (error) {
-        console.log(error)
-    }
-};
-
-const convertAutoTradeCsvToJson = async (csvFile, dealerId) => {
-    try {
-        const csvData = csvFile.buffer.toString('utf-8');
-        const rows = csvData.trim().split('\n');
-        const headers = rows[0].split(',').map(header => header.replace(/"/g, '').trim());
-
-        let jsonData = [];
-
-        for (let i = 1; i < 3; i++) {
-            console.log(i);
-            const row = rows[i].split(',');
-
-            // Skip empty rows
-            if (row.every(field => field.trim() === '')) {
-                continue;
-            }
-
-            const fullRow = row.join('');
-
-            // Extract URLs using a regular expression
-            const urlPattern = /https?:\/\/[^\s"']+/g;
-            const photoUrls = fullRow.match(urlPattern);
-
-            // Split the long string key in rowData
-            const rawData = {};
-            const keys = headers[0].split('|');
-            const values = row[0].split('|');
-            
-            keys.forEach((key, index) => {
-                rawData[key.trim()] = values[index] ? values[index].trim() : '';
-            });
-
-            let adDescription = '';
-            for (let j = 23; j < row.length && !row[j].includes('http'); j++) {
-                adDescription += row[j].trim() + ' ';
-            }
-
-            let rowData = {
-                VIN: rawData['Vin'],
-                Stock_Number: rawData['StockNumber'],
-                New_or_Used: rawData['Status'],
-                MSRP: rawData['Price'],
-                Year: rawData['Year'],
-                Make: rawData['Make'],
-                Model: rawData['Model'],
-                Body_Style: rawData['Body'],
-                Series: rawData['Trim'],
-                Exterior_Colour: rawData['Exterior Color'],
-                Interior_Colour: rawData['Interior Color'],
-                Trim: rawData['Trim'],
-                Engine_Size: rawData['Engine Size'],
-                Cylinder_Count: rawData['Cylinder'],
-                Door_Count: rawData['Doors'],
-                Drive_configuration: rawData['Drive'],
-                Additional_Options: rawData['Options'],
-                Current_Miles: rawData['KMS'],
-                Date_Added_to_Inventory: rawData['CreatedDate'],
-                Status: rawData['Status'],
-                Fuel_Type: rawData['FuelType'],
-                Vehicle_Location: rawData['CompanyName'],
-                Certified_Pre_owned: rawData['Certified_Pre_owned'],
-                Price: rawData['Price'],
-                Transmission_Description: rawData['Transmission'],
-                Internet_Description: adDescription,
-                Vehicle_Class: rawData['Category'],
-                Main_Photo: rawData['MainPhoto'] ? rawData['MainPhoto'] : photoUrls ? photoUrls[0] : '',
-                Main_Photo_Last_Modified_Date: rawData['ModifiedDate'],
-                Extra_Photos: rawData['OtherPhoto'] ? rawData['OtherPhoto'] : photoUrls ? photoUrls.slice(1).join(';') : '',
-                Extra_Photo_Last_Modified_Date: rawData['ModifiedDate'],
-                dealerId: dealerId,
-                image360URL: rawData['MainPhoto'] ? rawData['MainPhoto'] : photoUrls ? photoUrls[0] : ''
-            };
-
-            const additionalDetails = await addCSVRawToDBWithDataCheck(rowData?.VIN);
-            
-            if (additionalDetails) {
-                const fuel_type = additionalDetails?.attributes?.fuel_type;
-                const drive_type = additionalDetails?.attributes?.drivetrain;
-                const brake_system = additionalDetails?.attributes?.anti_brake_system;
-                const body_type = additionalDetails?.attributes?.type;
-                const doors = additionalDetails?.attributes?.doors;
-                const engine_name = additionalDetails?.attributes?.engine;
-                const engine_cylinder_count = additionalDetails?.attributes?.engine_cylinders;
-                const transmission_name = additionalDetails?.attributes?.transmission;
-                const transmission_detail_type = additionalDetails?.attributes?.transmission_type;
-                const transmission_detail_gears = additionalDetails?.attributes?.transmission_speeds;
-                const epa_fuel_efficiency_city = additionalDetails?.attributes?.city_mileage;
-                const epa_fuel_efficiency_highway = additionalDetails?.attributes?.highway_mileage;
-                const recalls = additionalDetails?.recalls
-
-                const mpgToKmPerLiter = 0.425144;
-
-                rowData['recalls'] = recalls;
-                rowData['Fuel_Type'] = fuel_type;
-                rowData['Drive_configuration'] = drive_type;
-                rowData['brake_system'] = brake_system;
-                rowData['Body_Style'] = body_type;
-                rowData['Door_Count'] = doors;
-                rowData['Engine_Name'] = engine_name;
-                rowData['Cylinder_Count'] = engine_cylinder_count;
-                rowData['Transmission_name'] = transmission_name;
-                rowData['Transmission_detail_type'] = transmission_detail_type;
-                rowData['Transmission_detail_gears'] = transmission_detail_gears;
-                
-                if (epa_fuel_efficiency_city) {
-                    const cityEfficiencyMpg = parseFloat(epa_fuel_efficiency_city.split(" ")[0]);
-                    const cityEfficiencyKmL = (cityEfficiencyMpg * mpgToKmPerLiter).toFixed(2);
-                    rowData['Fuel_efficienecy_city'] = `${cityEfficiencyKmL} km/L`;
-                }
-
-                if (epa_fuel_efficiency_highway) {
-                    const highwayEfficiencyMpg = parseFloat(epa_fuel_efficiency_highway.split(" ")[0]);
-                    const highwayEfficiencyKmL = (highwayEfficiencyMpg * mpgToKmPerLiter).toFixed(2);
-                    rowData['Fuel_efficienecy_highway'] = `${highwayEfficiencyKmL} km/L`;
-                }
-
-                const transformedEquipments = [];
-
-                if (additionalDetails?.equipments && additionalDetails.equipments.length > 0) {
-                    const grouped = additionalDetails.equipments.reduce((acc, item) => {
-                        if (!acc[item.group]) {
-                            acc[item.group] = [];
-                        }
-                        acc[item.group].push({
-                            type: item.name,
-                            value: item.value,
-                            availability: item.availability
-                        });
-                        return acc;
-                    }, {});
-                
-                    for (const [group, features] of Object.entries(grouped)) {
-                        transformedEquipments.push({
-                            title: group,
-                            features: features
-                        });
-                    }
-
-                    rowData['equipments'] = transformedEquipments;
-                } else {
-                    console.warn("No equipment data found in additionalDetails.equipments");
-                }
-            }
-
-            jsonData.push(rowData);
-
+            // Store data in the database
             await addCSVRawToDB(rowData, dealerId);
         }
 
         return jsonData;
     } catch (error) {
-        console.log(error);   
+        console.error("Error converting CSV to JSON:", error);
+        throw error;
     }
 };
 
-const convertLondonAutoValleyCsvToJson = async (csvFile, dealerId) => {
-    const csvData = csvFile.buffer.toString('utf-8');
+// Helper function to add additional details to a row
+const addAdditionalDetailsToRow = (rowData, additionalDetails) => {
+    const attributes = additionalDetails.attributes || {};
+    const recalls = additionalDetails.recalls || [];
+    const mpgToKmPerLiter = 0.425144;   
 
-    const records = await new Promise((resolve, reject) => {
-        parse(csvData, {
-            columns: true,
-            skip_empty_lines: true,
-            trim: true,
-        }, (err, output) => {
-            if (err) reject(err);
-            else resolve(output);
-        });
-    });
-
-    const cleanHTML = (text) => text.replace(/<\/?(p|div|br|span|a)>/gi, '').trim();
-    const cleanURL = (url) => url.replace(/<\/?[^>]+(>|$)/g, '').trim();
-
-    const dealer = await dealerServices.getDealerByDealerId(dealerId);
-
-    let address;
-
-    if (dealer) {
-        if (dealer?.address?.address1) {
-            address = dealer?.address?.address1;
-
-            if (dealer?.address?.address1?.address2) {
-                address = dealer?.address?.address1?.address2;
-            }
-        }
+    // Convert MPG to km/L for fuel efficiency
+    if (attributes.city_mileage) {
+        const cityEfficiencyMpg = parseFloat(attributes.city_mileage.split(' ')[0]);
+        rowData['Fuel_efficiency_city'] = `${(cityEfficiencyMpg * mpgToKmPerLiter).toFixed(2)} km/L`;
+    }
+    if (attributes.highway_mileage) {
+        const highwayEfficiencyMpg = parseFloat(attributes.highway_mileage.split(' ')[0]);
+        rowData['Fuel_efficiency_highway'] = `${(highwayEfficiencyMpg * mpgToKmPerLiter).toFixed(2)} km/L`;
     }
 
-    const dbPromises = records.map(async row => {
-        const fullRow = Object.values(row).join(' ');
-        const urlPattern = /https?:\/\/[^\s"']+/g;
-        const allUrls = fullRow.match(urlPattern) || [];
-        const cleanedUrls = allUrls.map(cleanURL);
+    // Transform and add equipment data
+    if (additionalDetails.equipments && additionalDetails.equipments.length > 0) {
+        const transformedEquipments = additionalDetails.equipments.reduce((acc, item) => {
+            const group = acc[item.group] || [];
+            group.push({
+                type: item.name,
+                value: item.value,
+                availability: item.availability,
+            });
+            acc[item.group] = group;
+            return acc;
+        }, {});
 
-        let carFAXLink = '';
-        let mainPhoto = '';
-        let extraPhotos = [];
+        rowData['equipments'] = Object.entries(transformedEquipments).map(([group, features]) => ({
+            title: group,
+            features,
+        }));
+    }
+};
 
-        cleanedUrls.forEach(url => {
-            if (url.includes('https://vhr.carfax.ca/?')) {
-                carFAXLink = url;
-            } else {
-                extraPhotos.push(url);
-            }
+// Helper function to standardize column names
+const standardizeColumnNames = (columns) => {
+    return columns.map(col => col.replace(/[\s]+/g, '').toLowerCase());
+};
+
+// Helper function to detect the delimiter
+const detectDelimiter = (csvContent) => {
+    const commonDelimiters = [',', ';', '\t', '|'];
+    const firstFewLines = csvContent.split('\n').slice(0, 5); // Limit to the first 5 lines for analysis
+
+    let detectedDelimiter = null;
+    let maxValidSplits = 0;
+
+    commonDelimiters.forEach(delimiter => {
+        let validSplits = 0;
+
+        firstFewLines.forEach(line => {
+            const splits = line.split(delimiter).length;
+            // Count the line as valid if it has more than one split (indicates a delimiter is present)
+            if (splits > 1) validSplits++;
         });
 
-        if (extraPhotos.length > 0) {
-            const firstUrlSet = extraPhotos[0].split(',');
-            mainPhoto = firstUrlSet[0];
-            extraPhotos = [...firstUrlSet.slice(1), ...extraPhotos.slice(1)];
+        // Update detectedDelimiter if current delimiter has more valid splits
+        if (validSplits > maxValidSplits) {
+            detectedDelimiter = delimiter;
+            maxValidSplits = validSplits;
         }
-
-        const rowData = {
-            VIN: row['VIN'] || '',
-            Stock_Number: row['STOCKNUMBER'] || '',
-            New_or_Used: row['INVENTORYTYPE'] || '',
-            MSRP: row['MSRP'] ? row['MSRP'] : row['PURCHASEPRICE'] || row['SALEPRICE'] || '',
-            Year: row['YEAR'] || '',
-            Make: row['MAKE'] || '',
-            Model: row['MODEL'] || '',
-            Body_Style: row['BODYSTYLE'] || '',
-            Series: row['TRIM'] || '',
-            Exterior_Colour: row['EXTCOLOUR'] || '',
-            Interior_Colour: row['INTCOLOUR'] || '',
-            Trim: row['TRIM'] || '',
-            Engine_Size: row['ENGINE'] || '',
-            Cylinder_Count: row['CYLINDERS'] || '',
-            Door_Count: row['DOORS'] || '',
-            Drive_configuration: row['DRIVETYPE'] || '',
-            Additional_Options: cleanHTML(row['OPTIONS'] || ''),
-            Current_Miles: row['ODOMETER'] || '',
-            Date_Added_to_Inventory: row['INSTOCKDATE'] || '',
-            Status: row['STATUS'] || '',
-            Fuel_Type: row['FUELTYPE'] || '',
-            Vehicle_Location: row['LOCATION'] ? row['LOCATION'] : address,
-            Certified_Pre_owned: row['ISCERTIFIED'] === 'True',
-            Price: row['SALEPRICE'] || '',
-            Transmission_Description: row['TRANSMISSIONTYPE'] || '',
-            Internet_Description: cleanHTML(row['DESCRIPTION'] || ''),
-            Vehicle_Class: row['CATEGORY'] || '',
-            Main_Photo: mainPhoto,
-            Main_Photo_Last_Modified_Date: '',
-            Extra_Photos: extraPhotos.join(';'),
-            Extra_Photo_Last_Modified_Date: '',
-            carFAXLink: carFAXLink,
-            dealerId: dealerId,
-            image360URL: mainPhoto,
-        };
-
-        const additionalDetails = await addCSVRawToDBWithDataCheck(rowData.VIN);
-
-        if (additionalDetails) {
-            const fuel_type = additionalDetails?.attributes?.fuel_type;
-            const drive_type = additionalDetails?.attributes?.drivetrain;
-            const brake_system = additionalDetails?.attributes?.anti_brake_system;
-            const body_type = additionalDetails?.attributes?.type;
-            const doors = additionalDetails?.attributes?.doors;
-            const engine_name = additionalDetails?.attributes?.engine;
-            const engine_cylinder_count = additionalDetails?.attributes?.engine_cylinders;
-            const transmission_name = additionalDetails?.attributes?.transmission;
-            const transmission_detail_type = additionalDetails?.attributes?.transmission_type;
-            const transmission_detail_gears = additionalDetails?.attributes?.transmission_speeds;
-            const epa_fuel_efficiency_city = additionalDetails?.attributes?.city_mileage;
-            const epa_fuel_efficiency_highway = additionalDetails?.attributes?.highway_mileage;
-            const recalls = additionalDetails?.recalls
-
-            const mpgToKmPerLiter = 0.425144;
-
-            if (epa_fuel_efficiency_city) {
-                const cityEfficiencyMpg = parseFloat(epa_fuel_efficiency_city.split(" ")[0]);
-                const cityEfficiencyKmL = (cityEfficiencyMpg * mpgToKmPerLiter).toFixed(2);
-                rowData['Fuel_efficienecy_city'] = `${cityEfficiencyKmL} km/L`;
-            }
-
-            if (epa_fuel_efficiency_highway) {
-                const highwayEfficiencyMpg = parseFloat(epa_fuel_efficiency_highway.split(" ")[0]);
-                const highwayEfficiencyKmL = (highwayEfficiencyMpg * mpgToKmPerLiter).toFixed(2);
-                rowData['Fuel_efficienecy_highway'] = `${highwayEfficiencyKmL} km/L`;
-            }
-
-            rowData['recalls'] = recalls;
-            rowData['Fuel_Type'] = fuel_type;
-            rowData['Drive_configuration'] = drive_type;
-            rowData['brake_system'] = brake_system;
-            rowData['Body_Style'] = body_type;
-            rowData['Door_Count'] = doors;
-            rowData['Engine_Name'] = engine_name;
-            rowData['Cylinder_Count'] = engine_cylinder_count;
-            rowData['Transmission_name'] = transmission_name;
-            rowData['Transmission_detail_type'] = transmission_detail_type;
-            rowData['Transmission_detail_gears'] = transmission_detail_gears;
-
-            const transformedEquipments = [];
-
-            if (additionalDetails?.equipments && additionalDetails.equipments.length > 0) {
-                const grouped = additionalDetails.equipments.reduce((acc, item) => {
-                    if (!acc[item.group]) {
-                        acc[item.group] = [];
-                    }
-                    acc[item.group].push({
-                        type: item.name,
-                        value: item.value,
-                        availability: item.availability
-                    });
-                    return acc;
-                }, {});
-            
-                for (const [group, features] of Object.entries(grouped)) {
-                    transformedEquipments.push({
-                        title: group,
-                        features: features
-                    });
-                }
-
-                rowData['equipments'] = transformedEquipments;
-            } else {
-                console.warn("No equipment data found in additionalDetails.equipments");
-            }
-        }
-
-        await addCSVRawToDB(rowData, dealerId);
-        return rowData;
     });
 
-    const jsonData = await Promise.all(dbPromises);
-    return jsonData;
+    return detectedDelimiter || ','; // Default to comma if no delimiter is detected
 };
+
+
+module.exports = { convertCsvToJson };
 
 const addCSVRawToDBWithDataCheck = async (VIN) => {
     try {
@@ -522,6 +383,9 @@ const addCSVRawToDB = async (dataRow, dealerId) => {
         if (dataRow !== undefined && dataRow !== null) {
             const VINNumber = dataRow.VIN;
             const checkExist = await carServices.getCarByVIN(VINNumber);
+            console.log(VINNumber);
+            console.log(checkExist);
+            
             if (checkExist.length) {
                 let inventoryId = checkExist[0]._id;
                 const updateCarDetails = await carServices.editCarDetails(dataRow, dealerId, inventoryId, checkExist[0]);
@@ -1144,10 +1008,10 @@ module.exports = {
         try {
             const csvFile = req.file;
             const dealerId = req.body.dealerId;
-
+            
             if (csvFile) {
                 let inventory_data = await convertCsvToJson(csvFile, dealerId);
-
+                
                 return res.status(200).json({ IsSuccess: true, Data: inventory_data, Message: 'Inventory updated successfully' });
             } else {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Inventory not updated' });
