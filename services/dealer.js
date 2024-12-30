@@ -104,6 +104,7 @@ module.exports = {
         return dealer;
     },
 
+    //Add dealer inventory
     updateDealerFCMToken: async (dealerId, fcmToken) => {
         let update = {
             fcmToken
