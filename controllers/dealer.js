@@ -12,6 +12,89 @@ const Stripe = require('stripe');
 const axios = require('axios');
 const querystring = require('querystring');
 
+// Environment variables or config for sensitive data
+const AUTH_URL = 'https://authentication.carfax.ca/oauth/token';
+const REPORT_LOOKUP_URL = 'https://vhrlookupapi.carfax.ca/api/v4/ReportLookup/ReportLookupForProxy';
+const ORDER_REPORT_URL = 'https://vhrorderapi.carfax.ca/Api/V2/Order/VhrForProxy';
+
+// Sensitive data from Carfax
+const CLIENT_ID = 'eZ7h7cPxb5qAvk5FUxYn0U2NGUhTzKC1';
+const CLIENT_SECRET = '5gH-xmrGeG4Gwivwkd0K2g9jmoS5VEDRBUTlSb4o8k-wakD031XOrk2GW44RwzuM';
+const ACCOUNT_TOKEN = 'ccOiNagI18N6/25lsTrBqFPfWMg9nZmPqaNGVRZryZlynpAul7CTzW/N1PSzXuKc';
+
+const getAccessToken = async () => {
+    try {
+        const response = await axios.post(
+            AUTH_URL,
+            new URLSearchParams({
+                audience: 'https://api.carfax.ca',
+                grant_type: 'client_credentials',
+                client_id: CLIENT_ID,
+                client_secret: CLIENT_SECRET,
+            }),
+            {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            }
+        );
+        return response.data.access_token;
+    } catch (error) {
+        console.error('Error fetching access token:', error.response?.data || error.message);
+        throw new Error('Failed to fetch access token');
+    }
+};
+
+const checkCarfaxReport = async (vin, accessToken) => {
+    try {
+        const response = await axios.post(
+            REPORT_LOOKUP_URL,
+            {
+                Vin: vin,
+                AccountToken: ACCOUNT_TOKEN,
+                ReportTypeFilter: '2,3,4,5,6,9',
+            },
+            {
+                headers: {
+                    accept: 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        return response.data.ResponseData;
+    } catch (error) {
+        console.error('Error checking Carfax report:', error.response?.data || error.message);
+        throw new Error('Failed to check Carfax report');
+    }
+};
+
+const orderCarfaxReport = async (vin, accessToken) => {
+    try {
+        const response = await axios.post(
+            ORDER_REPORT_URL,
+            {
+                AccountToken: ACCOUNT_TOKEN,
+                LienExpressProvince: 'ON',
+                RefNum: 'MyV',
+                Vin: vin,
+                ReportType: 4,
+            },
+            {
+                headers: {
+                    accept: 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        return response.ResponseData;
+    } catch (error) {
+        console.error('Error ordering Carfax report:', error.response?.data || error.message);
+        throw new Error('Failed to order Carfax report');
+    }
+};
+
 const uploadedImage = async (base64Image, fileNameConst) => {
     const matches = base64Image.match(/^data:image\/(\w+);base64,(.+)$/);
       
@@ -246,9 +329,9 @@ const convertCsvToJson = async (csvFile, dealerId) => {
             extraphotolastmodifieddate: "Extra_Photo_Last_Modified_Date",
             locationlat: "location.lat",
             locationlong: "location.long",
+            adid: "dealerId",
             dealerid: "dealerId",
             dealershipid: "dealerId",
-            adid: "dealerId",
             featureinterioricon: "feature.interior.icon",
             featureinteriorfeaturename: "feature.interior.featureName",
             featurevehicleicon: "feature.vehicle.icon",
@@ -259,8 +342,8 @@ const convertCsvToJson = async (csvFile, dealerId) => {
             image360url: "image360URL",
         };
 
-        // Process each row
-        for (let i = 1; i < rows.length; i++) {
+        // Process each row rows.length
+        for (let i = 1; i < 3; i++) {
             const row = rows[i].split(delimiter);
             const rowData = {};
 
@@ -379,7 +462,7 @@ const addCSVRawToDBWithDataCheck = async (VIN) => {
         }
 
     } catch (error) {
-        console.log(error);
+        console.log('------------------',error);
     }
 };
   
@@ -388,14 +471,31 @@ const addCSVRawToDB = async (dataRow, dealerId) => {
         if (dataRow !== undefined && dataRow !== null) {
             const VINNumber = dataRow.VIN;
             const checkExist = await carServices.getCarByVIN(VINNumber);
-            console.log(VINNumber);
-            console.log(checkExist);
             
             if (checkExist.length) {
                 let inventoryId = checkExist[0]._id;
                 const updateCarDetails = await carServices.editCarDetails(dataRow, dealerId, inventoryId, checkExist[0]);
             } else {
-                const addCarDetails = await carServices.addNewCar(dataRow, dealerId);
+                console.log("=============",dataRow);
+                if (dataRow.carfaxlink === null || dataRow.carfaxlink === '' || dataRow.carfaxlink === undefined) {
+                    const accessToken = await getAccessToken();
+
+                    const reportData = await checkCarfaxReport(VINNumber, accessToken);
+
+                    if (reportData.Reports && reportData.Reports.length > 0) {
+                        console.log('Carfax report already exists:', reportData.Reports);
+
+                        dataRow.carfaxlink = reportData?.Reports?.ReportLinkUrl;
+                    } else {
+                        console.log('No Carfax report found, ordering a new one...');
+                        const orderResponse = await orderCarfaxReport(VINNumber, accessToken);
+
+                        dataRow.carfaxlink = orderResponse?.VhrReportUrl;
+                    }
+                    const addCarDetails = await carServices.addNewCar(dataRow, dealerId);
+                } else {
+                    const addCarDetails = await carServices.addNewCar(dataRow, dealerId);
+                }
             }
         }    
     } catch (error) {
@@ -863,7 +963,6 @@ module.exports = {
     getDocusignContent: async (req, res, next) => {
         try {
             const envelopeData = req.body;
-            console.log(envelopeData);
 
             const envelopeId = envelopeData?.data?.envelopeId;
             const eventName = envelopeData?.event;
