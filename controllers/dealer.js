@@ -11,6 +11,7 @@ const dealer = require('../models/dealer');
 const Stripe = require('stripe');
 const axios = require('axios');
 const querystring = require('querystring');
+const vehicleType = require('../models/vehicleType');
 
 // Environment variables or config for sensitive data
 const AUTH_URL = 'https://authentication.carfax.ca/oauth/token';
@@ -264,6 +265,26 @@ const deleteImage = async (fileName) => {
 
 // const convertLondonAutoValleyCsvToJson = async (csvFile, dealerId) => {
 // };
+const parseCsvRow = (row, delimiter) => {
+    const regex = new RegExp(
+        `(?:^|${delimiter})(\"(?:[^\"]+|\"\")*\"|[^${delimiter}]*)`,
+        'g'
+    );
+
+    const result = [];
+    let match;
+
+    while ((match = regex.exec(row)) !== null) {
+        let value = match[1].trim();
+        // Remove surrounding quotes if present
+        if (value.startsWith('"') && value.endsWith('"')) {
+            value = value.slice(1, -1).replace(/""/g, '"'); // Handle escaped quotes
+        }
+        result.push(value);
+    }
+
+    return result;
+};
 
 const convertCsvToJson = async (csvFile, dealerId) => {
     try {
@@ -285,6 +306,7 @@ const convertCsvToJson = async (csvFile, dealerId) => {
             inventorytype: "New_or_Used",
             status: "New_or_Used",
             msrp: "MSRP",
+            price: "MSRP",
             year: "Year",
             make: "Make",
             model: "Model",
@@ -306,8 +328,10 @@ const convertCsvToJson = async (csvFile, dealerId) => {
             doors: "Door_Count",
             driveconfiguration: "Drive_configuration",
             drive: "Drive_configuration",
+            drivetrain: "Drive_configuration",
             additionaloptions: "Additional_Options",
             currentmiles: "Current_Miles",
+            mileage:"Current_Miles",
             dateaddedtoinventory: "Date_Added_to_Inventory",
             createddate: "createdAt",
             modifieddate: "updatedAt",
@@ -316,7 +340,7 @@ const convertCsvToJson = async (csvFile, dealerId) => {
             location: "Vehicle_Location",
             certifiedpreowned: "Certified_Pre_owned",
             iscertified: "Certified_Pre_owned",
-            price: "Price",
+            //price: "Price",
             transmissiondescription: "Transmission_Description",
             transmission: "Transmission_Description",
             internetdescription: "Internet_Description",
@@ -340,11 +364,13 @@ const convertCsvToJson = async (csvFile, dealerId) => {
             featuretechnicalfeaturename: "feature.technical.featureName",
             carfaxlink: "carFAXLink",
             image360url: "image360URL",
+            imageurls: "Main_Photo",
+            vehicletype:"Body_Style"
         };
 
-        // Process each row rows.length
-        for (let i = 1; i < 3; i++) {
-            const row = rows[i].split(delimiter);
+        // Process each row
+        for (let i = 1; i < rows.length; i++) {
+            const row = parseCsvRow(rows[i], delimiter); // Use the custom parser
             const rowData = {};
 
             // Skip empty rows
@@ -352,11 +378,30 @@ const convertCsvToJson = async (csvFile, dealerId) => {
                 continue;
             }
 
-            // Map headers to row data using column mapping
+            // Process each column
             for (let j = 0; j < headers.length; j++) {
                 const key = headers[j];
-                const value = row[j]?.trim();
-                rowData[columnMapping[key] || key] = value;
+                let value = row[j]?.trim();
+
+                // Check if value is a string and remove commas
+                if (typeof value === 'string') {
+                    value = value.replace(/,/g, '');
+                }
+                
+                // Handle image360url field
+                if (key === 'imageurls' && value) {
+                    
+                    const imageDelimiter = detectDelimiter(value); // Adjust this based on the expected delimiter for multiple images
+                    rowData[columnMapping[key] || key] = value.includes(imageDelimiter)
+                        ? value.split(imageDelimiter)[0].trim()
+                        : [value.trim()]; // Ensure it's always an array
+                    rowData[columnMapping["extraphotos"]] = value; // Remaining photos as an array
+
+                }else if (key === 'drive' || key === 'driveconfiguration')   {
+                    rowData[columnMapping[key] || key] = value ? value : 'N/A';
+                } else {
+                    rowData[columnMapping[key] || key] = value;
+                }
             }
 
             // Fetch and add additional details
