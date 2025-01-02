@@ -14,14 +14,14 @@ const querystring = require('querystring');
 const vehicleType = require('../models/vehicleType');
 
 // Environment variables or config for sensitive data
-const AUTH_URL = 'https://authentication.carfax.ca/oauth/token';
-const REPORT_LOOKUP_URL = 'https://vhrlookupapi.carfax.ca/api/v4/ReportLookup/ReportLookupForProxy';
-const ORDER_REPORT_URL = 'https://vhrorderapi.carfax.ca/Api/V2/Order/VhrForProxy';
+const AUTH_URL = process.env.AUTH_URL;
+const REPORT_LOOKUP_URL = process.env.REPORT_LOOKUP_URL;
+const ORDER_REPORT_URL = process.env.ORDER_REPORT_URL;
 
 // Sensitive data from Carfax
-const CLIENT_ID = 'eZ7h7cPxb5qAvk5FUxYn0U2NGUhTzKC1';
-const CLIENT_SECRET = '5gH-xmrGeG4Gwivwkd0K2g9jmoS5VEDRBUTlSb4o8k-wakD031XOrk2GW44RwzuM';
-const ACCOUNT_TOKEN = 'ccOiNagI18N6/25lsTrBqFPfWMg9nZmPqaNGVRZryZlynpAul7CTzW/N1PSzXuKc';
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const ACCOUNT_TOKEN = process.env.ACCOUNT_TOKEN;
 
 const getAccessToken = async () => {
     try {
@@ -521,18 +521,15 @@ const addCSVRawToDB = async (dataRow, dealerId) => {
                 let inventoryId = checkExist[0]._id;
                 const updateCarDetails = await carServices.editCarDetails(dataRow, dealerId, inventoryId, checkExist[0]);
             } else {
-                console.log("=============",dataRow);
                 if (dataRow.carfaxlink === null || dataRow.carfaxlink === '' || dataRow.carfaxlink === undefined) {
                     const accessToken = await getAccessToken();
 
                     const reportData = await checkCarfaxReport(VINNumber, accessToken);
 
                     if (reportData.Reports && reportData.Reports.length > 0) {
-                        console.log('Carfax report already exists:', reportData.Reports);
 
-                        dataRow.carfaxlink = reportData?.Reports?.ReportLinkUrl;
+                        dataRow.carfaxlink = reportData?.Reports[0]?.ReportLinkUrl;
                     } else {
-                        console.log('No Carfax report found, ordering a new one...');
                         const orderResponse = await orderCarfaxReport(VINNumber, accessToken);
 
                         dataRow.carfaxlink = orderResponse?.VhrReportUrl;

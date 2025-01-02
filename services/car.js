@@ -56,7 +56,8 @@ module.exports = {
                 city: params.Fuel_efficienecy_city,
                 highway: params.Fuel_efficienecy_highway,
                 combined: params.Fuel_efficienecy_combined,
-            }
+            },
+            carFAXLink: params.carfaxlink
         });
 
         if (addCar) {
