@@ -187,32 +187,32 @@ module.exports = {
         return vehicleTypeSchema.find();
     },
 
-    searchOperation: async (keyword, userId, userType) => {
-        let query;
-
-        if (userType === 'dealer') {
-            query = {
+    searchOperation: async (sentence, userId, userType) => {
+        // Split the sentence into words
+        let keywords = sentence.split(' ').map(word => word.trim()).filter(word => word !== '');
+    
+        let orConditions = keywords.map((word) => {
+            const regex = { $regex: word, $options: 'i' };
+            return {
                 $or: [
-                    { Make: { $regex: keyword, $options: 'i' } },
-                    { Model: { $regex: keyword, $options: 'i' } },
-                    { Body_Style: { $regex: keyword, $options: 'i' } },
-                    { Exterior_Colour: { $regex: keyword, $options: 'i' } }
-                ],
-                dealerId: userId
-            };
-        } else {
-            query = {
-                $or: [
-                    { Make: { $regex: keyword, $options: 'i' } },
-                    { Model: { $regex: keyword, $options: 'i' } },
-                    { Body_Style: { $regex: keyword, $options: 'i' } },
-                    { Exterior_Colour: { $regex: keyword, $options: 'i' } }
+                    { Make: regex },
+                    { Model: regex },
+                    { Body_Style: regex },
+                    { Exterior_Colour: regex }
                 ]
             };
+        });
+    
+        // Combine the conditions
+        let query = { $and: orConditions };
+    
+        if (userType === 'dealer') {
+            query.dealerId = userId;
         }
-
+    
+        // Execute the search query
         let cars = await carSchema.find(query);
-
+    
         return cars;
     },
 
