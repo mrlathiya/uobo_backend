@@ -637,6 +637,13 @@ module.exports = {
 
             let csvFile = req.file;
 
+
+            if (params.logo) {
+                let awsUploadedFile = await awsServices._upload(params.logo,params.dealerShipName, 'image', params.dealerShipName);
+
+                params.logo = awsUploadedFile?.URL;
+            }
+
             let registerDealerData = await dealerServices.registerDealer(params);
 
             if (registerDealerData) {

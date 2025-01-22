@@ -47,6 +47,7 @@ module.exports = {
                 uoboDelivery: params.uoboDelivery,
                 ownDeliveryStaff: params.ownDeliveryStaff,
             },
+            logo: params.logo,
             customerPickUp: params.customerPickUp,
             location: {
                 lat: params.lat !== undefined && params.lat !== "" && params.lat !== null ? Number(params.lat) : undefined,

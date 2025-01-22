@@ -44,7 +44,9 @@ const _delete = async (address) => {
 /* Upload Image on s3 bucket */
 const _upload = async (file, folderName, fileType, fileNameIs) => {
   try {
-    let fileName = fileNameIs !== undefined ? fileNameIs : new Date().getTime().toString();
+    let fileName = fileNameIs !== undefined 
+    ? fileNameIs.replace(/\s+/g, "_") // Replace spaces with underscores
+    : new Date().getTime().toString();
 
     let base64ContentArray = file.split(",");
     
