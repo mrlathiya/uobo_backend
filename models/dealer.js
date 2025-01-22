@@ -21,6 +21,12 @@ const dealerSchema = mongoose.Schema({
         postalcode: {
             type: String
         },
+        state: {
+            type: String
+        },
+        country: {
+            type: String
+        },
     },
     OMVICLicenceLink: {
         type: String,

@@ -35,6 +35,8 @@ module.exports = {
                 address1: params.address1 ? params.address1 : '',
                 address2: params.address2 ? params.address2 : '',
                 city: params.city ? params.city : '',
+                state: params.state ? params.state : '',
+                country: params.country ? params.country : '',
                 postalcode: params.postalcode ? params.postalcode : '',
             },
             phoneNumber: {

@@ -637,6 +637,24 @@ module.exports = {
 
             let csvFile = req.file;
 
+            if (params.address) {
+                let addressList = params?.address?.split(',');
+
+                if (addressList.length) {
+
+                    const address1 = addressList[0]?.trim();
+                    const city = addressList[1]?.trim();
+                    const postalcode = addressList[2]?.trim().split(' ')[1];
+                    const state = addressList[2]?.trim().split(' ')[0];
+                    const country = addressList[3]?.trim();
+
+                    params.address1 = address1;
+                    params.city = city;
+                    params.postalcode = postalcode;
+                    params.state = state;
+                    params.country = country;
+                }
+            }
 
             if (params.logo) {
                 let awsUploadedFile = await awsServices._upload(params.logo,params.dealerShipName, 'image', params.dealerShipName);
