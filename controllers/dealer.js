@@ -12,7 +12,6 @@ const Stripe = require('stripe');
 const axios = require('axios');
 const querystring = require('querystring');
 const vehicleType = require('../models/vehicleType');
-const { del } = require('request');
 
 // Environment variables or config for sensitive data
 const AUTH_URL = process.env.AUTH_URL;
@@ -300,8 +299,6 @@ const convertCsvToJson = async (csvFile, dealerId) => {
     try {
         const jsonData = [];
         const csvContent = csvFile.buffer.toString('utf-8');
-        
-        console.log("hhi");
         
         // Detect delimiter
         const delimiter = detectDelimiter(csvContent);
