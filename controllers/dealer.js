@@ -310,7 +310,6 @@ const convertCsvToJson = async (csvFile, dealerId) => {
         // Split CSV into rows
         const rows = csvContent.trim().split('\n');
         const headers = standardizeColumnNames(rows[0].split(delimiter));
-        console.log("heloo");
         
         // Column mapping
         const columnMapping = {
@@ -381,8 +380,6 @@ const convertCsvToJson = async (csvFile, dealerId) => {
             imageurls: "Main_Photo",
             vehicletype:"Body_Style"
         };
-        console.log("helo2");
-        console.log(headers.length);
         
         // Process each row
         for (let i = 1; i < rows.length; i++) {
