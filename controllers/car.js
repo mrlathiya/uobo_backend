@@ -365,13 +365,12 @@ module.exports = {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: 'VIN is required' });
             }
 
-            if (!iframe360) {
+            if (req.body.iframe360 === undefined || req.body.iframe360 === '' || req.body.iframe360 === null) {
                 return res.status(401).json({ IsSuccess: false, Data: [], Message: '360_iframe is required parameter is missing' });
             }
 
             let carIs = await carServices.getCarByVINId(VIN);
 
-            
             if (carIs) {
                 let extraPhotos = carIs?.Extra_Photos || '';
                 const additionalExtraPhotos = image_data.map(image => image.output_image).join(';');
@@ -382,7 +381,7 @@ module.exports = {
                     extraPhotos = additionalExtraPhotos;
                 }
 
-                let editImageURL = await carServices.edit360ImageURL(iframe360, extraPhotos, VIN);
+                let editImageURL = await carServices.edit360ImageURL(req.body.iframe360, extraPhotos, VIN);
             
                 if (editImageURL) {
                     return res.status(200).json({ IsSuccess: true, Data: editImageURL, Message: 'Image 360 URL updated' });
