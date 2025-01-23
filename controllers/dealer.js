@@ -12,6 +12,7 @@ const Stripe = require('stripe');
 const axios = require('axios');
 const querystring = require('querystring');
 const vehicleType = require('../models/vehicleType');
+const { del } = require('request');
 
 // Environment variables or config for sensitive data
 const AUTH_URL = process.env.AUTH_URL;
@@ -266,37 +267,50 @@ const deleteImage = async (fileName) => {
 // const convertLondonAutoValleyCsvToJson = async (csvFile, dealerId) => {
 // };
 const parseCsvRow = (row, delimiter) => {
-    const regex = new RegExp(
-        `(?:^|${delimiter})(\"(?:[^\"]+|\"\")*\"|[^${delimiter}]*)`,
-        'g'
-    );
-
+    // Split the row by the delimiter
+    const fields = row.split(delimiter);
     const result = [];
-    let match;
 
-    while ((match = regex.exec(row)) !== null) {
-        let value = match[1].trim();
-        // Remove surrounding quotes if present
+    // Iterate over each field
+    fields.forEach(field => {
+        // Trim the field to remove any leading or trailing spaces
+        let value = field.trim();
+
+        // If the value starts and ends with double quotes, remove them
         if (value.startsWith('"') && value.endsWith('"')) {
-            value = value.slice(1, -1).replace(/""/g, '"'); // Handle escaped quotes
+            value = value.slice(1, -1);
         }
+
+        // Replace any escaped quotes inside quoted fields
+        value = value.replace(/""/g, '"');
+
         result.push(value);
+    });
+
+    // Check if the row parsed correctly
+    if (result.length === 0) {
+        console.error('Failed to parse row:', row);
     }
 
     return result;
 };
 
+
 const convertCsvToJson = async (csvFile, dealerId) => {
     try {
         const jsonData = [];
         const csvContent = csvFile.buffer.toString('utf-8');
-
+        
+        console.log("hhi");
+        
         // Detect delimiter
         const delimiter = detectDelimiter(csvContent);
-
+        console.log(delimiter);
+        
         // Split CSV into rows
         const rows = csvContent.trim().split('\n');
         const headers = standardizeColumnNames(rows[0].split(delimiter));
+        console.log("heloo");
         
         // Column mapping
         const columnMapping = {
@@ -367,7 +381,9 @@ const convertCsvToJson = async (csvFile, dealerId) => {
             imageurls: "Main_Photo",
             vehicletype:"Body_Style"
         };
-
+        console.log("helo2");
+        console.log(headers.length);
+        
         // Process each row
         for (let i = 1; i < rows.length; i++) {
             const row = parseCsvRow(rows[i], delimiter); // Use the custom parser
