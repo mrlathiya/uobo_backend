@@ -9,6 +9,7 @@ const dealerAuthController = require('../../middleware/dealerAuth');
 
 router.get('/test', carController.searchCarInventory);
 router.get('/dealer', carController.getFilteredDealerInventory);
+router.put('/360/Image', carController.updateCar360ImageURL);
 
 router.get('/search', commonAuthController, carController.searchCarInventory);
 
@@ -25,6 +26,5 @@ router.post('/additional/services', carController.additionalCarServices);
 router.get('/additional/services', carController.getAdditionalCarServices);
 router.put('/additional/services', carController.addCarServicesToOrder);
 
-router.put('/360/Image', carController.updateCar360ImageURL);
 
 module.exports = router;
