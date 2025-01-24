@@ -184,25 +184,47 @@ const deleteImage = async (fileName) => {
 // const convertLondonAutoValleyCsvToJson = async (csvFile, dealerId) => {
 // };
 const parseCsvRow = (row, delimiter) => {
-    // Split the row by the delimiter
-    const fields = row.split(delimiter);
+    
     const result = [];
+    if(delimiter == '|'){
+        // Split the row by the delimiter
+        const fields = row.split(delimiter);
 
-    // Iterate over each field
-    fields.forEach(field => {
-        // Trim the field to remove any leading or trailing spaces
-        let value = field.trim();
+        // Iterate over each field
+        fields.forEach(field => {
+            // Trim the field to remove any leading or trailing spaces
+            let value = field.trim();
 
-        // If the value starts and ends with double quotes, remove them
-        if (value.startsWith('"') && value.endsWith('"')) {
-            value = value.slice(1, -1);
+            // If the value starts and ends with double quotes, remove them
+            if (value.startsWith('"') && value.endsWith('"')) {
+                value = value.slice(1, -1);
+            }
+
+            // Replace any escaped quotes inside quoted fields
+            value = value.replace(/""/g, '"');
+
+            result.push(value);
+        });
+    }else{
+        // Create the regex pattern dynamically for your delimiter
+        const regex = new RegExp(
+            `(?:^|${delimiter})(\"(?:[^\"]+|\"\")*\"|[^${delimiter}]*)`, 
+            'g'
+        );
+        let match;
+
+        while ((match = regex.exec(row)) !== null) {
+            let value = match[1] ? match[1].trim() : ''; // Handle null matches gracefully
+
+            // Remove surrounding quotes if present (only for quoted fields)
+            if (value.startsWith('"') && value.endsWith('"')) {
+                value = value.slice(1, -1).replace(/""/g, '"'); // Handle escaped quotes
+            }
+
+            // Push the cleaned value into the result array
+            result.push(value);
         }
-
-        // Replace any escaped quotes inside quoted fields
-        value = value.replace(/""/g, '"');
-
-        result.push(value);
-    });
+    }
 
     // Check if the row parsed correctly
     if (result.length === 0) {
@@ -237,6 +259,7 @@ const convertCsvToJson = async (csvFile, dealerId) => {
             inventorytype: "New_or_Used",
             status: "New_or_Used",
             msrp: "MSRP",
+            listprice:"MSRP",
             price: "MSRP",
             year: "Year",
             make: "Make",
@@ -260,6 +283,7 @@ const convertCsvToJson = async (csvFile, dealerId) => {
             driveconfiguration: "Drive_configuration",
             drive: "Drive_configuration",
             drivetrain: "Drive_configuration",
+            drivetype:"Drive_configuration",
             additionaloptions: "Additional_Options",
             currentmiles: "Current_Miles",
             mileage:"Current_Miles",
@@ -274,6 +298,7 @@ const convertCsvToJson = async (csvFile, dealerId) => {
             //price: "Price",
             transmissiondescription: "Transmission_Description",
             transmission: "Transmission_Description",
+            transmissiontype: "Transmission_Description",
             internetdescription: "Internet_Description",
             vehicleclass: "Vehicle_Class",
             mainphoto: "Main_Photo",
@@ -313,16 +338,11 @@ const convertCsvToJson = async (csvFile, dealerId) => {
 
             // Process each column
             for (let j = 0; j < headers.length; j++) {
-                const key = headers[j];
+                const key = headers[j].replace(/"/g, '');
                 let value = row[j]?.trim();
-
-                // Check if value is a string and remove commas
-                if (typeof value === 'string') {
-                    value = value.replace(/,/g, '');
-                }
-                
+ 
                 // Handle image360url field
-                if (key === 'imageurls' && value) {
+                if (key === 'imageurls' || key === 'photos' && value) {
                     
                     const imageDelimiter = detectDelimiter(value); // Adjust this based on the expected delimiter for multiple images
                     rowData[columnMapping[key] || key] = value.includes(imageDelimiter)
@@ -330,10 +350,21 @@ const convertCsvToJson = async (csvFile, dealerId) => {
                         : [value.trim()]; // Ensure it's always an array
                     rowData[columnMapping["extraphotos"]] = value; // Remaining photos as an array
 
-                }else if (key === 'drive' || key === 'driveconfiguration')   {
+                }else if (key === 'drive' || key === 'driveconfiguration'){
+                     // Check if value is a string and remove commas
+                    if (typeof value === 'string') {
+                        value = value.replace(/,/g, '');
+                    }
                     rowData[columnMapping[key] || key] = value ? value : 'N/A';
                 } else {
-                    rowData[columnMapping[key] || key] = value;
+                     // Check if value is a string and remove commas
+                    if (typeof value === 'string') {
+                        value = value.replace(/,/g, '');
+                    }
+                    if (!rowData[columnMapping[key] || key]){
+
+                        rowData[columnMapping[key] || key] = value;
+                    }
                 }
             }
 
