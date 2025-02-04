@@ -571,9 +571,10 @@ const addCSVRawToDB = async (dataRow, dealerId) => {
 
                         dataRow.carfaxlink = reportData?.Reports[0]?.ReportLinkUrl;
                     } else {
-                        const orderResponse = await orderCarfaxReport(VINNumber, accessToken);
+                        // const orderResponse = await orderCarfaxReport(VINNumber, accessToken);
 
-                        dataRow.carfaxlink = orderResponse?.VhrReportUrl;
+                        // dataRow.carfaxlink = orderResponse?.VhrReportUrl;
+                        dataRow.carfaxlink = ''
                     }
                     const addCarDetails = await carServices.addNewCar(dataRow, dealerId);
                 } else {
