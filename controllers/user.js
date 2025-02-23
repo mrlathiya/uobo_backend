@@ -5,6 +5,33 @@ const financeServices = require('../services/finance');
 const fs = require('fs');
 const sendNotification = require('../config/send-notification');
 const Stripe = require('stripe');
+const nodemailer = require("nodemailer");
+
+// Configure transporter (Use your email service credentials)
+const transporter = nodemailer.createTransport({
+    service: "gmail", // You can use any email provider like Outlook, Yahoo, etc.
+    auth: {
+      user: "uobo.drive@gmail.com",
+      pass: "ciik azkw suor yxqd", // Use App Password if using Gmail
+    },
+});
+  
+// Function to send OTP
+const sendOTP = async (email, otp) => {
+    try {
+      const mailOptions = {
+        from: "uobo.drive@gmail.com",
+        to: email,
+        subject: "Your OTP Code",
+        text: `Your OTP code is: ${otp}`,
+      };
+  
+      await transporter.sendMail(mailOptions);
+      console.log("OTP sent successfully!");
+    } catch (error) {
+      console.error("Error sending OTP:", error);
+    }
+};
 
 const uploadedImage = async (base64Image, fileNameConst) => {
     const matches = base64Image.match(/^data:image\/(\w+);base64,(.+)$/);
@@ -133,6 +160,69 @@ module.exports = {
                 return res.status(400).json({ IsSuccess: true, Data: checkExistUser, token, Message: 'User not found' });
             }
             
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    },
+
+    generateOTP: async (req, res, next) => {
+        try {
+            const { customerId } = req.body;
+
+            if (!customerId) {
+                return res.status(400).json({ message: "customerId is required" });
+            }
+
+            const existCustomer = await userServices.getUserById(customerId);
+
+            if (existCustomer) {
+                // Generate 6-digit OTP
+                const otp = Math.floor(100000 + Math.random() * 900000);
+
+                if (existCustomer.email) {
+                    const email = existCustomer.email;
+                    await sendOTP(email, otp);
+                    await userServices.storeCustomerOTP(email, otp);
+                    return res.status(200).json({ IsSuccess: true, Message: "OTP sent successfully" });
+                } else {
+                    return res.status(200).json({ IsSuccess: false, Message: "Customer Email not found" });
+                }
+                
+            } else {
+                return res.status(404).json({ IsSuccess: false, Message: "User not found" });
+            }
+
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
+
+    customerOTPVerification: async (req, res, next) => {
+        try {
+            const { customerId, OTP } = req.body;
+
+            if (!customerId) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'CustomerId is required' });
+            }
+
+            if (!OTP) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'OTP is required' });
+            }
+
+            const existCustomer = await userServices.getUserById(customerId);
+            
+            if (existCustomer.verificationOTP === OTP) {
+                const verificationStatus = await userServices.verifyCustomer(customerId);
+
+                if (verificationStatus) {
+                    return res.status(200).json({ IsSuccess: true, Data: verificationStatus, Message: "Verified successfully" })
+                } else {
+                    return res.status(200).json({ IsSuccess: false, Data: [], Message: "Verified failed" });
+                }
+            } else {
+                return res.status(200).json({ IsSuccess: false, Data: [], Message: "Wrong OTP..!! Please enter correct OTP" });
+            }
+
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
         }

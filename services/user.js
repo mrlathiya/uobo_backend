@@ -52,6 +52,14 @@ module.exports = {
         return existUser;
     },
 
+    storeCustomerOTP: async (email, otp) => {
+        return await userSchema.findOneAndUpdate({ email }, { verificationOTP: otp }, { new: true });
+    },
+
+    verifyCustomer: async (customerId) => {
+        return await userSchema.findByIdAndUpdate(customerId, { emailVerified: true }, { new: true });
+    },
+
     createUserToken: async (userId) => {
         const token = jwt.sign(
         { 

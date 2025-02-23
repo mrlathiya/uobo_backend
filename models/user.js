@@ -65,6 +65,13 @@ const userSchema = mongoose.Schema(
         issued: {
             type: String
         },
+        emailVerified: {
+            type: Boolean,
+            default: false
+        },
+        verificationOTP: {
+            type: String
+        },
         licenceDetails: {
             licenceNumber: {
                 type: String
