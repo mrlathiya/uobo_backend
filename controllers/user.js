@@ -167,20 +167,20 @@ module.exports = {
 
     generateOTP: async (req, res, next) => {
         try {
-            const { customerId } = req.body;
+            const { email } = req.body;
 
-            if (!customerId) {
-                return res.status(400).json({ message: "customerId is required" });
+            if (!email) {
+                return res.status(400).json({ message: "email is required" });
             }
 
-            const existCustomer = await userServices.getUserById(customerId);
+            const existCustomer = await userServices.getUserByEmail(email);
 
-            if (existCustomer) {
+            if (existCustomer.length) {
                 // Generate 6-digit OTP
                 const otp = Math.floor(100000 + Math.random() * 900000);
 
-                if (existCustomer.email) {
-                    const email = existCustomer.email;
+                if (existCustomer[0].email) {
+                    const email = existCustomer[0].email;
                     await sendOTP(email, otp);
                     await userServices.storeCustomerOTP(email, otp);
                     return res.status(200).json({ IsSuccess: true, Message: "OTP sent successfully" });
@@ -199,28 +199,33 @@ module.exports = {
 
     customerOTPVerification: async (req, res, next) => {
         try {
-            const { customerId, OTP } = req.body;
+            const { email, OTP } = req.body;
 
-            if (!customerId) {
-                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'CustomerId is required' });
+            if (!email) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'email is required' });
             }
 
             if (!OTP) {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'OTP is required' });
             }
 
-            const existCustomer = await userServices.getUserById(customerId);
-            
-            if (existCustomer.verificationOTP === OTP) {
-                const verificationStatus = await userServices.verifyCustomer(customerId);
+            const existCustomer = await userServices.getUserByEmail(email);
 
-                if (verificationStatus) {
-                    return res.status(200).json({ IsSuccess: true, Data: verificationStatus, Message: "Verified successfully" })
+            if (existCustomer.length) {
+                if (existCustomer[0]?.verificationOTP === OTP) {
+                    const customerId = existCustomer[0]?._id;
+                    const verificationStatus = await userServices.verifyCustomer(customerId);
+    
+                    if (verificationStatus) {
+                        return res.status(200).json({ IsSuccess: true, Data: verificationStatus, Message: "Verified successfully" })
+                    } else {
+                        return res.status(200).json({ IsSuccess: false, Data: [], Message: "Verified failed" });
+                    }
                 } else {
-                    return res.status(200).json({ IsSuccess: false, Data: [], Message: "Verified failed" });
+                    return res.status(200).json({ IsSuccess: false, Data: [], Message: "Wrong OTP..!! Please enter correct OTP" });
                 }
             } else {
-                return res.status(200).json({ IsSuccess: false, Data: [], Message: "Wrong OTP..!! Please enter correct OTP" });
+                return res.status(404).json({ IsSuccess: false, Message: "User not found" });
             }
 
         } catch (error) {
