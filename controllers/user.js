@@ -192,7 +192,7 @@ module.exports = {
                     const email = existCustomer[0].email;
                     await sendOTP(email, otp);
                     await userServices.storeCustomerOTP(email, otp);
-                    return res.status(200).json({ IsSuccess: true, Data: existCustomer, Message: "OTP sent successfully" });
+                    return res.status(200).json({ IsSuccess: true, Message: "OTP sent successfully" });
                 } else {
                     return res.status(200).json({ IsSuccess: false, Message: "Customer Email not found" });
                 }
@@ -226,7 +226,7 @@ module.exports = {
                     const verificationStatus = await userServices.verifyCustomer(customerId);
     
                     if (verificationStatus) {
-                        return res.status(200).json({ IsSuccess: true, Data: existCustomer, Message: "Verified successfully" })
+                        return res.status(200).json({ IsSuccess: true, Data: verificationStatus, Message: "Verified successfully" })
                     } else {
                         return res.status(200).json({ IsSuccess: false, Data: [], Message: "Verified failed" });
                     }
