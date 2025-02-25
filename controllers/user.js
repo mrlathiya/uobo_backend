@@ -132,15 +132,19 @@ module.exports = {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Country code is required' });
             }
 
-            if (!params.number) {
-                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Mobile number is required' });
+            // if (!params.number) {
+            //     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Mobile number is required' });
+            // }
+
+            if (!params.email) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Email is required' });
             }
 
             if (!params.fcmToken) {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'FCM Token is required' });
             }
 
-            let checkExistUser = await userServices.getUserByMobileNumber(params);
+            let checkExistUser = await userServices.getUserByEmail(email);
 
             if (checkExistUser.length === 1) {
                 const userId = checkExistUser[0]._id;
@@ -154,6 +158,9 @@ module.exports = {
                 let token = await userServices.createUserToken(userId);
 
                 if (token) {
+                    const otp = Math.floor(100000 + Math.random() * 900000);
+                    await sendOTP(email, otp);
+                    await userServices.storeCustomerOTP(email, otp);
                     return res.status(200).json({ IsSuccess: true, Data: checkExistUser, token, Message: 'User logged In...!!!' });
                 } else {
                     return res.status(400).json({ IsSuccess: true, Data: [], Message: 'Token not created' });
