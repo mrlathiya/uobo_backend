@@ -128,9 +128,9 @@ module.exports = {
         try {
             const params = req.query;
 
-            if (!params.countryCode) {
-                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Country code is required' });
-            }
+            // if (!params.countryCode) {
+            //     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Country code is required' });
+            // }
 
             // if (!params.number) {
             //     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Mobile number is required' });
