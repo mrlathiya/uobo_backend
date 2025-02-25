@@ -112,9 +112,9 @@ module.exports = {
             const addUser = await userServices.registerUser(params);
 
             if (addUser) {
-                const otp = Math.floor(100000 + Math.random() * 900000);
-                await sendOTP(params.email, otp);
-                await userServices.storeCustomerOTP(params.email, otp);
+                // const otp = Math.floor(100000 + Math.random() * 900000);
+                // await sendOTP(params.email, otp);
+                // await userServices.storeCustomerOTP(params.email, otp);
                 return res.status(200).json({ IsSuccess: true, Data: [addUser], Message: 'User registered successfully' });
             } else {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'User not registered' });
