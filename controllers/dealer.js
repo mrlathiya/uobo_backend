@@ -774,29 +774,22 @@ module.exports = {
 
     dealerLogin: async (req, res, next) => {
         try {
-            const params = req.body;
+            const { email } = req.body;
 
-            let dealer = await dealerServices.loginDealer(params);
+            if (!email) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Email is required' });
+            }
 
-            // if (!params.fcmToken) {
-            //     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer FCM token is required' });
-            // }
+            let dealer = await dealerServices.getDealerByEmail(email);
 
             if (dealer) {
-
-                // if (params.fcmToken) {
-                //     await dealerServices.updateDealerFCMToken(dealer._id, params.fcmToken);
-                // }
-
-                // let dealerToken = await dealerServices.updateDealerFCMToken(dealer._id, params.fcmToken);
-
-                // if (dealerToken === undefined || dealerToken === null) {
-                //     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Dealer FCM token is not updated' });
-                // }
 
                 const token = await userServices.createUserToken(dealer._id);
 
                 if (token) {
+                    const otp = Math.floor(100000 + Math.random() * 900000);
+                    await sendOTP(email, otp);
+                    await dealerServices.storeDealerOTP(email, otp);
                     return res.status(200).json({ IsSuccess: true, Data: {dealer, token}, Message: "Dealer LoggedIn" });
                 } else {
                     return res.status(400).json({ IsSuccess: false, Data: [], Message: "Dealer token not created" });
