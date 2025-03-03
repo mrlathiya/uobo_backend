@@ -95,6 +95,20 @@ module.exports = {
         return dealer;
     },
 
+    getDealerByEmail: async (email) => {
+        let dealer = await dealerSchema.findOne({ email });
+
+        return dealer;
+    },
+
+    storeDealerOTP: async (email, otp) => {
+        return await dealerSchema.findOneAndUpdate({ email }, { verificationOTP: otp }, { new: true });
+    },
+
+    verifyDealer: async (dealerId) => {
+        return await dealerSchema.findByIdAndUpdate(dealerId, { emailVerified: true }, { new: true });
+    },
+
     getDealerByDealerId: async (dealerId) => {
         let dealer = await dealerSchema.findById(dealerId);
 

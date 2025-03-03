@@ -26,6 +26,9 @@ router.patch('/remove-inventory-image', dealerController.removeImageFromInventor
 router.patch('/edit-inventory', dealerController.editInventory);
 router.get('/inventory', dealerController.getAllDealerInventory);
 
+router.post('/sendOTP', dealerController.generateOTP);
+router.post('/verifyOTP', dealerController.dealerOTPVerification);
+
 router.get('/', dealerAuthController, dealerController.getDealer);
 router.get('/all', dealerController.getAlldealerDetails);
 router.put('/', dealerAuthController, dealerController.updateDealer);

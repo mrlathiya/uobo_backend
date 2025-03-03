@@ -76,6 +76,13 @@ const dealerSchema = mongoose.Schema({
     logo: {
         type: String
     },
+    emailVerified: {
+        type: Boolean,
+        default: false
+    },
+    verificationOTP: {
+        type: String
+    },
     location: {
         lat: {
             type: Number

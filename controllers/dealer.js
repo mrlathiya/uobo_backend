@@ -10,8 +10,16 @@ const path = require('path');
 const dealer = require('../models/dealer');
 const Stripe = require('stripe');
 const axios = require('axios');
-const querystring = require('querystring');
-const vehicleType = require('../models/vehicleType');
+const nodemailer = require("nodemailer");
+
+// Configure transporter (Use your email service credentials)
+const transporter = nodemailer.createTransport({
+    service: "gmail", // You can use any email provider like Outlook, Yahoo, etc.
+    auth: {
+      user: "uobo.drive@gmail.com",
+      pass: "ciik azkw suor yxqd", // Use App Password if using Gmail
+    },
+});
 
 // Environment variables or config for sensitive data
 const AUTH_URL = process.env.AUTH_URL;
@@ -617,6 +625,23 @@ const uploadCsvFile = async (base64Csv, fileNameConst) => {
     return fileName;
 }
 
+// Function to send OTP
+const sendOTP = async (email, otp) => {
+    try {
+      const mailOptions = {
+        from: "uobo.drive@gmail.com",
+        to: email,
+        subject: "Your OTP Code",
+        text: `Your OTP code is: ${otp}`,
+      };
+  
+      await transporter.sendMail(mailOptions);
+      console.log("OTP sent successfully!");
+    } catch (error) {
+      console.error("Error sending OTP:", error);
+    }
+};
+
 module.exports = {
     addNewDealer: async (req, res, next) => {
         try {
@@ -843,6 +868,74 @@ module.exports = {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
         }
     },
+
+    generateOTP: async (req, res, next) => {
+        try {
+            const { email } = req.body;
+
+            if (!email) {
+                return res.status(400).json({ message: "email is required" });
+            }
+
+            const existDealer = await dealerServices.getDealerByEmail(email);
+
+            if (existDealer) {
+                // Generate 6-digit OTP
+                const otp = Math.floor(100000 + Math.random() * 900000);
+
+                if (existDealer.email) {
+                    const email = existDealer.email;
+                    await sendOTP(email, otp);
+                    await dealerServices.storeDealerOTP(email, otp);
+                    return res.status(200).json({ IsSuccess: true, Message: "OTP sent successfully" });
+                } else {
+                    return res.status(200).json({ IsSuccess: false, Message: "Dealer Email not found" });
+                }
+                
+            } else {
+                return res.status(404).json({ IsSuccess: false, Message: "User not found" });
+            }
+
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Message: error.message });
+        }
+    },
+
+    dealerOTPVerification: async (req, res, next) => {
+        try {
+            const { email, OTP } = req.body;
+
+            if (!email) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'email is required' });
+            }
+
+            if (!OTP) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'OTP is required' });
+            }
+
+            const existDealer = await dealerServices.getDealerByEmail(email);
+
+            if (existDealer) {
+                if (existDealer?.verificationOTP === OTP) {
+                    const dealerId = existDealer?._id;
+                    const verificationStatus = await dealerServices.verifyDealer(dealerId);
+    
+                    if (verificationStatus) {
+                        return res.status(200).json({ IsSuccess: true, Data: verificationStatus, Message: "Verified successfully" })
+                    } else {
+                        return res.status(200).json({ IsSuccess: false, Data: [], Message: "Verified failed" });
+                    }
+                } else {
+                    return res.status(200).json({ IsSuccess: false, Data: [], Message: "Wrong OTP..!! Please enter correct OTP" });
+                }
+            } else {
+                return res.status(404).json({ IsSuccess: false, Message: "Dealer not found" });
+            }
+
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    },
     
     getDealer: async (req, res, next) => {
         try {
@@ -886,6 +979,8 @@ module.exports = {
         try {
 
             const dealers = await dealerServices.getAllDealers();
+
+            await sendOTP('monildumasia@gmail.com', '1234');
 
             if (dealers.length) {
                 return res.status(200).json({ 
