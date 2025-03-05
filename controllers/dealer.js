@@ -973,8 +973,6 @@ module.exports = {
 
             const dealers = await dealerServices.getAllDealers();
 
-            await sendOTP('monildumasia@gmail.com', '1234');
-
             if (dealers.length) {
                 return res.status(200).json({ 
                     IsSuccess: true, 
