@@ -410,6 +410,13 @@ const convertCsvToJson = async (csvFile, dealerId) => {
             imageurls: "Main_Photo",
             vehicletype:"Body_Style"
         };
+
+        // Store VINs from CSV
+        const csvVINs = new Set();
+
+        // Fetch existing VINs from DB
+        const existingVINs = await dealerServices.getVINsFromDB(dealerId);
+        const existingVINSet = new Set(existingVINs);
         
         // Process each row
         for (let i = 1; i < rows.length; i++) {
@@ -425,6 +432,10 @@ const convertCsvToJson = async (csvFile, dealerId) => {
             for (let j = 0; j < headers.length; j++) {
                 const key = headers[j].replace(/"/g, '');
                 let value = row[j]?.trim();
+
+                if (key === 'vin') {
+                    csvVINs.add(value); // Store VIN
+                }
  
                 // Handle image360url field
                 if (key === 'imageurls' || key === 'photos' && value) {
@@ -465,6 +476,14 @@ const convertCsvToJson = async (csvFile, dealerId) => {
 
             // Store data in the database
             await addCSVRawToDB(rowData, dealerId);
+        }
+
+        // Find VINs to delete
+        const vinsToDelete = [...existingVINSet].filter(vin => !csvVINs.has(vin));
+
+        if (vinsToDelete.length > 0) {
+            await dealerServices.deleteVINsFromDB(vinsToDelete, dealerId);
+            console.log(`Deleted ${vinsToDelete.length} old VINs.`);
         }
 
         return jsonData;

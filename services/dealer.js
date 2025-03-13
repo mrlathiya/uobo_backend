@@ -793,5 +793,16 @@ module.exports = {
         const editNotification = await notificationStorageSchema.updateMany({ receiverId: String(dealerId) }, { isRead: true }, { new: true });
 
         return editNotification;
+    },
+
+    getVINsFromDB: async (dealerId) => {
+        const result = await inventorySchema.find({ dealerId })
+        return result.map(row => row.VIN);
+    },
+    
+    deleteVINsFromDB: async (vinsToDelete, dealerId) => {
+        if (vinsToDelete.length === 0) return;
+
+        await inventorySchema.deleteMany({ VIN: { $in: vinsToDelete }, dealerId });
     }
 }
