@@ -51,7 +51,7 @@ router.get('/', userController.signInUser);
 // router.get('/:id', userController.getUser);
 router.post('/pave', userController.listenToPaveEvent);
 
-router.post('/stripe-payment', userController.createStripePayment);
+// router.post('/stripe-payment', userController.createStripePayment);
 router.post('/transfer-stripe-payment', userController.transferStripePayment);
 
 router.post('/promocode', userController.addCustomerPromocode);
