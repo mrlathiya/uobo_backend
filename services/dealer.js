@@ -116,9 +116,12 @@ module.exports = {
     },
 
     getDealerStripeAccountByDealerId: async (dealerId) => {
-        let dealer = await stripeAccountSchema.findOne({dealerId});
-
-        return dealer;
+        try {
+            let dealer = await stripeAccountSchema.findOne({dealerId});
+            return dealer
+        } catch (error) {
+            console.log(error);
+        }
     },
 
     //Add dealer inventory
