@@ -382,7 +382,7 @@ const convertCsvToJson = async (csvFile, dealerId) => {
             location: "Vehicle_Location",
             certifiedpreowned: "Certified_Pre_owned",
             iscertified: "Certified_Pre_owned",
-            //price: "Price",
+            // LISTPRICE: "Price",
             transmissiondescription: "Transmission_Description",
             transmission: "Transmission_Description",
             transmissiontype: "Transmission_Description",
@@ -417,7 +417,6 @@ const convertCsvToJson = async (csvFile, dealerId) => {
         // Fetch existing VINs from DB
         const existingVINs = await dealerServices.getVINsFromDB(dealerId);
         const existingVINSet = new Set(existingVINs);
-        
         // Process each row
         for (let i = 1; i < rows.length; i++) {
             const row = parseCsvRow(rows[i], delimiter); // Use the custom parser
@@ -566,7 +565,7 @@ module.exports = { convertCsvToJson };
 
 const addCSVRawToDBWithDataCheck = async (VIN) => {
     try {
-        const response = await axios.get('https://specifications.vinaudit.com/v3/specifications?key=FLC6484MT12NQLS&format=json&include=attributes,equipment,colors,recalls,warrantiess&vin=KMHD84LF8HU388984');
+        const response = await axios.get(`https://specifications.vinaudit.com/v3/specifications?key=FLC6484MT12NQLS&format=json&include=attributes,equipment,colors,recalls,warrantiess&vin=${VIN}`);
 
         if (response.data) {
             return response.data;
