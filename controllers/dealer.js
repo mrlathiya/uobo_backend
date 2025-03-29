@@ -332,7 +332,6 @@ const convertCsvToJson = async (csvFile, dealerId) => {
         
         // Detect delimiter
         const delimiter = detectDelimiter(csvContent);
-        console.log(delimiter);
         
         // Split CSV into rows
         const rows = csvContent.trim().split('\n');

@@ -410,6 +410,10 @@ module.exports = {
                 stripe = Stripe(process.env.STRIPE_SECRET);
             }
 
+            if (!dealerId) {
+                return res.status(400).json({ IsSuccess: false, Message: 'Dealer Id is required' })
+            }
+
             let getDealerStripeAccount = await dealerServices.getDealerStripeAccountByDealerId(dealerId);
 
             // let amounIs = amount
