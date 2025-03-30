@@ -462,6 +462,10 @@ const convertCsvToJson = async (csvFile, dealerId) => {
                 }
             }
 
+            if (typeof rowData["Extra_Photos"] === "string") {
+                rowData["Extra_Photos"] = rowData["Extra_Photos"].split(/[,; ]+/).map(url => url.trim()).filter(url => url);
+            }
+
             // Fetch and add additional details
             const additionalDetails = await addCSVRawToDBWithDataCheck(rowData.VIN);
 
