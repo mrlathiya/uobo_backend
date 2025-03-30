@@ -220,8 +220,29 @@ module.exports = {
                     inventory_image360URL: "$inventory.image360URL", 
                     inventory_createdAt: "$inventory.createdAt", 
                     inventory_updatedAt: "$inventory.updatedAt", 
-                    inventory_Extra_Photos : { 
-                        $split: ["$inventory.Extra_Photos", ";"] 
+                    inventory_Extra_Photos: { 
+                        $split: [
+                            {
+                                $replaceAll: {
+                                    input: {
+                                        $replaceAll: {
+                                            input: {
+                                                $replaceAll: {
+                                                    input: "$inventory.Extra_Photos",
+                                                    find: " ",
+                                                    replacement: ";"
+                                                }
+                                            },
+                                            find: ",",
+                                            replacement: ";"
+                                        }
+                                    },
+                                    find: ";;",
+                                    replacement: ";"
+                                }
+                            },
+                            ";"
+                        ] 
                     },
                     inventory_equipments : "$inventory.equipments",
                     inventory_recalls : "$inventory.recalls",
