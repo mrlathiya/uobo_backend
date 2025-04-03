@@ -991,9 +991,11 @@ module.exports = {
 
     getAlldealerDetails: async (req, res, next) => {
         try {
-
+            console.log('in dealer');
             const dealers = await dealerServices.getAllDealers();
 
+            console.log('--------------------',dealers.length)
+            console.log('--------------------',dealers)
             if (dealers.length) {
                 return res.status(200).json({ 
                     IsSuccess: true, 

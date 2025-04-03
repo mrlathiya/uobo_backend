@@ -25,12 +25,12 @@ router.delete('/clean-data', dealerController.deleteUnrelatedData);
 router.patch('/remove-inventory-image', dealerController.removeImageFromInventory);
 router.patch('/edit-inventory', dealerController.editInventory);
 router.get('/inventory', dealerController.getAllDealerInventory);
+router.get('/all', dealerController.getAlldealerDetails);
 
 router.post('/sendOTP', dealerController.generateOTP);
 router.post('/verifyOTP', dealerController.dealerOTPVerification);
 
 router.get('/', dealerAuthController, dealerController.getDealer);
-router.get('/all', dealerController.getAlldealerDetails);
 router.put('/', dealerAuthController, dealerController.updateDealer);
 router.delete('/stripe-account', dealerAuthController, dealerController.deleteDealerStripeAccount);
 router.delete('/:id', dealerAuthController, dealerController.deleteDealer);
