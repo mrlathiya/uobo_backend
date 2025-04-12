@@ -373,6 +373,7 @@ const convertCsvToJson = async (csvFile, dealerId) => {
             additionaloptions: "Additional_Options",
             currentmiles: "Current_Miles",
             mileage:"Current_Miles",
+            ODOMETER: "Current_Miles",
             dateaddedtoinventory: "Date_Added_to_Inventory",
             createddate: "createdAt",
             modifieddate: "updatedAt",

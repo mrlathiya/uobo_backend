@@ -13,13 +13,13 @@ const ftpConfigs = [
         remoteFilePath: 'inventory_328.csv',
         dealerId: '672a5bb453e291958a149599'
     },
-    {
-        host: '54.156.195.154',
-        user: 'SevenSeas',
-        password: 'uobo7seas',
-        remoteFilePath: 'sevenseasmotors.csv',
-        dealerId: '66fd770c74a163de4912e859'
-    },
+    // {
+    //     host: '54.156.195.154',
+    //     user: 'SevenSeas',
+    //     password: 'uobo7seas',
+    //     remoteFilePath: 'sevenseasmotors.csv',
+    //     dealerId: '66fd770c74a163de4912e859'
+    // },
     {
         host: 'ftp1.trader.com',
         user: 'ONCE_UB_TAC',
@@ -27,13 +27,13 @@ const ftpConfigs = [
         remoteFilePath: 'Transformed5051.csv',
         dealerId: '66db783ba3f5dc72a6ed55c2'
     },
-    {
-        host: '54.156.195.154',
-        user: 'carmax',
-        password: 'carMax',
-        remoteFilePath: 'autobunny.csv',
-        dealerId: '67634c511964d21b5ee22078'
-    }
+    // {
+    //     host: '54.156.195.154',
+    //     user: 'carmax',
+    //     password: 'carMax',
+    //     remoteFilePath: 'autobunny.csv',
+    //     dealerId: '67634c511964d21b5ee22078'
+    // }
 ];
 
 const fetchAndProcessCSV = async (ftpConfig) => {
@@ -61,7 +61,7 @@ const fetchAndProcessCSV = async (ftpConfig) => {
         form.append('dealerId', ftpConfig.dealerId);
         form.append('inventory_csv', fs.createReadStream(localFilePath));
 
-        const API_URL = "https://api.uobo.ca/api/dealer/update-inventory";
+        const API_URL = "http://107.23.254.68:8000/api/dealer/update-inventory";
 
         // Send the API request
         try {
